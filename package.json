@@ -1,9 +1,9 @@
 {
-  "name": "parsegraph-TODO-PACKAGE-NAME",
+  "name": "parsegraph-node",
   "version": "1.5.6",
-  "description": "TODO-PACKAGE-NAME",
-  "main": "dist/parsegraph-TODO-PACKAGE-NAME.js",
-  "types": "dist/TODO-PACKAGE-NAME.d.ts",
+  "description": "node",
+  "main": "dist/parsegraph-node.js",
+  "types": "dist/node.d.ts",
   "scripts": {
     "coverage": "nyc npm run test",
     "test": "mocha -r @babel/register -r jsdom-global/register --recursive",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/parsegraph/TODO-PACKAGE-NAME.git"
+    "url": "git+ssh://git@github.com/parsegraph/node.git"
   },
   "author": "Rainback, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/parsegraph/TODO-PACKAGE-NAME/issues"
+    "url": "https://github.com/parsegraph/node/issues"
   },
-  "homepage": "https://github.com/parsegraph/TODO-PACKAGE-NAME#readme",
+  "homepage": "https://github.com/parsegraph/node#readme",
   "nyc": {
     "extends": "@istanbuljs/nyc-config-babel",
     "reporter": [
