@@ -8,6 +8,7 @@ import EventCaret from './EventCaret';
 
 import {
   copyStyle,
+  BUD_RADIUS
 } from './DefaultNodeStyle';
 
 import DirectionNode, {
@@ -44,7 +45,8 @@ import Unicode, {
 import {
   CREASE,
   FONT_SIZE,
-  FIT_LOOSE
+  FIT_LOOSE,
+  defaultFont
 } from './settings';
 import {
   getImpulse,
@@ -83,10 +85,12 @@ export const NULL_DIRECTION:Direction = null;
 
 export {
   copyStyle,
+  BUD_RADIUS,
   Camera,
   CREASE,
   FONT_SIZE,
   FIT_LOOSE,
+  defaultFont,
   elapsed,
   AnimationTimer,
   TimeoutTimer,
