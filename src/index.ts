@@ -3,6 +3,13 @@ import Rect from 'parsegraph-rect';
 import {Direction, Axis} from 'parsegraph-direction';
 import DefaultNodeType, {Type} from './DefaultNodeType';
 import Node from './Node';
+import EventNode from './EventNode';
+import EventCaret from './EventCaret';
+
+import {
+  copyStyle,
+} from './DefaultNodeStyle';
+
 import DirectionNode, {
   PreferredAxis,
   LayoutState,
@@ -23,7 +30,7 @@ import {
   readFit
 } from 'parsegraph-layout';
 import showGraph from './showGraph';
-import {addEventMethod} from './event';
+import {addEventMethod, addEventListener} from './event';
 import Viewport from './Viewport';
 import Window, {Component, ProxyComponent, LayoutList, TimingBelt} from 'parsegraph-window';
 import World from './World';
@@ -36,6 +43,8 @@ import Unicode, {
 } from 'parsegraph-unicode';
 import {
   CREASE,
+  FONT_SIZE,
+  FIT_LOOSE
 } from './settings';
 import {
   getImpulse,
@@ -73,8 +82,11 @@ export const OUTWARD = Direction.OUTWARD;
 export const NULL_DIRECTION:Direction = null;
 
 export {
+  copyStyle,
   Camera,
   CREASE,
+  FONT_SIZE,
+  FIT_LOOSE,
   elapsed,
   AnimationTimer,
   TimeoutTimer,
@@ -83,6 +95,9 @@ export {
   getAllTests,
   LayoutNode,
   DirectionNode,
+  EventNode,
+  EventCaret,
+  DefaultNodeType,
   Node,
   Rect,
   Color,
@@ -100,6 +115,7 @@ export {
   nameFit,
   readFit,
   addEventMethod,
+  addEventListener,
   TimingBelt,
   Viewport,
   Window,
