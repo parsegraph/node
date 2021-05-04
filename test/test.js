@@ -1,8 +1,8 @@
-var assert = require("assert");
-import todo from "../dist/parsegraph-node";
+import {expect} from 'chai';
+import {Caret} from "../dist/parsegraph-node";
 
 describe("Package", function () {
   it("works", ()=>{
-    assert.equal(todo(), 42);
+    expect(new Caret()).to.be.an.instanceof(Caret);
   });
 });

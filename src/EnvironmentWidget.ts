@@ -1,6 +1,8 @@
 import Direction from "parsegraph-direction";
 import GraphicsWindow from "parsegraph-window";
-import { ActionCarousel, Caret, Viewport } from "../parsegraph";
+import ActionCarousel from './ActionCarousel';
+import Caret from './Caret';
+import Viewport from './Viewport';
 import DefaultNodePalette from "./DefaultNodePalette";
 import DefaultNodeType from "./DefaultNodeType";
 import EventNode from "./EventNode";
@@ -62,7 +64,7 @@ export default class EnvironmentWidget implements Widget {
         const car = new Caret('u');
         this._ac.install(car.node(), car.node())
 
-        //car.onClick(this.blockSpawner, this);
+        // car.onClick(this.blockSpawner, this);
         this._root = car.root();
 
         return this._root;

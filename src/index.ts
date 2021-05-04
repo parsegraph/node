@@ -1,8 +1,8 @@
 import TestSuite, {getAllTests} from 'parsegraph-testsuite';
 import Rect from 'parsegraph-rect';
 import {Direction, Axis} from 'parsegraph-direction';
-import DefaultNodeType, {Type} from './graph/DefaultNodeType';
-import Node from './graph/Node';
+import DefaultNodeType, {Type} from './DefaultNodeType';
+import Node from './Node';
 import DirectionNode, {
   PreferredAxis,
   LayoutState,
@@ -22,20 +22,13 @@ import {
   nameFit,
   readFit
 } from 'parsegraph-layout';
-import showGraph from './graph/showGraph';
+import showGraph from './showGraph';
 import {addEventMethod} from './event';
-import Viewport from './graph/Viewport';
+import Viewport from './Viewport';
 import Window, {Component, ProxyComponent, LayoutList, TimingBelt} from 'parsegraph-window';
-import World from './graph/World';
-import Caret from './graph/Caret';
+import World from './World';
+import Caret from './Caret';
 import Color from 'parsegraph-color';
-import buildTextDemo from './widgets/text';
-import PrimesWidget from './widgets/primes';
-import ChessWidget from './widgets/chess';
-import showCorporateStructure from './widgets/corporate';
-import showFlowchartTemplate from './widgets/builder';
-import MemoryPiers from './widgets/piers';
-import Room, {Spawner, SpawnerRegistry} from './widgets/room';
 import {elapsed, AnimationTimer, TimeoutTimer, IntervalTimer} from 'parsegraph-timing';
 import Unicode, {
   defaultUnicode,
@@ -43,7 +36,7 @@ import Unicode, {
 } from 'parsegraph-unicode';
 import {
   CREASE,
-} from './graph/settings';
+} from './settings';
 import {
   getImpulse,
   setImpulse,
@@ -51,19 +44,17 @@ import {
   setMouseImpulseAdjustment,
   getWheelImpulseAdjustment,
   setWheelImpulseAdjustment
-} from './graph/Input';
-import Multislot, {MultislotSpawner} from './widgets/multislot';
-import CameraFilter from './graph/CameraFilter';
-import ActionCarousel from './graph/ActionCarousel';
-import Carousel from './graph/Carousel';
-import CarouselAction from './graph/CarouselAction';
+} from './Input';
+import CameraFilter from './CameraFilter';
+import ActionCarousel from './ActionCarousel';
+import Carousel from './Carousel';
+import CarouselAction from './CarouselAction';
 import Camera from 'parsegraph-camera'
-import CreaseWidget from './widgets/crease';
 
-import EnvironmentWidget from './graph/EnvironmentWidget';
-import Widget from './graph/Widget';
+import EnvironmentWidget from './EnvironmentWidget';
+import Widget from './Widget';
 
-import DefaultNodePalette from './graph/DefaultNodePalette';
+import DefaultNodePalette from './DefaultNodePalette';
 
 const pal = new DefaultNodePalette();
 export const BUD = pal.readType('bud');
@@ -116,19 +107,10 @@ export {
   Component,
   LayoutList,
   World,
-  buildTextDemo,
   Caret,
-  PrimesWidget,
-  ChessWidget,
-  showCorporateStructure,
-  showFlowchartTemplate,
   Unicode,
   defaultUnicode,
   setDefaultUnicode,
-  MemoryPiers,
-  Multislot,
-  MultislotSpawner,
-  Room, Spawner, SpawnerRegistry,
   getImpulse,
   setImpulse,
   getMouseImpulseAdjustment,
@@ -139,7 +121,6 @@ export {
   ActionCarousel,
   Carousel,
   CarouselAction,
-  CreaseWidget,
   DefaultNodePalette,
   PreferredAxis,
   LayoutState,
