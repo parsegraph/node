@@ -1,6 +1,6 @@
-# microproject
+# parsegraph-node
 
-This is for Node projects:
+parsegraph-node is the main project for Parsegraph.
 
 ## Setup
 
