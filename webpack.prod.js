@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   entry: path.resolve(__dirname, "src/index.ts"),
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist-prod"),
     filename: "parsegraph-node.js",
     globalObject: "this",
     library: "parsegraph",
