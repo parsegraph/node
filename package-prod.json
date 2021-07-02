@@ -1,9 +1,9 @@
 {
   "name": "parsegraph-node",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "node",
-  "main": "dist/node.js",
-  "types": "dist/node.d.ts",
+  "main": "dist/parsegraph-node.js",
+  "types": "dist/parsegraph-node.d.ts",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/parsegraph/node.git"

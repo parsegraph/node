@@ -1,9 +1,9 @@
 {
   "name": "parsegraph-node",
-  "version": "2.2.2-dev",
+  "version": "2.2.3-dev",
   "description": "node",
   "main": "dist/parsegraph-node.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/parsegraph-node.d.ts",
   "scripts": {
     "coverage": "nyc npm run test",
     "test": "mocha -r @babel/register -r jsdom-global/register --recursive",
