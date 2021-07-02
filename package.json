@@ -33,7 +33,7 @@
     ],
     "reportDir": "dist/coverage"
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -74,9 +74,7 @@
     "openssl": "^1.1.0",
     "raw-loader": "^4.0.1",
     "ts-mocha": "^8.0.0",
-    "webgl-mock": "^0.1.7"
-  },
-  "dependencies": {
+    "webgl-mock": "^0.1.7",
     "parsegraph-animator": "^1.5.4",
     "parsegraph-blockpainter": "^1.4.3",
     "parsegraph-camera": "^1.4.2",
