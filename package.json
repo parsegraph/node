@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-node",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "node",
   "main": "dist/parsegraph-node.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,8 @@
     "test": "mocha -r @babel/register -r jsdom-global/register --recursive",
     "demo": "node demo/demo.js",
     "autobuild": "webpack --watch --config webpack.config.js",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "build-prod": "NODE_ENV=production webpack --config webpack.prod.js"
   },
   "repository": {
     "type": "git",
@@ -59,9 +60,7 @@
     "ts-shader-loader": "^1.0.6",
     "typescript": "^4.1.3",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
-  },
-  "dependencies": {
+    "webpack-cli": "^3.3.12",
     "@atscm/esdoc-typescript-plugin": "^0.1.0",
     "@babel/polyfill": "^7.10.4",
     "@babel/register": "^7.12.10",
@@ -73,6 +72,11 @@
     "express": "^4.17.1",
     "glslify-loader": "^2.0.0",
     "openssl": "^1.1.0",
+    "raw-loader": "^4.0.1",
+    "ts-mocha": "^8.0.0",
+    "webgl-mock": "^0.1.7"
+  },
+  "dependencies": {
     "parsegraph-animator": "^1.5.4",
     "parsegraph-blockpainter": "^1.4.3",
     "parsegraph-camera": "^1.4.2",
@@ -86,9 +90,6 @@
     "parsegraph-testsuite": "^1.4.1",
     "parsegraph-toradians": "^1.4.2",
     "parsegraph-unicode": "^1.5.5",
-    "parsegraph-window": "^1.5.8",
-    "raw-loader": "^4.0.1",
-    "ts-mocha": "^8.0.0",
-    "webgl-mock": "^0.1.7"
+    "parsegraph-window": "^1.5.8"
   }
 }

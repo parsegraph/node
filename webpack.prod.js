@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|ts|tsx?)$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: ["babel-loader", "ts-loader"]
       },
@@ -20,13 +20,12 @@ module.exports = {
         test: /\.(glsl|vs|fs|vert|frag)$/,
         exclude: /node_modules/,
         use: ["ts-shader-loader"],
-      },
+      }
     ],
   },
   resolve: {
     extensions: [".js", ".ts", ".tsx", ".glsl"],
     modules: [path.resolve(__dirname, "src"), "node_modules"],
   },
-  mode: "development",
-  devtool: "eval-source-map",
+  mode: "production",
 };
