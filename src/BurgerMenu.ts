@@ -60,16 +60,14 @@ export default class BurgerMenu {
   constructor(viewport:Viewport) {
     this._viewport = viewport;
 
-    this._iconImage = new Image();
+    this._iconImage = new Image(256, 32);
     const that = this;
     this._iconImage.onload = function() {
       that._iconReady = true;
       that.scheduleRepaint();
     };
     this._iconReady = false;
-    this._iconImage.style.background = `url(${rainbackMenu})`;
-    this._iconImage.style.height = "32px";
-    this._iconImage.style.width = "224px";
+    this._iconImage.src = rainbackMenu;
     this._iconTexture = null;
     this._iconPainter = null;
 
