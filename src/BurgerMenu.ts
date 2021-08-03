@@ -68,6 +68,8 @@ export default class BurgerMenu {
     };
     this._iconReady = false;
     this._iconImage.style.background = `url(${rainbackMenu})`;
+    this._iconImage.style.height = "32px";
+    this._iconImage.style.width = "224px";
     this._iconTexture = null;
     this._iconPainter = null;
 
