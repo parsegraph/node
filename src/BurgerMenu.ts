@@ -2,6 +2,7 @@ import TexturePainter from './TexturePainter';
 import {matrixMultiply3x3I, makeTranslation3x3} from 'parsegraph-matrix';
 import Viewport from './Viewport';
 import BlockPainter from 'parsegraph-blockpainter';
+import rainbackMenu from './rainback-menu-icons.png';
 
 const MENU_ICON_TEXTURE_SIZE = 32;
 const MENU_ICON_SIZE = 32;
@@ -66,7 +67,7 @@ export default class BurgerMenu {
       that.scheduleRepaint();
     };
     this._iconReady = false;
-    this._iconImage.src = '../www/rainback-menu-icons.png';
+    this._iconImage.style.background = `url(${rainbackMenu})`;
     this._iconTexture = null;
     this._iconPainter = null;
 

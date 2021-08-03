@@ -20,6 +20,10 @@ module.exports = {
         test: /\.(glsl|vs|fs|vert|frag)$/,
         exclude: /node_modules/,
         use: ["ts-shader-loader"],
+      },
+      {
+        test: /\.png/,
+        type: "asset/inline"
       }
     ],
   },
