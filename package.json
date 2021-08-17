@@ -89,5 +89,8 @@
     "webgl-mock": "^0.1.7",
     "webpack": "^5.48.0",
     "webpack-cli": "^4.7.2"
+  },
+  "peerDependencies": {
+    "parsegraph-checkglerror": "^1.4.8"
   }
 }
