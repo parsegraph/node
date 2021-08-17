@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-node",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "description": "node",
   "main": "dist/parsegraph-node.js",
   "types": "dist/parsegraph-node.d.ts",
@@ -16,7 +16,7 @@
   "homepage": "https://github.com/parsegraph/node#readme",
   "dependencies": {
     "parsegraph-animator": "^1.5.5",
-    "parsegraph-blockpainter": "^1.4.6",
+    "parsegraph-blockpainter": "^1.4.10",
     "parsegraph-camera": "^1.4.5",
     "parsegraph-color": "^1.4.3",
     "parsegraph-layout": "^1.5.8",
@@ -28,6 +28,6 @@
     "parsegraph-testsuite": "^1.4.1",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.6.2"
+    "parsegraph-window": "^1.6.3"
   }
 }
