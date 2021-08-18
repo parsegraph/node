@@ -1,4 +1,4 @@
-// import checkGLError from 'parsegraph-checkglerror';
+import checkGLError from 'parsegraph-checkglerror';
 import {
   Direction,
   forEachCardinalDirection,
@@ -523,7 +523,7 @@ export default class DefaultNodePainter implements NodePainter {
     if (this.isExtentRenderingEnabled() && !node.isRoot()) {
       this.paintExtent(node);
     }
-    // checkGLError(gl, 'Before Node drawNode');
+    checkGLError(gl, 'Before Node drawNode');
 
     switch (node.type().type()) {
       case Type.SLIDER:
@@ -536,7 +536,7 @@ export default class DefaultNodePainter implements NodePainter {
         this.paintLines(node);
         this.paintBlock(node);
     }
-    // checkGLError(gl, 'After Node drawNode');
+    checkGLError(gl, 'After Node drawNode');
   }
 
   drawLine(direction:Direction, node:Node<DefaultNodeType>) {
