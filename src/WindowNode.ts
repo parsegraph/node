@@ -490,7 +490,8 @@ export default abstract class WindowNode extends LayoutNode {
     ++IMMEDIATE_RENDERS;
     // console.log("Rendering " + this + " in scene.");
     // console.log(this.absoluteX(), this.absoluteY());
-    window.overlay().resetTransform();
+    const overlay = window.overlay();
+    overlay.save();
     window
         .overlay()
         .scale(
@@ -508,6 +509,7 @@ export default abstract class WindowNode extends LayoutNode {
             this.absoluteScale()
         );
     painter.render(renderWorld, renderScale, false);
+    overlay.restore();
 
     if (this._absoluteDirty) {
       // window.log("Node was rendered with dirty absolute position.");

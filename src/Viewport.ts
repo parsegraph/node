@@ -338,8 +338,6 @@ export default class Viewport extends Component {
     gl.clear(gl.COLOR_BUFFER_BIT);
     const overlay = this.window().overlay();
     overlay.textBaseline = 'top';
-    overlay.scale(this.camera().scale(), this.camera().scale());
-    overlay.translate(this.camera().x(), this.camera().y());
 
     const needsUpdate = this._world.render(this._window, cam);
     if (needsUpdate) {
