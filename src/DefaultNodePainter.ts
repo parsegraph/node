@@ -28,8 +28,45 @@ import Color from 'parsegraph-color';
 import Font from './Font';
 import TexturePainter from './TexturePainter';
 import NodePainter from './NodePainter';
+import Camera from 'parsegraph-camera';
 
 export const LINE_THICKNESS = 12;
+
+class PaintedElement {
+  _element:any;
+  _x:number;
+  _y:number;
+  _scale:number;
+
+  constructor(elem:any, x:number, y:number, scale:number) {
+    this._element = elem;
+    this._x = x;
+    this._y = y;
+    this._scale = scale;
+  }
+
+  clear() {
+    if (this._element.parentNode) {
+      this._element.parentNode.removeChild(this._element);
+    }
+  }
+
+  paint(window:Window) {
+    this._element.style.position = "absolute";
+    if (this._element.parentNode !== window.container()) {
+      this.clear();
+      window.container().appendChild(this._element);
+    }
+  }
+
+  render(world:Matrix3x3, scale:number, camera:Camera):void {
+    const elem = this._element;
+    const absScale = this._scale;
+    elem.style.left = `${Math.round((this._x*absScale - (this._element.offsetWidth/2)/camera.scale() + camera.x())*camera.scale())}px`;
+    elem.style.top = `${Math.round((this._y*absScale - (this._element.offsetHeight/2)/camera.scale() + camera.y())*camera.scale())}px`;
+    elem.style.transform = `scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
+  }
+}
 
 export default class DefaultNodePainter implements NodePainter {
   _window: Window;
@@ -47,6 +84,7 @@ export default class DefaultNodePainter implements NodePainter {
   _consecutiveRenders: number;
   _renderLines: boolean;
   _renderScenes: boolean;
+  _elements: PaintedElement[];
   bodySize: Size;
 
   consecutiveRenders():number {
@@ -66,6 +104,7 @@ export default class DefaultNodePainter implements NodePainter {
     // this._renderExtents = true;
 
     this._fontPainters = {};
+    this._elements = [];
 
     this._renderText = true;
 
@@ -140,6 +179,9 @@ export default class DefaultNodePainter implements NodePainter {
       // gl.deleteTexture(t._texture);
     });
     this._textures = [];
+
+    this._elements.forEach(elem=>elem.clear());
+    this._elements = [];
   }
 
   drawSlider(node: Node<DefaultNodeType>): void {
@@ -294,6 +336,16 @@ export default class DefaultNodePainter implements NodePainter {
     fontPainter.setPosition(node._label[0], node._label[1]);
     fontPainter.drawText(node.label());
   */}
+
+  drawElement(node: Node<DefaultNodeType>): void {
+    if (!node.element()) {
+      return;
+    }
+
+    const elem = new PaintedElement(node.element(), node.groupX(), node.groupY(), node.groupScale());
+    elem.paint(this.window());
+    this._elements.push(elem);
+  }
 
   drawScene(node: Node<DefaultNodeType>): void {
     if (!node.scene()) {
@@ -532,6 +584,10 @@ export default class DefaultNodePainter implements NodePainter {
         this.paintLines(node);
         this.paintBlock(node);
         return this.drawScene(node);
+      case Type.ELEMENT:
+        this.paintLines(node);
+        this.drawElement(node);
+        break;
       default:
         this.paintLines(node);
         this.paintBlock(node);
@@ -798,7 +854,7 @@ export default class DefaultNodePainter implements NodePainter {
     label.paint(fontPainter, labelX, labelY, fontScale);
   }
 
-  render(world: Matrix3x3, scale: number, forceSimple: boolean): void {
+  render(world: Matrix3x3, scale: number, forceSimple: boolean, camera:Camera): void {
     // console.log("RENDERING THE NODE from nodepainter");
     ++this._consecutiveRenders;
     const gl = this.gl();
@@ -831,6 +887,10 @@ export default class DefaultNodePainter implements NodePainter {
         t.render(world);
       });
     }
+
+    this._elements.forEach(elem=>{
+      elem.render(world, scale, camera);
+    });
   }
 
   enableExtentRendering(): void {

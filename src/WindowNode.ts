@@ -398,7 +398,8 @@ export default abstract class WindowNode extends LayoutNode {
       window: Window,
       renderWorld: Matrix3x3,
       renderScale: number,
-      forceSimple?: boolean,
+      forceSimple: boolean,
+      cam:Camera
   ): boolean {
     if (!this.localPaintGroup()) {
       throw new Error('Cannot render a node that is not a paint group');
@@ -407,7 +408,7 @@ export default abstract class WindowNode extends LayoutNode {
     if (!painter) {
       return false;
     }
-    painter.render(renderWorld, renderScale, forceSimple);
+    painter.render(renderWorld, renderScale, forceSimple, cam);
   }
 
   render(
@@ -508,7 +509,7 @@ export default abstract class WindowNode extends LayoutNode {
             this.absoluteScale(),
             this.absoluteScale()
         );
-    painter.render(renderWorld, renderScale, false);
+    painter.render(renderWorld, renderScale, false, camera);
     overlay.restore();
 
     if (this._absoluteDirty) {

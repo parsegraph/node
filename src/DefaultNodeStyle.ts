@@ -175,6 +175,26 @@ export const SLOT_MATH_STYLE = {
 };
 SLOT_MATH_STYLE.borderColor.setA(1);
 
+const ELEMENT_STYLE = {
+  minWidth: BLOCK_STYLE.minWidth,
+  minHeight: BLOCK_STYLE.minHeight,
+  horizontalPadding: 0,
+  verticalPadding: 0,
+  borderColor: new Color(0.4, 0.4, 0.4, 1),
+  backgroundColor: new Color(0.5, 0.5, 0.5, 1),
+  selectedBorderColor: new Color(0.9, 0.9, 1, 1),
+  selectedBackgroundColor: new Color(0.8, 0.8, 1, 1),
+  brightness: 0.75,
+  borderRoundness: BUD_RADIUS * 3,
+  borderThickness: 0,
+  fontColor: new Color(0, 0, 0, 1),
+  selectedFontColor: new Color(0, 0, 0, 1),
+  fontSize: Settings.FONT_SIZE,
+  letterWidth: 0.61,
+  verticalSeparation: 6 * VERTICAL_SEPARATION_PADDING,
+  horizontalSeparation: 7 * HORIZONTAL_SEPARATION_PADDING,
+};
+
 export const EXTENT_BORDER_COLOR = new Color(
     1,
     1,
@@ -233,6 +253,9 @@ export default function style(type:Type|string, mathMode?:boolean):any {
     }
     case Type.SCENE: {
       return SCENE_STYLE;
+    }
+    case Type.ELEMENT : {
+      return ELEMENT_STYLE;
     }
   }
   return null;

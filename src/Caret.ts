@@ -14,6 +14,14 @@ export default class Caret extends EventCaret<Node<DefaultNodeType>> {
     super(new DefaultNodePalette(mathMode), given);
   }
 
+  element(elem?:any):any {
+    if (elem === undefined) {
+      return this.node().element();
+    }
+    this.node().setElement(elem);
+    return this;
+  }
+
   clone(): Caret {
     const car = new Caret(this.node());
     car.setFont(this.font());

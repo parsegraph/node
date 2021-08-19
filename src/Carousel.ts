@@ -6,6 +6,7 @@ import {BUD_RADIUS} from './DefaultNodeStyle';
 import Viewport from './Viewport';
 import WindowNode from './WindowNode';
 import CarouselAction from './CarouselAction';
+import Camera from 'parsegraph-camera';
 // import {toDegrees} from 'parsegraph-toradians';
 
 class CarouselPlot {
@@ -533,6 +534,8 @@ export default class Carousel {
               ),
           ),
           1.0,
+          false,
+          new Camera()
       );
       window.overlay().restore();
     });

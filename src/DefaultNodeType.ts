@@ -18,6 +18,7 @@ export enum Type {
   BLOCK,
   SLIDER,
   SCENE,
+  ELEMENT
 }
 
 export function readType(given: string|Type):Type {
@@ -47,8 +48,11 @@ export function readType(given: string|Type):Type {
     case 'sc':
     case 'sce':
     case 'c':
-    case 'e':
       return Type.SCENE;
+    case 'e':
+    case 'el':
+    case 'ele':
+      return Type.ELEMENT;
   }
   return null;
 }
@@ -106,19 +110,39 @@ export default class DefaultNodeType implements NodeType<DefaultNodeType> {
         return 'SLIDER';
       case Type.SCENE:
         return 'SCENE';
+      case Type.ELEMENT:
+        return 'ELEMENT';
     }
   }
 
+  elementSize(node:Node<DefaultNodeType>, bodySize:Size):void {
+    const style = node.blockStyle();
+    bodySize[0] = 0;
+    bodySize[1] = 0;
+    const elem = node.element();
+    if (elem) {
+      bodySize[0] = elem.offsetWidth;
+      bodySize[1] = elem.offsetHeight;
+    }
+    bodySize[0] = Math.max(style.minWidth, bodySize[0]);
+    bodySize[1] = Math.max(style.minHeight, bodySize[1]);
+  }
+
   sizeWithoutPadding(node:Node<DefaultNodeType>, bodySize?:Size):Size {
+    if (!bodySize) {
+      // console.log(new Error("Creating size"));
+      bodySize = new Size();
+    }
+    if (this.is(Type.ELEMENT)) {
+      this.elementSize(node, bodySize);
+      return bodySize;
+    }
+
     // Find the size of this node's drawing area.
     const style = node.blockStyle();
 
     const label = node.realLabel();
     if (label && !label.isEmpty()) {
-      if (!bodySize) {
-        // console.log(new Error("Creating size"));
-        bodySize = new Size();
-      }
       const scaling = style.fontSize / label.font().fontSize();
       bodySize[0] = label.width() * scaling;
       bodySize[1] = label.height() * scaling;

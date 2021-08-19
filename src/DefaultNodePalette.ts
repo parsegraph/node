@@ -8,6 +8,7 @@ export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType
   _slotType:DefaultNodeType;
   _sliderType:DefaultNodeType;
   _sceneType:DefaultNodeType;
+  _elementType:DefaultNodeType;
   _mathMode:boolean;
 
   constructor(mathMode?:boolean) {
@@ -39,6 +40,7 @@ export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType
     this._slotType = new DefaultNodeType(this, Type.SLOT, this._mathMode);
     this._sliderType = new DefaultNodeType(this, Type.SLIDER);
     this._sceneType = new DefaultNodeType(this, Type.SCENE);
+    this._elementType = new DefaultNodeType(this, Type.ELEMENT);
   }
 
   readType(given?: any):DefaultNodeType {
@@ -55,6 +57,7 @@ export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType
     case Type.SLOT: return this._slotType;
     case Type.SCENE: return this._sceneType;
     case Type.SLIDER: return this._sliderType;
+    case Type.ELEMENT: return this._elementType;
     }
     return this._budType;
   }
