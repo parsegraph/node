@@ -6,7 +6,7 @@ import EventNode from './EventNode';
 import WindowNode from './WindowNode';
 import Caret from './Caret';
 import Rect from 'parsegraph-rect';
-import Window from 'parsegraph-window';
+import Window, { Component } from 'parsegraph-window';
 import Camera from 'parsegraph-camera';
 
 export default class World {
@@ -218,7 +218,7 @@ export default class World {
   needsRepaint(): boolean {
     return this._worldPaintingDirty || this._cameraBox.needsRepaint();
   }
-  paint(window: Window, timeout?: number): boolean {
+  paint(window: Window, timeout?: number, paintContext?: any): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -255,7 +255,7 @@ export default class World {
         if (!plot.localPaintGroup()) {
           throw new Error('World root must have a paint group');
         }
-        const needsUpdate: boolean = plot.paint(window, timeRemaining());
+        const needsUpdate: boolean = plot.paint(window, timeRemaining(), paintContext);
         if (needsUpdate) {
           this._previousWorldPaintState = i;
           return true;
@@ -273,7 +273,7 @@ export default class World {
 
     return false;
   }
-  render(window: Window, camera: Camera): boolean {
+  render(window: Window, camera: Camera, paintContext: Component): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -281,7 +281,7 @@ export default class World {
     let needsUpdate: boolean = false;
     for (let i = 0; i < this._worldRoots.length; ++i) {
       needsUpdate =
-        this._worldRoots[i].renderIteratively(window, camera) || needsUpdate;
+        this._worldRoots[i].renderIteratively(window, camera, paintContext) || needsUpdate;
     }
     this._cameraBox.render(window, camera);
     return needsUpdate;

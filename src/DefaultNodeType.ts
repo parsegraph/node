@@ -9,7 +9,7 @@ import style, {
   BUD_TO_BUD_VERTICAL_SEPARATION,
 } from './DefaultNodeStyle';
 import NodePainter from './NodePainter';
-import Window from 'parsegraph-window';
+import Window, { Component } from 'parsegraph-window';
 import DefaultNodePainter from './DefaultNodePainter';
 
 export enum Type {
@@ -72,8 +72,8 @@ export default class DefaultNodeType implements NodeType<DefaultNodeType> {
     return node.type().is(Type.SLIDER);
   }
 
-  newPainter(window:Window, node:Node<DefaultNodeType>):NodePainter {
-    return new DefaultNodePainter(window, node);
+  newPainter(window:Window, node:Node<DefaultNodeType>, paintContext: Component):NodePainter {
+    return new DefaultNodePainter(window, node, paintContext);
   }
 
   palette():NodePalette<Node<DefaultNodeType>> {
@@ -116,16 +116,15 @@ export default class DefaultNodeType implements NodeType<DefaultNodeType> {
   }
 
   elementSize(node:Node<DefaultNodeType>, bodySize:Size):void {
-    const style = node.blockStyle();
     bodySize[0] = 0;
     bodySize[1] = 0;
-    const elem = node.element();
-    if (elem) {
-      bodySize[0] = elem.offsetWidth;
-      bodySize[1] = elem.offsetHeight;
-    }
-    bodySize[0] = Math.max(style.minWidth, bodySize[0]);
-    bodySize[1] = Math.max(style.minHeight, bodySize[1]);
+    node._windowElement.forEach(elem=>{
+      if (!elem) {
+        return;
+      }
+      bodySize[0] = Math.max(bodySize[0], elem.offsetWidth);
+      bodySize[1] = Math.max(bodySize[1], elem.offsetHeight);
+    });
   }
 
   sizeWithoutPadding(node:Node<DefaultNodeType>, bodySize?:Size):Size {

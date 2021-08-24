@@ -253,8 +253,8 @@ export default class Viewport extends Component {
       return false;
     }
 
-    let needsUpdate = this._carousel.paint();
-    needsUpdate = this._world.paint(window, timeout) || needsUpdate;
+    let needsUpdate = this._carousel.paint(this);
+    needsUpdate = this._world.paint(window, timeout, this) || needsUpdate;
 
     this._input.paint();
     // this._piano.paint();
@@ -339,7 +339,7 @@ export default class Viewport extends Component {
     const overlay = this.window().overlay();
     overlay.textBaseline = 'top';
 
-    const needsUpdate = this._world.render(this._window, cam);
+    const needsUpdate = this._world.render(this._window, cam, this);
     if (needsUpdate) {
       this._window.log('World was rendered dirty.');
       this.scheduleRender();

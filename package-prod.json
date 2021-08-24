@@ -28,6 +28,9 @@
     "parsegraph-testsuite": "^1.4.1",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.6.6"
+    "parsegraph-window": "^1.6.13"
+  },
+  "peerDependencies": {
+    "parsegraph-checkglerror": "^1.4.8"
   }
 }

@@ -23,53 +23,40 @@ import {
 import Size from 'parsegraph-size';
 import GlyphPainter from './GlyphPainter';
 import Rect from 'parsegraph-rect';
-import Window from 'parsegraph-window';
+import Window, { Component } from 'parsegraph-window';
 import Color from 'parsegraph-color';
 import Font from './Font';
 import TexturePainter from './TexturePainter';
 import NodePainter from './NodePainter';
 import Camera from 'parsegraph-camera';
+import WindowNode from './WindowNode';
 
 export const LINE_THICKNESS = 12;
 
 class PaintedElement {
-  _element:any;
-  _x:number;
-  _y:number;
-  _scale:number;
+  _window:Window;
+  _node:WindowNode;
 
-  constructor(elem:any, x:number, y:number, scale:number) {
-    this._element = elem;
-    this._x = x;
-    this._y = y;
-    this._scale = scale;
+  constructor(window:Window, node:WindowNode) {
+    this._window = window;
+    this._node = node;
   }
 
-  clear() {
-    if (this._element.parentNode) {
-      this._element.parentNode.removeChild(this._element);
-    }
-  }
-
-  paint(window:Window) {
-    this._element.style.position = "absolute";
-    if (this._element.parentNode !== window.container()) {
-      this.clear();
-      window.container().appendChild(this._element);
-    }
-  }
-
-  render(world:Matrix3x3, scale:number, camera:Camera):void {
-    const elem = this._element;
-    const absScale = this._scale;
-    elem.style.left = `${Math.round((this._x*absScale - (this._element.offsetWidth/2)/camera.scale() + camera.x())*camera.scale())}px`;
-    elem.style.top = `${Math.round((this._y*absScale - (this._element.offsetHeight/2)/camera.scale() + camera.y())*camera.scale())}px`;
+  render(camera:Camera, paintContext: Component):void {
+    const node = this._node;
+    const elem = node.elementFor(paintContext);
+    const x = node.groupX();
+    const y = node.groupY();
+    const absScale = node.groupScale();
+    elem.style.left = `${Math.round((x*absScale - (elem.offsetWidth/2)/camera.scale() + camera.x())*camera.scale())}px`;
+    elem.style.top = `${Math.round((y*absScale - (elem.offsetHeight/2)/camera.scale() + camera.y())*camera.scale())}px`;
     elem.style.transform = `scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
   }
 }
 
 export default class DefaultNodePainter implements NodePainter {
   _window: Window;
+  _paintContext: Component;
   _node: Node<DefaultNodeType>;
   _backgroundColor: Color;
   _blockPainter: BlockPainter;
@@ -85,14 +72,16 @@ export default class DefaultNodePainter implements NodePainter {
   _renderLines: boolean;
   _renderScenes: boolean;
   _elements: PaintedElement[];
+  _renderedElements: Map<Component, PaintedElement[]>;
   bodySize: Size;
 
   consecutiveRenders():number {
     return this._consecutiveRenders;
   }
 
-  constructor(window: Window, node:Node<DefaultNodeType>) {
+  constructor(window: Window, node:Node<DefaultNodeType>, paintContext: Component) {
     this._window = window;
+    this._paintContext = paintContext;
     this._node = node;
 
     this._backgroundColor = window.backgroundColor();
@@ -180,8 +169,8 @@ export default class DefaultNodePainter implements NodePainter {
     });
     this._textures = [];
 
-    this._elements.forEach(elem=>elem.clear());
     this._elements = [];
+    this._renderedElements = new Map();
   }
 
   drawSlider(node: Node<DefaultNodeType>): void {
@@ -342,8 +331,7 @@ export default class DefaultNodePainter implements NodePainter {
       return;
     }
 
-    const elem = new PaintedElement(node.element(), node.groupX(), node.groupY(), node.groupScale());
-    elem.paint(this.window());
+    const elem = new PaintedElement(this._window, node);
     this._elements.push(elem);
   }
 
@@ -854,7 +842,7 @@ export default class DefaultNodePainter implements NodePainter {
     label.paint(fontPainter, labelX, labelY, fontScale);
   }
 
-  render(world: Matrix3x3, scale: number, forceSimple: boolean, camera:Camera): void {
+  render(world: Matrix3x3, scale: number, forceSimple: boolean, camera:Camera, paintContext:Component): void {
     // console.log("RENDERING THE NODE from nodepainter");
     ++this._consecutiveRenders;
     const gl = this.gl();
@@ -888,9 +876,7 @@ export default class DefaultNodePainter implements NodePainter {
       });
     }
 
-    this._elements.forEach(elem=>{
-      elem.render(world, scale, camera);
-    });
+    this._elements.forEach(elem=>elem.render(camera, paintContext));
   }
 
   enableExtentRendering(): void {

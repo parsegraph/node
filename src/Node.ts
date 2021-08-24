@@ -19,7 +19,6 @@ import EventNode from './EventNode';
 export default class Node<T extends NodeType<T>> extends EventNode {
   _type: T;
   _scene: any;
-  _element: any;
   _label: Label;
 
   constructor(newType: T, fromNode?: Node<T>, parentDirection?: Direction) {
@@ -28,7 +27,6 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     this._type.applyStyle(this);
 
     this._scene = null;
-    this._element = null;
     this._label = null;
   }
 
@@ -36,8 +34,8 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     return this.type().palette();
   }
 
-  newPainter(window:Window):NodePainter {
-    return this.type().newPainter(window, this);
+  newPainter(window:Window, paintContext: any):NodePainter {
+    return this.type().newPainter(window, this, paintContext);
   }
 
   sizeWithoutPadding(bodySize?: Size): Size {
@@ -113,15 +111,6 @@ export default class Node<T extends NodeType<T>> extends EventNode {
 
   setScene(scene: any): void {
     this._scene = scene;
-    this.layoutWasChanged(Direction.INWARD);
-  }
-
-  element(): any {
-    return this._element;
-  }
-
-  setElement(element: any): void {
-    this._element = element;
     this.layoutWasChanged(Direction.INWARD);
   }
 

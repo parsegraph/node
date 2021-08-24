@@ -429,7 +429,7 @@ export default class Carousel {
     });
   };
 
-  paint() {
+  paint(paintContext?: any) {
     if (
       !this._updateRepeatedly &&
       (!this._carouselPaintingDirty || !this._showCarousel)
@@ -441,7 +441,7 @@ export default class Carousel {
     // console.log("Painting the carousel");
     this.arrangeCarousel();
     this._carouselPlots.forEach((carouselData)=>{
-      carouselData.node.paint(this.window());
+      carouselData.node.paint(this.window(), 1000, paintContext);
     });
 
     // Paint the background highlighting fan.
@@ -535,7 +535,8 @@ export default class Carousel {
           ),
           1.0,
           false,
-          new Camera()
+          new Camera(),
+          null
       );
       window.overlay().restore();
     });
