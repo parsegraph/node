@@ -4,7 +4,8 @@ body {
   padding: 0;
 }
 
-.parsegraph_Window, .parsegraph_Surface {
+.parsegraph_Window,
+.parsegraph_Surface {
   width: 100%;
   height: 100vh;
   margin: 0;
@@ -12,7 +13,7 @@ body {
 
 div {
   text-align: center;
-  position: absolute;
+  width: fit-content;
 }
 
 .controls {

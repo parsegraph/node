@@ -34,8 +34,8 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     return this.type().palette();
   }
 
-  newPainter(window:Window):NodePainter {
-    return this.type().newPainter(window, this);
+  newPainter(window:Window, paintContext: any):NodePainter {
+    return this.type().newPainter(window, this, paintContext);
   }
 
   sizeWithoutPadding(bodySize?: Size): Size {

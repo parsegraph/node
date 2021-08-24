@@ -131,8 +131,11 @@
       caret.label(testLanguageNames[i]);
       const testSentences = testLanguages[i];
       for (let j = 0; j < testSentences.length; ++j) {
-        caret.spawnMove('d', 's');
-        caret.label(testSentences[j]);
+        caret.spawnMove('d', 'e');
+        const dom = document.createElement('div');
+        dom.style.backgroundColor = "#f88";
+        dom.innerHTML = `<div style='color:red;margin:0;font-size:72px;background:#f88;'>dom${testSentences[j]}</div>`;
+        caret.element(dom);
         caret.move('u');
         caret.pull('d');
         caret.move('d');

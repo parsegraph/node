@@ -23,16 +23,40 @@ import {
 import Size from 'parsegraph-size';
 import GlyphPainter from './GlyphPainter';
 import Rect from 'parsegraph-rect';
-import Window from 'parsegraph-window';
+import Window, { Component } from 'parsegraph-window';
 import Color from 'parsegraph-color';
 import Font from './Font';
 import TexturePainter from './TexturePainter';
 import NodePainter from './NodePainter';
+import Camera from 'parsegraph-camera';
+import WindowNode from './WindowNode';
 
 export const LINE_THICKNESS = 12;
 
+class PaintedElement {
+  _window:Window;
+  _node:WindowNode;
+
+  constructor(window:Window, node:WindowNode) {
+    this._window = window;
+    this._node = node;
+  }
+
+  render(camera:Camera, paintContext: Component):void {
+    const node = this._node;
+    const elem = node.elementFor(paintContext);
+    const x = node.groupX();
+    const y = node.groupY();
+    const absScale = node.groupScale();
+    elem.style.left = `${Math.round((x*absScale - (elem.offsetWidth/2)/camera.scale() + camera.x())*camera.scale())}px`;
+    elem.style.top = `${Math.round((y*absScale - (elem.offsetHeight/2)/camera.scale() + camera.y())*camera.scale())}px`;
+    elem.style.transform = `scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
+  }
+}
+
 export default class DefaultNodePainter implements NodePainter {
   _window: Window;
+  _paintContext: Component;
   _node: Node<DefaultNodeType>;
   _backgroundColor: Color;
   _blockPainter: BlockPainter;
@@ -47,14 +71,17 @@ export default class DefaultNodePainter implements NodePainter {
   _consecutiveRenders: number;
   _renderLines: boolean;
   _renderScenes: boolean;
+  _elements: PaintedElement[];
+  _renderedElements: Map<Component, PaintedElement[]>;
   bodySize: Size;
 
   consecutiveRenders():number {
     return this._consecutiveRenders;
   }
 
-  constructor(window: Window, node:Node<DefaultNodeType>) {
+  constructor(window: Window, node:Node<DefaultNodeType>, paintContext: Component) {
     this._window = window;
+    this._paintContext = paintContext;
     this._node = node;
 
     this._backgroundColor = window.backgroundColor();
@@ -66,6 +93,7 @@ export default class DefaultNodePainter implements NodePainter {
     // this._renderExtents = true;
 
     this._fontPainters = {};
+    this._elements = [];
 
     this._renderText = true;
 
@@ -140,6 +168,9 @@ export default class DefaultNodePainter implements NodePainter {
       // gl.deleteTexture(t._texture);
     });
     this._textures = [];
+
+    this._elements = [];
+    this._renderedElements = new Map();
   }
 
   drawSlider(node: Node<DefaultNodeType>): void {
@@ -294,6 +325,15 @@ export default class DefaultNodePainter implements NodePainter {
     fontPainter.setPosition(node._label[0], node._label[1]);
     fontPainter.drawText(node.label());
   */}
+
+  drawElement(node: Node<DefaultNodeType>): void {
+    if (!node.element()) {
+      return;
+    }
+
+    const elem = new PaintedElement(this._window, node);
+    this._elements.push(elem);
+  }
 
   drawScene(node: Node<DefaultNodeType>): void {
     if (!node.scene()) {
@@ -532,6 +572,10 @@ export default class DefaultNodePainter implements NodePainter {
         this.paintLines(node);
         this.paintBlock(node);
         return this.drawScene(node);
+      case Type.ELEMENT:
+        this.paintLines(node);
+        this.drawElement(node);
+        break;
       default:
         this.paintLines(node);
         this.paintBlock(node);
@@ -798,7 +842,7 @@ export default class DefaultNodePainter implements NodePainter {
     label.paint(fontPainter, labelX, labelY, fontScale);
   }
 
-  render(world: Matrix3x3, scale: number, forceSimple: boolean): void {
+  render(world: Matrix3x3, scale: number, forceSimple: boolean, camera:Camera, paintContext:Component): void {
     // console.log("RENDERING THE NODE from nodepainter");
     ++this._consecutiveRenders;
     const gl = this.gl();
@@ -831,6 +875,8 @@ export default class DefaultNodePainter implements NodePainter {
         t.render(world);
       });
     }
+
+    this._elements.forEach(elem=>elem.render(camera, paintContext));
   }
 
   enableExtentRendering(): void {

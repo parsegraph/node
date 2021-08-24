@@ -644,7 +644,7 @@ export class FrozenNodeFragment {
       const tsize = wdata.textureSize();
       const world = cam.project();
       // console.log("Rnedering offscreen");
-      this._frozenNode.node().renderOffscreen(this.window(), world, scale);
+      this._frozenNode.node().renderOffscreen(this.window(), world, scale, false, cam, null);
       // console.log("Dnone");
 
       if (!this._vertexBuffer) {
