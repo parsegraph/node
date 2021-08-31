@@ -699,12 +699,12 @@ export default class KeyInput {
         mouseInWorld[0], mouseInWorld[1]);
       switch (overClickable) {
         case 2:
-          this._viewport.window().setCursor('pointer');
+          this._viewport.setCursor('pointer');
           break;
         case 1:
           break;
         case 0:
-          this._viewport.window().setCursor('auto');
+          this._viewport.setCursor('auto');
           break;
       }
 
@@ -733,13 +733,13 @@ export default class KeyInput {
     }
     switch (overClickable) {
       case 2:
-        this._viewport.window().setCursor('pointer');
+        this._viewport.setCursor('pointer');
         break;
       case 1:
         // console.log("World not ready");
         break;
       case 0:
-        this._viewport.window().setCursor('auto');
+        this._viewport.setCursor('auto');
         break;
     }
     this.mouseChanged();

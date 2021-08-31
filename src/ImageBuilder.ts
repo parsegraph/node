@@ -21,7 +21,7 @@ export default class ImageBuilder {
     this._window = new ImageWindow(width, height);
     this._window.setOnScheduleUpdate(this.scheduleUpdate, this);
     this._world = new World();
-    this._viewport = new Viewport(this._window, this._world);
+    this._viewport = new Viewport(this._world);
     this._window.addComponent(this._viewport);
 
     this.scheduleUpdate();

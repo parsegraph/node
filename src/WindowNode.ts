@@ -7,7 +7,7 @@ export const NATURAL_VIEWPORT_SCALE = 1.0;
 // The maximum scale where nodes will be rendered from a cache.
 export const CACHE_ACTIVATION_SCALE = 0.01;
 
-import { Component, INTERVAL } from "parsegraph-window";
+import { BasicWindow, Component, INTERVAL } from "parsegraph-window";
 
 import {
   matrixIdentity3x3,
@@ -18,7 +18,6 @@ import {
 } from 'parsegraph-matrix';
 
 import Rect from 'parsegraph-rect';
-import Window from 'parsegraph-window';
 import NodePainter from './NodePainter';
 import Camera from 'parsegraph-camera';
 import Freezer from './Freezer';
@@ -89,9 +88,9 @@ export default abstract class WindowNode extends LayoutNode {
     }
   }
 
-  abstract newPainter(window:Window, paintContext: Component): NodePainter;
+  abstract newPainter(window:BasicWindow, paintContext: Component): NodePainter;
 
-  painter(window: Window): NodePainter {
+  painter(window: BasicWindow): NodePainter {
     if (!window) {
       throw new Error(
           'A window must be provided for a NodePainter to be selected',
@@ -219,7 +218,7 @@ export default abstract class WindowNode extends LayoutNode {
     cam.setOrigin(x - ax, y - ay);
   }
 
-  contextChanged(isLost: boolean, window: Window): void {
+  contextChanged(isLost: boolean, window: BasicWindow): void {
     if (!this.localPaintGroup()) {
       return;
     }
@@ -241,11 +240,10 @@ export default abstract class WindowNode extends LayoutNode {
     return this._windowElement.get(context);
   }
 
-  prepare(window: Window, paintContext: Component):void {
+  prepare(window: BasicWindow, paintContext: Component):void {
     // Loop back to the first node, from the root.
     this.forEachPaintGroup((pg:WindowNode)=>{
       pg.forEachNode((node:WindowNode)=>{
-        console.log("Preparing node", node);
         if (node.element() && !node.elementFor(paintContext)) {
           const elem = node.element()(window);
           if (elem.parentNode !== window.containerFor(paintContext)) {
@@ -255,13 +253,14 @@ export default abstract class WindowNode extends LayoutNode {
             window.containerFor(paintContext).appendChild(elem);
           }
           node._windowElement.set(paintContext, elem);
+          elem.style.display = "none";
           elem.style.position = "absolute";
         }
       });
     });
   }
 
-  paint(window: Window, timeout?: number, paintContext?: Component): boolean {
+  paint(window: BasicWindow, timeout?: number, paintContext?: Component): boolean {
     if (!this.localPaintGroup()) {
       throw new Error('A node must be a paint group in order to be painted');
     }
@@ -354,7 +353,7 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   renderIteratively(
-      window: Window,
+      window: BasicWindow,
       camera: Camera,
       paintContext: Component
   ): boolean {
@@ -417,7 +416,7 @@ export default abstract class WindowNode extends LayoutNode {
     }return dirtyRenders > 0;
   }
 
-  getHeaviestNode(window: Window): WindowNode {
+  getHeaviestNode(window: BasicWindow): WindowNode {
     let heaviest: number = 0;
     let heaviestNode: WindowNode = this;
     this.forEachPaintGroup((node:WindowNode)=>{
@@ -434,7 +433,7 @@ export default abstract class WindowNode extends LayoutNode {
     return heaviestNode;
   }
   renderOffscreen(
-      window: Window,
+      window: BasicWindow,
       renderWorld: Matrix3x3,
       renderScale: number,
       forceSimple: boolean,
@@ -452,7 +451,7 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   render(
-      window: Window,
+      window: BasicWindow,
       camera: Camera,
       renderData: NodeRenderData,
       paintContext: Component

@@ -9,7 +9,7 @@ import style, {
   BUD_TO_BUD_VERTICAL_SEPARATION,
 } from './DefaultNodeStyle';
 import NodePainter from './NodePainter';
-import Window, { Component } from 'parsegraph-window';
+import { BasicWindow, Component } from 'parsegraph-window';
 import DefaultNodePainter from './DefaultNodePainter';
 
 export enum Type {
@@ -72,7 +72,7 @@ export default class DefaultNodeType implements NodeType<DefaultNodeType> {
     return node.type().is(Type.SLIDER);
   }
 
-  newPainter(window:Window, node:Node<DefaultNodeType>, paintContext: Component):NodePainter {
+  newPainter(window:BasicWindow, node:Node<DefaultNodeType>, paintContext: Component):NodePainter {
     return new DefaultNodePainter(window, node, paintContext);
   }
 

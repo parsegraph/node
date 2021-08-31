@@ -1,6 +1,6 @@
 import TestSuite from 'parsegraph-testsuite';
 import Color from 'parsegraph-color';
-import Window from 'parsegraph-window';
+import Window, { BasicWindow } from 'parsegraph-window';
 import {defaultFont} from './settings';
 
 // TODO Add runs of selected text
@@ -13,7 +13,7 @@ import { Matrix3x3 } from 'parsegraph-matrix';
 import { compileProgram } from 'parsegraph-compileprogram';
 
 export default class GlyphPainter {
-  _window:Window;
+  _window:BasicWindow;
   _font:Font;
   _id:number;
   _maxSize:number;
@@ -35,7 +35,7 @@ export default class GlyphPainter {
   aBackgroundColor:number;
   aScale:number;
   aTexCoord:number;
-  constructor(window:Window, font:Font) {
+  constructor(window:BasicWindow, font:Font) {
     if (!window) {
       throw new Error("Window or other GLProvider must be given");
     }
@@ -134,7 +134,7 @@ export default class GlyphPainter {
     glyphData.painted = true;
 
     const gl = this.window().gl();
-    const glTextureSize = this.window().getTextureSize();
+    const glTextureSize = this.window().textureSize();
     if (gl.isContextLost()) {
       return;
     }
@@ -410,7 +410,7 @@ export class GlyphPageRenderer {
   ) {
     const gl = this._painter.window().gl();
     const font = this._painter.font();
-    const glTextureSize = this._painter.window().getTextureSize();
+    const glTextureSize = this._painter.window().textureSize();
     if (gl.isContextLost()) {
       return;
     }

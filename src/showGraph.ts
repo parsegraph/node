@@ -13,7 +13,7 @@ export default function showGraph(rootNode:EventNode) {
   const belt = new TimingBelt();
   belt.addWindow(window);
 
-  const viewport = new Viewport(window, world);
+  const viewport = new Viewport(world);
   window.addComponent(viewport.component());
 
   world.plot(rootNode);

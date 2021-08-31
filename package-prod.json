@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-node",
-  "version": "2.2.11",
+  "version": "2.2.12",
   "description": "node",
   "main": "dist/parsegraph-node.js",
   "types": "dist/parsegraph-node.d.ts",
@@ -28,7 +28,7 @@
     "parsegraph-testsuite": "^1.4.1",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.6.14"
+    "parsegraph-window": "^1.6.18"
   },
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.4.8"

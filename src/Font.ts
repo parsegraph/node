@@ -1,5 +1,5 @@
 import TinySDF, {SDF_RADIUS} from 'parsegraph-sdf';
-import Window from 'parsegraph-window';
+import { BasicWindow } from 'parsegraph-window';
 
 // The width in pixels of a font's glyph page.
 export const MAX_PAGE_WIDTH = 512;
@@ -66,10 +66,10 @@ export class FontWindow {
   _glTextureSize:number;
   _numGlyphs:number;
   _textureArray:Uint8Array;
-  _window:Window;
+  _window:BasicWindow;
   _font:Font;
 
-  constructor(font:Font, window:Window) {
+  constructor(font:Font, window:BasicWindow) {
     this._font = font;
     this._window = window;
     this._glTextureSize = null;
@@ -243,14 +243,14 @@ export default class Font {
     return this.hasGlyph(glyph);
   }
 
-  contextChanged(isLost:boolean, window:Window) {
+  contextChanged(isLost:boolean, window:BasicWindow) {
     if (!isLost) {
       return;
     }
     this.dispose(window);
   };
 
-  update(window:Window) {
+  update(window:BasicWindow) {
     if (!window) {
       throw new Error('Window must be provided');
     }
@@ -269,7 +269,7 @@ export default class Font {
       return;
     }
     if (!ctx._glTextureSize) {
-      ctx._glTextureSize = window.getTextureSize();
+      ctx._glTextureSize = window.textureSize();
       // console.log("GLTEXTURESIZE=" + ctx._glTextureSize);
       ctx._textureArray = new Uint8Array(ctx._glTextureSize * ctx._glTextureSize);
     }
@@ -379,7 +379,7 @@ export default class Font {
     //   "ms");
   };
 
-  dispose(window:Window) {
+  dispose(window:BasicWindow) {
     const ctx = this._windows[window.id()];
     if (!ctx) {
       return;

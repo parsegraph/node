@@ -4,7 +4,7 @@ import Font from './Font';
 import { GLProvider } from 'parsegraph-blockpainter';
 import Camera from 'parsegraph-camera';
 import World from './World';
-import Window from 'parsegraph-window';
+import { BasicWindow } from 'parsegraph-window';
 
 export default class CameraBox {
   _world:World;
@@ -92,7 +92,7 @@ export default class CameraBox {
     this._world.scheduleRepaint();
   };
 
-  paint(window:Window) {
+  paint(window:BasicWindow) {
     // console.log("Repainting camera boxes");
     let needsRepaint = false;
     if (this._showCameraBoxes && this._cameraBoxDirty) {

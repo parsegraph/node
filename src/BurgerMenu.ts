@@ -3,6 +3,7 @@ import {matrixMultiply3x3I, makeTranslation3x3} from 'parsegraph-matrix';
 import Viewport from './Viewport';
 import BlockPainter from 'parsegraph-blockpainter';
 import rainbackMenu from './rainback-menu-icons.png';
+import GraphicsWindow from 'parsegraph-window';
 
 const MENU_ICON_TEXTURE_SIZE = 32;
 const MENU_ICON_SIZE = 32;
@@ -84,6 +85,9 @@ export default class BurgerMenu {
     this._textInput = document.createElement('input');
     this._textInput.style.display = 'none';
     this._textInput.placeholder = 'Search';
+  }
+
+  mount() {
     if (!this.window().isOffscreen()) {
       this._viewport.window().container().appendChild(this._textInput);
     }
@@ -193,10 +197,7 @@ export default class BurgerMenu {
         return true;
       }
       if (iconLocation.icon == MENU_ICON_HSPLIT) {
-        const newViewport = new Viewport(
-            this.window(),
-            this._viewport.world(),
-        );
+        const newViewport = new Viewport(this._viewport.world());
         newViewport.camera().copy(this._viewport.camera());
         newViewport
             .camera()
@@ -204,7 +205,7 @@ export default class BurgerMenu {
                 this._viewport.camera().width(),
                 this._viewport.camera().height(),
             );
-        this.window().addHorizontal(
+        (this.window() as GraphicsWindow).addHorizontal(
             newViewport.component(),
             this._viewport.component(),
         );
@@ -212,10 +213,7 @@ export default class BurgerMenu {
         return true;
       }
       if (iconLocation.icon == MENU_ICON_VSPLIT) {
-        const newViewport = new Viewport(
-            this.window(),
-            this._viewport.world(),
-        );
+        const newViewport = new Viewport(this._viewport.world());
         newViewport.camera().copy(this._viewport.camera());
         newViewport
             .camera()
@@ -223,7 +221,7 @@ export default class BurgerMenu {
                 this._viewport.camera().width(),
                 this._viewport.camera().height(),
             );
-        this.window().addVertical(
+        (this.window() as GraphicsWindow).addVertical(
             newViewport.component(),
             this._viewport.component(),
         );

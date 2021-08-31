@@ -6,7 +6,7 @@ import EventNode from './EventNode';
 import WindowNode from './WindowNode';
 import Caret from './Caret';
 import Rect from 'parsegraph-rect';
-import Window, { Component } from 'parsegraph-window';
+import { BasicWindow, Component } from 'parsegraph-window';
 import Camera from 'parsegraph-camera';
 
 export default class World {
@@ -31,7 +31,7 @@ export default class World {
   freezer(): Freezer {
     return this._freezer;
   }
-  contextChanged(isLost: boolean, window: Window): void {
+  contextChanged(isLost: boolean, window: BasicWindow): void {
     this._worldPaintingDirty = true;
     this._previousWorldPaintState = null;
     for (let i = 0; i < this._worldRoots.length; ++i) {
@@ -218,7 +218,7 @@ export default class World {
   needsRepaint(): boolean {
     return this._worldPaintingDirty || this._cameraBox.needsRepaint();
   }
-  paint(window: Window, timeout?: number, paintContext?: any): boolean {
+  paint(window: BasicWindow, timeout?: number, paintContext?: any): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -273,7 +273,7 @@ export default class World {
 
     return false;
   }
-  render(window: Window, camera: Camera, paintContext: Component): boolean {
+  render(window: BasicWindow, camera: Camera, paintContext: Component): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;

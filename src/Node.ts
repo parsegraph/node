@@ -3,7 +3,7 @@ import {
 } from './settings';
 
 import Label from './Label';
-import Window from 'parsegraph-window';
+import { BasicWindow } from 'parsegraph-window';
 import NodePainter from './NodePainter';
 import Color from 'parsegraph-color';
 import Font from './Font';
@@ -34,7 +34,7 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     return this.type().palette();
   }
 
-  newPainter(window:Window, paintContext: any):NodePainter {
+  newPainter(window:BasicWindow, paintContext: any):NodePainter {
     return this.type().newPainter(window, this, paintContext);
   }
 

@@ -1,5 +1,5 @@
 import Rect from 'parsegraph-rect';
-import Window, { Component } from 'parsegraph-window';
+import { BasicWindow, Component } from 'parsegraph-window';
 import {Matrix3x3} from 'parsegraph-matrix';
 import Camera from 'parsegraph-camera';
 
@@ -9,7 +9,7 @@ export default interface NodePainter {
 
   weight(): number;
 
-  window(): Window;
+  window(): BasicWindow;
 
   /**
    * Disposes of any resources allocated during painting, resetting the painter.

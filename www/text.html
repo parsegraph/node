@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/environment.css" />
     <script src="parsegraph-checkglerror.js"></script>
+    <script>
+    parsegraph.setIgnoreGLErrors(true);
+    </script>
     <script src="parsegraph-node.js"></script>
     <script>
 
@@ -119,8 +122,20 @@
     'Hungarian',
   ];
 
-  function buildTextDemo() {
+  function buildTextDemo(window, world, belt) {
     const caret = new parsegraph.Caret();
+    let animating = false;
+
+    let size = 72;
+    belt.queueJob(()=>{
+      if (!animating) {
+        return true;
+      }
+      size += 12;
+      size %= 255;
+      return true;
+    });
+
     for (let i = 0; i < testLanguages.length; ++i) {
       if (i > 0) {
         caret.spawnMove('f', 'u');
@@ -130,14 +145,34 @@
       caret.spawnMove('d', 'b');
       caret.label(testLanguageNames[i]);
       const testSentences = testLanguages[i];
+      //testLanguages[i].forEach((testSentence)=>{
       for (let j = 0; j < testSentences.length; ++j) {
+        const testSentence = testSentences[j];
         caret.spawnMove('d', 'e');
-        const dom = document.createElement('div');
-        dom.style.backgroundColor = "#f88";
-        dom.innerHTML = `<div style='color:red;margin:0;font-size:72px;background:#f88;'>dom${testSentences[j]}</div>`;
-        caret.element(dom);
+        const node = caret.node();
+
+        caret.element((window)=>{
+          const dom = document.createElement('div');
+          dom.style.backgroundColor = "#f88";
+          dom.style.borderRadius = "12px";
+          dom.style.padding = "12px";
+          dom.innerHTML = testSentence;
+          dom.style.fontSize = size + "px";
+          setInterval(()=>{
+            dom.style.fontSize = size + "px";
+          }, 1);
+          new ResizeObserver(entries=>{
+            node.layoutHasChanged();
+            window.scheduleUpdate();
+            world.scheduleRepaint();
+          }).observe(dom);
+          return dom;
+        });
         caret.move('u');
         caret.pull('d');
+        caret.onClick(()=>{
+          animating = !animating;
+        });
         caret.move('d');
       }
       caret.pop();
@@ -158,11 +193,12 @@
           belt.scheduleUpdate,
           belt
         );
-        var viewport = new parsegraph.Viewport(window, world);
+        var viewport = new parsegraph.Viewport(world);
         window.addComponent(viewport.component());
 
-        var text = buildTextDemo();
+        var text = buildTextDemo(window, world, belt);
         world.plot(text);
+        text.prepare(window, viewport);
         viewport.showInCamera(text);
       });
     </script>

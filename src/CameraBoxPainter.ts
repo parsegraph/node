@@ -4,7 +4,7 @@ import Color from 'parsegraph-color';
 import Label from './Label';
 import GlyphPainter from './GlyphPainter';
 import BlockPainter from 'parsegraph-blockpainter';
-import Window from 'parsegraph-window';
+import { BasicWindow } from 'parsegraph-window';
 import Rect from 'parsegraph-rect';
 import { Matrix3x3 } from 'parsegraph-matrix';
 
@@ -16,7 +16,7 @@ export default class CameraBoxPainter {
   _textColor:Color;
   _fontSize:number;
 
-  constructor(window:Window) {
+  constructor(window:BasicWindow) {
     this._blockPainter = new BlockPainter(window);
     this._glyphPainter = new GlyphPainter(
         window,

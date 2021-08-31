@@ -5,9 +5,9 @@ import BurgerMenu from './BurgerMenu';
 import CameraFilter from './CameraFilter';
 import World from './World';
 import EventNode from './EventNode';
-import Window, {Component} from 'parsegraph-window';
+import {BasicWindow, Component, WindowInput} from 'parsegraph-window';
 
-export const FOCUS_SCALE = 0.25;
+export const FOCUS_SCALE = 1;
 
 /*
  * TODO Add gridX and gridY camera listeners, with support for loading from an
@@ -45,7 +45,6 @@ export const FOCUS_SCALE = 0.25;
  */
 const viewportType = 'Viewport';
 export default class Viewport extends Component {
-  _window:Window;
   _world:World;
   _camera:Camera;
   _cameraFilter:CameraFilter;
@@ -58,25 +57,16 @@ export default class Viewport extends Component {
   _nodeShown:EventNode;
   _needsRepaint:boolean;
 
-  hasEventHandler():boolean {
-    return true;
-  }
-
-  constructor(window:Window, world:World) {
+  constructor(world:World) {
     super(viewportType);
-    if (!window) {
-      throw new Error('A window must be provided');
-    }
     // Construct the graph.
-    this._window = window;
     this._world = world;
     this._camera = new Camera();
     this._cameraFilter = new CameraFilter(this);
-
-    this._carousel = new Carousel(this);
     this._input = new Input(this);
+    this._carousel = new Carousel(this);
 
-    this._menu = null;
+
     this._menu = new BurgerMenu(this);
     // this._piano = new AudioKeyboard(this._camera);
     this._renderedMouse = -1;
@@ -125,11 +115,27 @@ export default class Viewport extends Component {
     if (eventType === 'keyup') {
       return this._input.onKeyup(eventData);
     }
-    if (eventType === 'tick') {
-      return this._input.update(eventData);
-    }
     console.log('Unhandled event type: ' + eventType);
   };
+
+  tick(startDate:number):boolean {
+    return this._input.update(new Date(startDate));
+  }
+
+  mount(window:BasicWindow) {
+    console.log("MOUNT", window)
+    new WindowInput(window, this, (eventType:string, inputData?:any)=>{this.handleEvent(eventType, inputData);});
+    this._menu.mount();
+  }
+
+  unmount() {
+
+  }
+
+  setCursor(cursor:string):void {
+    (this.window().containerFor(this) as HTMLElement).style.cursor = cursor;
+  }
+
 
   serialize() {
     return {
@@ -143,23 +149,23 @@ export default class Viewport extends Component {
   };
 
   width() {
-    return this._window.layout(this.component()).width();
+    return this._window?.layout(this.component()).width();
   };
 
   x() {
-    return this._window.layout(this.component()).x();
+    return this._window?.layout(this.component()).x();
   };
 
   y() {
-    return this._window.layout(this.component()).y();
+    return this._window?.layout(this.component()).y();
   };
 
   height() {
-    return this._window.layout(this.component()).height();
+    return this._window?.layout(this.component()).height();
   };
 
   shaders() {
-    return this.window().shaders();
+    return this.window()?.shaders();
   };
 
   window() {
@@ -351,11 +357,7 @@ export default class Viewport extends Component {
       this.scheduleRender();
     }
     // this._piano.render(world, cam.scale());
-    if (
-      !this._window.isOffscreen() &&
-      this._window.focusedComponent() &&
-      this._window.focusedComponent().peer() === this
-    ) {
+    if (!this._window.isOffscreen()) {
       this._carousel.render(world);
       this._menu.render();
     }

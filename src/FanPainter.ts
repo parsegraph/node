@@ -8,7 +8,7 @@ import {
 import PagingBuffer from 'parsegraph-pagingbuffer';
 import Color from 'parsegraph-color';
 import {toRadians} from 'parsegraph-toradians';
-import Window from 'parsegraph-window';
+import GraphicsWindow, { BasicWindow } from 'parsegraph-window';
 
 // TODO Separate coloring and slicing from drawing the circle... Basically, make this actually just draw the fans we want.
 import fanPainterVertexShader from './FanPainter_VertexShader.glsl';
@@ -18,7 +18,7 @@ import fanPainterFragmentShader from './FanPainter_FragmentShader.glsl';
  * Shows a circle that allows some parts to show as selected.
  */
 export default class FanPainter {
-  _window:Window;
+  _window:BasicWindow;
   _ascendingRadius:number;
   _descendingRadius:number;
   _selectionAngle:number;
@@ -32,7 +32,7 @@ export default class FanPainter {
   aSelectionSize:number;
   uWorld:WebGLUniformLocation;
 
-  constructor(window:Window) {
+  constructor(window:BasicWindow) {
     this._window = window;
     if (!this._window) {
       throw new Error('Window or other GLProvider must be given');
@@ -180,7 +180,7 @@ const fanPainterTests = new TestSuite(
 );
 
 fanPainterTests.addTest('FanPainter', function() {
-  const window = new Window();
+  const window = new GraphicsWindow();
   const painter = new FanPainter(window);
   painter.selectDeg(
       0,

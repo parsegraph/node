@@ -23,7 +23,7 @@ import {
 import Size from 'parsegraph-size';
 import GlyphPainter from './GlyphPainter';
 import Rect from 'parsegraph-rect';
-import Window, { Component } from 'parsegraph-window';
+import { BasicWindow, Component } from 'parsegraph-window';
 import Color from 'parsegraph-color';
 import Font from './Font';
 import TexturePainter from './TexturePainter';
@@ -34,10 +34,10 @@ import WindowNode from './WindowNode';
 export const LINE_THICKNESS = 12;
 
 class PaintedElement {
-  _window:Window;
+  _window:BasicWindow;
   _node:WindowNode;
 
-  constructor(window:Window, node:WindowNode) {
+  constructor(window:BasicWindow, node:WindowNode) {
     this._window = window;
     this._node = node;
   }
@@ -48,14 +48,16 @@ class PaintedElement {
     const x = node.groupX();
     const y = node.groupY();
     const absScale = node.groupScale();
-    elem.style.left = `${Math.round((x*absScale - (elem.offsetWidth/2)/camera.scale() + camera.x())*camera.scale())}px`;
-    elem.style.top = `${Math.round((y*absScale - (elem.offsetHeight/2)/camera.scale() + camera.y())*camera.scale())}px`;
-    elem.style.transform = `scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
+    const leftPos = Math.round((x*absScale - (elem.offsetWidth/2)/camera.scale() + camera.x())*camera.scale());
+    const topPos = Math.round((y*absScale - (elem.offsetHeight/2)/camera.scale() + camera.y())*camera.scale());
+    elem.style.display = "block";
+    elem.style.transformOrigin = "center";
+    elem.style.transform = `translate(${leftPos}px, ${topPos}px) scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
   }
 }
 
 export default class DefaultNodePainter implements NodePainter {
-  _window: Window;
+  _window: BasicWindow;
   _paintContext: Component;
   _node: Node<DefaultNodeType>;
   _backgroundColor: Color;
@@ -79,7 +81,7 @@ export default class DefaultNodePainter implements NodePainter {
     return this._consecutiveRenders;
   }
 
-  constructor(window: Window, node:Node<DefaultNodeType>, paintContext: Component) {
+  constructor(window: BasicWindow, node:Node<DefaultNodeType>, paintContext: Component) {
     this._window = window;
     this._paintContext = paintContext;
     this._node = node;
@@ -133,7 +135,7 @@ export default class DefaultNodePainter implements NodePainter {
     return painter;
   }
 
-  window(): Window {
+  window(): BasicWindow {
     return this._window;
   }
 
@@ -516,7 +518,7 @@ export default class DefaultNodePainter implements NodePainter {
     const fontPainter = this.getFontPainter(font);
 
     if (isNaN(this._pagesPerGlyphTexture)) {
-      const glTextureSize = this.window().getTextureSize();
+      const glTextureSize = this.window().textureSize();
       if (this.gl().isContextLost()) {
         return;
       }

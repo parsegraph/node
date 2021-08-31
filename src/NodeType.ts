@@ -2,7 +2,7 @@ import {Direction, NodePalette} from 'parsegraph-direction';
 import Node from './Node';
 import Size from 'parsegraph-size';
 import NodePainter from './NodePainter';
-import Window, { Component } from 'parsegraph-window';
+import { BasicWindow, Component } from 'parsegraph-window';
 
 export default interface NodeType<T extends NodeType<T>> {
   supportsDirection(dir:Direction):boolean;
@@ -15,6 +15,6 @@ export default interface NodeType<T extends NodeType<T>> {
   verticalSeparation(node:Node<T>, direction:Direction):number;
 
   acceptsSelection(node:Node<T>):boolean;
-  newPainter(window:Window, node:Node<T>, paintContext: Component):NodePainter;
+  newPainter(window:BasicWindow, node:Node<T>, paintContext: Component):NodePainter;
   promiscuousClicks(node:Node<T>):boolean;
 }

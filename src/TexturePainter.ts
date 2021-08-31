@@ -1,7 +1,7 @@
 import {compileProgram} from 'parsegraph-compileprogram';
 import PagingBuffer from 'parsegraph-pagingbuffer';
 import Color from 'parsegraph-color';
-import Window from 'parsegraph-window';
+import { BasicWindow } from 'parsegraph-window';
 import {Matrix3x3} from 'parsegraph-matrix';
 
 import texturePainterVertexShader from './TexturePainter_VertexShader.glsl';
@@ -26,7 +26,7 @@ export default class TexturePainter {
   _alpha: number;
 
   constructor(
-      window: Window,
+      window: BasicWindow,
       textureId: WebGLTexture,
       texWidth: number,
       texHeight: number,
