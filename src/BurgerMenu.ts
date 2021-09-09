@@ -57,6 +57,7 @@ export default class BurgerMenu {
   _iconPainter:TexturePainter;
   _menuHovered:MenuIcon;
   _iconLocations:BurgerMenuLocation[];
+  _showSplit:boolean;
 
   constructor(viewport:Viewport) {
     this._viewport = viewport;
@@ -85,6 +86,13 @@ export default class BurgerMenu {
     this._textInput = document.createElement('input');
     this._textInput.style.display = 'none';
     this._textInput.placeholder = 'Search';
+  }
+
+  showSplit(show?:boolean):boolean {
+    if (arguments.length !== 0) {
+      this._showSplit = show;
+    }
+    return this._showSplit;
   }
 
   mount() {
@@ -332,15 +340,17 @@ export default class BurgerMenu {
           MENU_ICON_UNDO,
           -2 * MENU_ICON_SIZE - pad,
       );
-      this.drawIcon(
-          MENU_ICON_VSPLIT,
-          pad + 2 * MENU_ICON_SIZE,
-      );
-      this.drawIcon(MENU_ICON_HSPLIT, pad + MENU_ICON_SIZE);
-      this.drawIcon(
-          MENU_ICON_RESET_CAMERA,
-          pad + 3 * MENU_ICON_SIZE,
-      );
+      if (this.showSplit()) {
+        this.drawIcon(
+            MENU_ICON_VSPLIT,
+            pad + 2 * MENU_ICON_SIZE,
+        );
+        this.drawIcon(MENU_ICON_HSPLIT, pad + MENU_ICON_SIZE);
+        this.drawIcon(
+            MENU_ICON_RESET_CAMERA,
+            pad + 3 * MENU_ICON_SIZE,
+        );
+      }
       if (this.window().numComponents() > 1) {
         this.drawIcon(
             MENU_ICON_CLOSE,

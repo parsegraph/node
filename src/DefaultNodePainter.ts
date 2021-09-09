@@ -44,7 +44,7 @@ class PaintedElement {
 
   render(camera:Camera, paintContext: Component):void {
     const node = this._node;
-    const elem = node.elementFor(paintContext);
+    const elem = node.elementFor(paintContext).parentElement;
     const x = node.groupX();
     const y = node.groupY();
     const absScale = node.groupScale();
@@ -53,6 +53,8 @@ class PaintedElement {
     elem.style.display = "block";
     elem.style.transformOrigin = "center";
     elem.style.transform = `translate(${leftPos}px, ${topPos}px) scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
+    elem.style.width = (absScale * node.size().width()) + "px";
+    elem.style.height = (absScale * node.size().height()) + "px";
   }
 }
 

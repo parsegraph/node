@@ -791,7 +791,8 @@ export default class Input {
     const selectedNode = this.world().nodeUnderCoords(x, y);
     if (!selectedNode) {
       console.log("No node found under coords:", x, y);
-      // this.setFocusedNode(null);
+      this.setFocusedNode(null);
+      this.viewport().showInCamera(null);
       return null;
     }
 

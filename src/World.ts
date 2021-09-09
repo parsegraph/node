@@ -10,30 +10,36 @@ import { BasicWindow, Component } from 'parsegraph-window';
 import Camera from 'parsegraph-camera';
 
 export default class World {
-  _worldPaintingDirty: boolean;
+  _worldPaintingDirty: Map<BasicWindow, boolean>;
   _worldRoots: EventNode[];
   _nodeUnderCursor: EventNode;
-  _previousWorldPaintState: number;
+  _previousWorldPaintState: Map<BasicWindow, number>;
   _freezer: Freezer;
   _cameraBox: CameraBox;
+  _repaintListeners:[Function, object][];
+
   constructor() {
     // World-rendered graphs.
-    this._worldPaintingDirty = true;
+    this._worldPaintingDirty = new Map();
     this._worldRoots = [];
 
     // The node currently under the cursor.
     this._nodeUnderCursor = null;
 
-    this._previousWorldPaintState = null;
+    this._previousWorldPaintState = new Map();
     this._freezer = new Freezer();
     this._cameraBox = new CameraBox(this);
+
+    this._repaintListeners = [];
   }
+
   freezer(): Freezer {
     return this._freezer;
   }
+
   contextChanged(isLost: boolean, window: BasicWindow): void {
-    this._worldPaintingDirty = true;
-    this._previousWorldPaintState = null;
+    this._worldPaintingDirty.set(window, true);
+    this._previousWorldPaintState.delete(window);
     for (let i = 0; i < this._worldRoots.length; ++i) {
       const root: EventNode = this._worldRoots[i];
       root.contextChanged(isLost, window);
@@ -51,16 +57,11 @@ export default class World {
     this._worldRoots.push(node);
   }
 
-  removePlot(plot: EventNode): EventNode {
-    for (let i = 0; i < this._worldRoots.length; ++i) {
-      if (this._worldRoots[i] === plot) {
-        if (this._previousWorldPaintState) {
-          this._previousWorldPaintState = null;
-        }
-        return this._worldRoots.splice(i, 1)[0];
-      }
-    }
-    return null;
+  removePlot(plot: EventNode) {
+    this._worldRoots = this._worldRoots.filter(root=>{
+      return plot !== root;
+    });
+    this._previousWorldPaintState.clear();
   }
 
   /*
@@ -175,9 +176,25 @@ export default class World {
   }
   scheduleRepaint(): void {
     // console.log(new Error("Scheduling repaint"));
-    this._worldPaintingDirty = true;
-    this._previousWorldPaintState = null;
+    this._worldPaintingDirty.forEach((_:boolean, w:BasicWindow)=>{
+      this._worldPaintingDirty.set(w, true);
+    });
+    this._previousWorldPaintState.clear();
+    this._repaintListeners.forEach(onRepaint=>{
+      onRepaint[0].call(onRepaint[1]);
+    });
   }
+
+  addRepaintListener(onRepaint:Function, onRepaintThisArg?:object) {
+    const listener:[Function, object] = [onRepaint, onRepaintThisArg];
+    this._repaintListeners.push(listener);
+    return ()=>{
+      this._repaintListeners = this._repaintListeners.filter(
+        cand=>cand!==listener
+      );
+    }
+  }
+
   nodeUnderCursor(): EventNode {
     return this._nodeUnderCursor;
   }
@@ -215,15 +232,18 @@ export default class World {
     }
     return null;
   }
-  needsRepaint(): boolean {
-    return this._worldPaintingDirty || this._cameraBox.needsRepaint();
+  needsRepaint(window: BasicWindow): boolean {
+    return !this._worldPaintingDirty.has(window)
+      || this._worldPaintingDirty.get(window)
+      || this._cameraBox.needsRepaint();
   }
+
   paint(window: BasicWindow, timeout?: number, paintContext?: any): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
     }
-    // console.log("Painting world, timeout=" + timeout);
+    console.log("Painting world for window " + window.id() + ", timeout=" + timeout);
     const t: number = new Date().getTime();
     const pastTime: Function = function() {
       return timeout !== undefined && new Date().getTime() - t > timeout;
@@ -235,20 +255,19 @@ export default class World {
       return Math.max(0, timeout - (new Date().getTime() - t));
     };
 
-    if (this._worldPaintingDirty) {
+    if (!this._worldPaintingDirty.has(window) || this._worldPaintingDirty.get(window)) {
       // console.log("World needs repaint");
       // Restore the last state.
       let i: number = 0;
       let savedState: number;
-      if (this._previousWorldPaintState !== null) {
-        savedState = this._previousWorldPaintState;
-        this._previousWorldPaintState = null;
+      if (this._previousWorldPaintState.has(window)) {
+        savedState = this._previousWorldPaintState.get(window);
         i = savedState;
       }
 
       while (i < this._worldRoots.length) {
         if (pastTime()) {
-          this._previousWorldPaintState = i;
+          this._previousWorldPaintState.set(window, i);
           return true;
         }
         const plot: WindowNode = this._worldRoots[i];
@@ -257,22 +276,24 @@ export default class World {
         }
         const needsUpdate: boolean = plot.paint(window, timeRemaining(), paintContext);
         if (needsUpdate) {
-          this._previousWorldPaintState = i;
+          this._previousWorldPaintState.set(window, i);
           return true;
         }
 
         ++i;
       }
-      // console.log("Done painting");
-      this._worldPaintingDirty = false;
+      console.log("Done painting window " + window.id());
+      this._worldPaintingDirty.set(window, false);
     } else {
-      window.log('World does not need repaint');
+      console.log('World does not need repaint');
     }
 
     this._cameraBox.paint(window);
 
+
     return false;
   }
+
   render(window: BasicWindow, camera: Camera, paintContext: Component): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {

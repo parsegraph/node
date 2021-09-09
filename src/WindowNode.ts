@@ -26,6 +26,7 @@ import {
   Direction,
 } from 'parsegraph-direction';
 import {LayoutNode} from 'parsegraph-layout';
+import Viewport from './Viewport';
 
 class NodeRenderData {
   bounds: Rect;
@@ -250,11 +251,21 @@ export default abstract class WindowNode extends LayoutNode {
             if (elem.parentNode) {
               elem.parentNode.removeChild(elem);
             }
-            window.containerFor(paintContext).appendChild(elem);
+            const sizer = document.createElement('div');
+            sizer.style.width = "10000px";
+            sizer.style.height = "10000px";
+            sizer.style.display = "none";
+            sizer.style.position = "absolute";
+            new ResizeObserver(()=>{
+              node.layoutWasChanged();
+              (paintContext as Viewport).world().scheduleRepaint();
+              (paintContext as Viewport).scheduleUpdate();
+              window.scheduleUpdate();
+            }).observe(elem);
+            window.containerFor(paintContext).appendChild(sizer);
+            sizer.appendChild(elem);
           }
           node._windowElement.set(paintContext, elem);
-          elem.style.display = "none";
-          elem.style.position = "absolute";
         }
       });
     });
@@ -264,7 +275,11 @@ export default abstract class WindowNode extends LayoutNode {
     if (!this.localPaintGroup()) {
       throw new Error('A node must be a paint group in order to be painted');
     }
-    if (!this.isDirty()) {
+
+    // Load saved state.
+    const wid: string = window.id();
+    let savedPaintGroup: WindowNode = this._windowPaintGroup[wid];
+    if (!this.isDirty() && savedPaintGroup) {
       // window.log(this + " is not dirty");
       return false;
     } else {
@@ -289,9 +304,6 @@ export default abstract class WindowNode extends LayoutNode {
       return isPast;
     };
 
-    // Load saved state.
-    const wid: string = window.id();
-    let savedPaintGroup: WindowNode = this._windowPaintGroup[wid];
 
     let cont: Function;
     if (this._commitLayoutFunc) {
@@ -413,7 +425,9 @@ export default abstract class WindowNode extends LayoutNode {
                 str += "]";
                 console.log(str);*/
       }
-    }return dirtyRenders > 0;
+    }
+    //console.log("Drity renders: ", dirtyRenders);
+    return dirtyRenders > 0;
   }
 
   getHeaviestNode(window: BasicWindow): WindowNode {
@@ -462,11 +476,11 @@ export default abstract class WindowNode extends LayoutNode {
     }
     const painter: NodePainter = this._windowPainter[window.id()];
     if (!painter) {
-      // window.log("Node has no painter for " + window.id());
+      console.log("Node has no painter for " + window.id());
       return false;
     }
     if (this._absoluteXPos === null) {
-      // window.log("Node has no absolute pos");
+      console.log("Node has no absolute pos");
       return false;
     }
 
@@ -479,7 +493,7 @@ export default abstract class WindowNode extends LayoutNode {
     s.scale(this.scale());
     s.translate(this._absoluteXPos, this._absoluteYPos);
     if (camera && !camera.containsAny(s)) {
-      // window.log("Out of bounds: " + this);
+      console.log("Out of bounds: " + this);
       return !this._absoluteDirty;
     }
 
@@ -555,7 +569,10 @@ export default abstract class WindowNode extends LayoutNode {
     overlay.restore();
 
     if (this._absoluteDirty) {
-      // window.log("Node was rendered with dirty absolute position.");
+      console.log("Node was rendered with dirty absolute position.");
+    }
+    if (this.isDirty()) {
+      console.log("Node was rendered dirty.");
     }
     return !this.isDirty() && !this._absoluteDirty;
   }

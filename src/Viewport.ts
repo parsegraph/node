@@ -9,6 +9,119 @@ import {BasicWindow, Component, WindowInput} from 'parsegraph-window';
 
 export const FOCUS_SCALE = 1;
 
+interface ViewportDisplayMode {
+  render(viewport:Viewport):boolean;
+}
+
+class FullscreenViewportDisplayMode implements ViewportDisplayMode {
+  render(viewport:Viewport) {
+    const cam = viewport.camera();
+    let needsUpdate = false;
+    if (viewport._nodeShown) {
+      if(viewport._cameraFilter.getRequiredScale() != viewport.getRequiredScale()) {
+        viewport._cameraFilter.restart();
+      } else if (
+        !cam.containsAll(viewport._nodeShown.absoluteSizeRect()) &&
+        !viewport._cameraFilter.animating()
+      ) {
+        viewport._cameraFilter.restart();
+      } else {
+        // console.log("Focused node is visible on screen");
+      }
+      if(viewport._cameraFilter.render()) {
+        viewport._window.log('Camera filter wants render.');
+        viewport.scheduleRender();
+      }
+    } else {
+      const root = viewport._world._worldRoots[0];
+      root.prepare(viewport._window, viewport);
+      const size = root.extentSize();
+      if (size.width() > 0 && size.height() > 0) {
+        root.showInCamera(cam, false);
+      }
+    }
+
+    return needsUpdate;
+  }
+}
+
+class SingleScreenViewportDisplayMode implements ViewportDisplayMode {
+  render(viewport:Viewport) {
+    const cam = viewport.camera();
+    const root = viewport._world._worldRoots[0];
+    root.prepare(viewport._window, viewport);
+    const size = root.extentSize();
+    viewport._window.container().style.display = "inline-block";
+    let needsUpdate = false;
+    if (size.width() > 0 && size.height() > 0) {
+      if (cam.setSize(size.width(), size.height())) {
+        console.log("SETTING EXTENT SIZE:", size.width, size.height());
+        viewport._window.setExplicitSize(size.width(), size.height());
+        needsUpdate = true;
+      }
+      root.showInCamera(cam, false);
+    } else {
+      console.log("NO EXTENT SIZE");
+      needsUpdate = true;
+      viewport._world.scheduleRepaint();
+    }
+    return needsUpdate;
+  }
+}
+
+class FixedWidthViewportDisplayMode implements ViewportDisplayMode {
+  _w:number;
+  _h:number;
+
+  constructor(w:number, h:number) {
+    this._w = w;
+    this._h = h;
+  }
+
+  render(viewport:Viewport) {
+    const cam = viewport.camera();
+    console.log("Showing");
+    const root = viewport._world._worldRoots[0];
+    root.prepare(viewport._window, viewport);
+    const size = root.extentSize();
+    viewport._window.container().style.display = "inline-block";
+    viewport._window.container().style.width = this._w + "px";
+    viewport._window.container().style.height = this._h + "px";
+    let needsUpdate = false;
+    if (size.width() > 0 && size.height() > 0) {
+      if (cam.setSize(this._w, this._h)) {
+        console.log("SETTING EXTENT SIZE:", size.width, size.height());
+        viewport._window.setExplicitSize(this._w, this._h);
+        needsUpdate = true;
+      }
+      root.showInCamera(cam, false);
+    } else {
+      console.log("NO EXTENT SIZE");
+      needsUpdate = true;
+      viewport._world.scheduleRepaint();
+    }
+    return needsUpdate;
+  }
+}
+
+class FitInWindowViewportDisplayMode implements ViewportDisplayMode {
+  render(viewport:Viewport) {
+    const cam = viewport.camera();
+    console.log("Showing");
+    const root = viewport._world._worldRoots[0];
+    root.prepare(viewport._window, viewport);
+    const size = root.extentSize();
+    let needsUpdate = false;
+    if (size.width() > 0 && size.height() > 0) {
+      root.showInCamera(cam, false);
+    } else {
+      console.log("NO EXTENT SIZE");
+      needsUpdate = true;
+      viewport._world.scheduleRepaint();
+    }
+    return needsUpdate;
+  }
+}
 /*
  * TODO Add gridX and gridY camera listeners, with support for loading from an
  * infinite grid of cells.
@@ -56,10 +169,13 @@ export default class Viewport extends Component {
   _focusScale:number;
   _nodeShown:EventNode;
   _needsRepaint:boolean;
+  _displayMode:ViewportDisplayMode;
+  _window:BasicWindow;
 
   constructor(world:World) {
     super(viewportType);
     // Construct the graph.
+    this._displayMode = new FullscreenViewportDisplayMode();
     this._world = world;
     this._camera = new Camera();
     this._cameraFilter = new CameraFilter(this);
@@ -68,11 +184,36 @@ export default class Viewport extends Component {
 
 
     this._menu = new BurgerMenu(this);
+    this._menu.showSplit(true);
     // this._piano = new AudioKeyboard(this._camera);
     this._renderedMouse = -1;
     this._needsRender = true;
 
     this._focusScale = FOCUS_SCALE;
+  }
+
+  setDisplayMode(displayMode:ViewportDisplayMode, showSplit:boolean) {
+    this._displayMode = displayMode;
+    this._menu.showSplit(showSplit)
+  }
+
+  setSingleScreen(single:boolean) {
+    this._displayMode = single ? 
+      new SingleScreenViewportDisplayMode() :
+      new FullscreenViewportDisplayMode();
+    this._menu.showSplit(!single);
+  }
+
+  setFixedWidth(w:number, h:number) {
+    this.setDisplayMode(new FixedWidthViewportDisplayMode(w, h), false);
+  }
+
+  fitInWindow() {
+    this.setDisplayMode(new FitInWindowViewportDisplayMode(), false);
+  }
+
+  displayMode() {
+    return this._displayMode;
   }
 
   peer():any {
@@ -122,14 +263,23 @@ export default class Viewport extends Component {
     return this._input.update(new Date(startDate));
   }
 
+  _unmount:()=>void;
+
   mount(window:BasicWindow) {
     console.log("MOUNT", window)
     new WindowInput(window, this, (eventType:string, inputData?:any)=>{this.handleEvent(eventType, inputData);});
     this._menu.mount();
+    this._window = window;
+    this._unmount = this._world.addRepaintListener(()=>{
+      this._window.scheduleUpdate();
+    });
   }
 
   unmount() {
-
+    if (this._unmount) {
+      this._unmount();
+      this._unmount = null;
+    }
   }
 
   setCursor(cursor:string):void {
@@ -224,7 +374,7 @@ export default class Viewport extends Component {
   needsRepaint() {
     return (
       this._needsRepaint ||
-      this._world.needsRepaint() ||
+      this._world.needsRepaint(this._window) ||
       (this._carousel.isCarouselShown() && this._carousel.needsRepaint()) ||
       this._menu.needsRepaint()
     );
@@ -239,8 +389,8 @@ export default class Viewport extends Component {
     );
   };
 
-  plot(...args:any) {
-    return this.world().plot.apply(this.world(), ...args);
+  plot(node:EventNode) {
+    return this.world().plot(node);
   };
 
   /*
@@ -255,7 +405,7 @@ export default class Viewport extends Component {
       return false;
     }
     if (!this.needsRepaint()) {
-      // window.log("Viewport is not dirty");
+      //console.log("No need to paint; viewport is not dirty for window " + window.id());
       return false;
     }
 
@@ -281,7 +431,7 @@ export default class Viewport extends Component {
     const noPrior = !this._nodeShown;
     this._nodeShown = node;
     this._input.setFocusedNode(node);
-    if (noPrior) {
+    if (noPrior && node) {
       this._cameraFilter.restart();
       this._cameraFilter.finish();
     }
@@ -311,41 +461,24 @@ export default class Viewport extends Component {
       width:number,
       height:number,
       avoidIfPossible?:boolean,
-  ) {
+  ):boolean {
     const gl = this._window.gl();
     if (gl.isContextLost()) {
       return false;
     }
     const cam = this.camera();
     if (!cam.setSize(width, height) && avoidIfPossible && !this.needsRender()) {
+      console.log("Avoided render");
       return false;
-    } else {
-      this._menu.paint();
     }
 
-    if (this._nodeShown) {
-      if(this._cameraFilter.getRequiredScale() != this.getRequiredScale()) {
-        this._cameraFilter.restart();
-      } else if (
-        !cam.containsAll(this._nodeShown.absoluteSizeRect()) &&
-        !this._cameraFilter.animating()
-      ) {
-        this._cameraFilter.restart();
-      } else {
-        // console.log("Focused node is visible on screen");
-      }
-    }
-
-    if(this._cameraFilter.render()) {
-      this._window.log('Camera filter wants render.');
-      this.scheduleRender();
-    }
+    let needsUpdate = this._displayMode.render(this);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
     const overlay = this.window().overlay();
     overlay.textBaseline = 'top';
 
-    const needsUpdate = this._world.render(this._window, cam, this);
+    needsUpdate = this._world.render(this._window, cam, this) || needsUpdate;
     if (needsUpdate) {
       this._window.log('World was rendered dirty.');
       this.scheduleRender();
@@ -359,6 +492,7 @@ export default class Viewport extends Component {
     // this._piano.render(world, cam.scale());
     if (!this._window.isOffscreen()) {
       this._carousel.render(world);
+      this._menu.paint();
       this._menu.render();
     }
     if (!needsUpdate) {
