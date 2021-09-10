@@ -122,21 +122,17 @@
     'Hungarian',
   ];
 
-  function buildTextDemo(window, world, belt) {
+  function buildTextDemo(belt, onlyThisLang) {
     const caret = new parsegraph.Caret();
     let animating = false;
 
-    let size = 72;
-    belt.queueJob(()=>{
-      if (!animating) {
-        return true;
-      }
-      size += 12;
-      size %= 255;
-      return true;
-    });
+    let size = 12;
 
     for (let i = 0; i < testLanguages.length; ++i) {
+      const langName = testLanguageNames[i];
+      if (onlyThisLang && onlyThisLang !== langName) {
+        continue;
+      }
       if (i > 0) {
         caret.spawnMove('f', 'u');
       }
@@ -144,13 +140,16 @@
       caret.pull('d');
       caret.spawnMove('d', 'b');
       caret.label(testLanguageNames[i]);
+
       const testSentences = testLanguages[i];
       //testLanguages[i].forEach((testSentence)=>{
       for (let j = 0; j < testSentences.length; ++j) {
         const testSentence = testSentences[j];
+
+        //caret.spawnMove('d', 'b');
+        //caret.label(testSentence);
         caret.spawnMove('d', 'e');
         const node = caret.node();
-
         caret.element((window)=>{
           const dom = document.createElement('div');
           dom.style.backgroundColor = "#f88";
@@ -161,47 +160,55 @@
           setInterval(()=>{
             dom.style.fontSize = size + "px";
           }, 1);
-          new ResizeObserver(entries=>{
-            node.layoutHasChanged();
-            window.scheduleUpdate();
-            world.scheduleRepaint();
-          }).observe(dom);
           return dom;
         });
         caret.move('u');
         caret.pull('d');
         caret.onClick(()=>{
           animating = !animating;
+          belt.queueJob(()=>{
+            size += 12;
+            size %= 255;
+            return animating;
+          })
         });
         caret.move('d');
       }
       caret.pop();
     }
 
-    return caret.root();
+    const world = new parsegraph.World();
+    world.plot(caret.root());
+    return world;
   }
 
       document.addEventListener("DOMContentLoaded", function (event) {
-        var window = new parsegraph.Window();
-        var world = new parsegraph.World();
-        document.body.appendChild(window.container());
-        var belt = new parsegraph.TimingBelt();
-        belt.addWindow(window);
-        parsegraph.addEventMethod(
-          top.window,
-          "resize",
-          belt.scheduleUpdate,
-          belt
+        const belt = new parsegraph.TimingBelt();
+        parsegraph.render(
+          belt,
+          buildTextDemo(belt, 'English'),
+          document.querySelector("#parsegraph-one")
         );
-        var viewport = new parsegraph.Viewport(world);
-        window.addComponent(viewport.component());
-
-        var text = buildTextDemo(window, world, belt);
-        world.plot(text);
-        text.prepare(window, viewport);
-        viewport.showInCamera(text);
+        parsegraph.render(
+          belt,
+          buildTextDemo(belt),
+          document.querySelector("#parsegraph-full")
+        );
       });
     </script>
   </head>
-  <body class="parsegraph"></body>
+<style>
+
+body {
+  background-color: #222;
+  color: white;
+}
+</style>
+  <body>
+    <h1>Text demo</h1>
+    <p>A single group shows several sentences:</p>
+    <div id="parsegraph-one"></div>
+    <p>The demo should show below:</p>
+    <div id="parsegraph-full"></div>
+  </body>
 </html>
