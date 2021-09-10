@@ -836,7 +836,7 @@ export default class DefaultNodePainter implements NodePainter {
       }
     } else {
       labelX = node.groupX() - (fontScale * label.width()) / 2;
-      labelY = node.groupY() - (fontScale * label.height()) / 2;
+      labelY = node.groupY() ;
     }
     const l = node.realLabel();
     l._x = labelX;

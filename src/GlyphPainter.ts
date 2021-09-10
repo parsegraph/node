@@ -205,6 +205,7 @@ export default class GlyphPainter {
       const line = this._lines[i];
       overlay.save();
       overlay.scale(line.scale, line.scale);
+      overlay.textBaseline = "middle";
       overlay.fillText(line.text, line.x/line.scale, line.y/line.scale);
       // console.log("GlyphPainter.render:", line.text, line.x, line.y, scale, line.scale);
       overlay.restore();
