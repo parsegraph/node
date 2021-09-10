@@ -11,7 +11,9 @@ export const SELECTED_LINE_COLOR = new Color(
     1,
 );
 
-export const BUD_RADIUS = 8;
+export const BUD_RADIUS = 2;
+
+export const LINE_THICKNESS = 12 * BUD_RADIUS / 8;
 
 export const MIN_BLOCK_HEIGHT = BUD_RADIUS * 12;
 export const MIN_BLOCK_WIDTH = BUD_RADIUS * 15;

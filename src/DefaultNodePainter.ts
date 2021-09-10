@@ -15,6 +15,7 @@ import BlockPainter from 'parsegraph-blockpainter';
 import {
   SELECTED_LINE_COLOR,
   LINE_COLOR,
+  LINE_THICKNESS,
   EXTENT_BORDER_ROUNDEDNESS,
   EXTENT_BORDER_THICKNESS,
   EXTENT_BORDER_COLOR,
@@ -30,8 +31,6 @@ import TexturePainter from './TexturePainter';
 import NodePainter from './NodePainter';
 import Camera from 'parsegraph-camera';
 import WindowNode from './WindowNode';
-
-export const LINE_THICKNESS = 12;
 
 class PaintedElement {
   _window:BasicWindow;

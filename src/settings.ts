@@ -24,10 +24,9 @@ export const CAROUSEL_SHOW_DURATION = 200;
 //
 // ////////////////////////////////////////////////////////////////////////////
 
-export const FONT_SIZE = 72;
-export const FONT_UPSCALE = 1;
-export const UPSCALED_FONT_SIZE =
-  FONT_UPSCALE * FONT_SIZE;
+export const FONT_SIZE = 12;
+export const FONT_UPSCALE = Math.max(1, 72/FONT_SIZE);
+export const UPSCALED_FONT_SIZE = FONT_UPSCALE * FONT_SIZE;
 export const LETTER_HEIGHT = 2.0;
 
 let DEFAULT_FONT:Font = null;

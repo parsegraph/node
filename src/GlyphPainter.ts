@@ -1,7 +1,7 @@
 import TestSuite from 'parsegraph-testsuite';
 import Color from 'parsegraph-color';
 import Window, { BasicWindow } from 'parsegraph-window';
-import {defaultFont} from './settings';
+import {defaultFont, UPSCALED_FONT_SIZE} from './settings';
 
 // TODO Add runs of selected text
 let glyphPainterCount = 0;
@@ -199,7 +199,7 @@ export default class GlyphPainter {
 
   render(world:Matrix3x3, scale:number) {
     const overlay = this.window().overlay();
-    overlay.font = '72px sans-serif';
+    overlay.font = `${UPSCALED_FONT_SIZE}px sans-serif`;
     overlay.save();
     for (let i = 0; i < this._lines.length; ++i) {
       const line = this._lines[i];
