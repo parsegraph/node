@@ -5,6 +5,7 @@ import DefaultNodeType, {Type} from './DefaultNodeType';
 import Node from './Node';
 import EventNode from './EventNode';
 import EventCaret from './EventCaret';
+import Label, {Line} from './Label';
 
 import {
   copyStyle,
@@ -148,5 +149,7 @@ export {
   namePreferredAxis,
   readPreferredAxis,
   EnvironmentWidget,
-  Widget
+  Widget,
+  Label,
+  Line
 };
