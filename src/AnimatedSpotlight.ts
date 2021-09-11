@@ -1,4 +1,4 @@
-import SpotlightPainter from './SpotlightPainter';
+import SpotlightPainter from 'parsegraph-spotlightpainter';
 import Color from 'parsegraph-color';
 import Animator from 'parsegraph-animator';
 import lerp from 'parsegraph-lerp';

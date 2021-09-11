@@ -39,7 +39,6 @@ SCRIPT_FILES = \
 	src/parsegraph_Graph_Tests.js \
 	src/settings.ts \
 	src/showGraph.ts \
-	src/SpotlightPainter.ts \
 	src/TexturePainter.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
@@ -54,8 +53,6 @@ GLSL_SCRIPTS = \
 	src/Freezer_VertexShader.glsl \
 	src/GlyphPainter_FragmentShader.glsl \
 	src/GlyphPainter_VertexShader.glsl \
-	src/SpotlightPainter_FragmentShader.glsl \
-	src/SpotlightPainter_VertexShader.glsl \
 	src/TexturePainter_FragmentShader.glsl \
 	src/TexturePainter_VertexShader.glsl
 
