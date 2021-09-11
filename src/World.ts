@@ -243,7 +243,7 @@ export default class World {
     if (gl.isContextLost()) {
       return false;
     }
-    console.log("Painting world for window " + window.id() + ", timeout=" + timeout);
+    //console.log("Painting world for window " + window.id() + ", timeout=" + timeout);
     const t: number = new Date().getTime();
     const pastTime: Function = function() {
       return timeout !== undefined && new Date().getTime() - t > timeout;
@@ -282,7 +282,7 @@ export default class World {
 
         ++i;
       }
-      console.log("Done painting window " + window.id());
+      //console.log("Done painting window " + window.id());
       this._worldPaintingDirty.set(window, false);
     } else {
       console.log('World does not need repaint');

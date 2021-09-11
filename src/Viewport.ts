@@ -468,7 +468,7 @@ export default class Viewport extends Component {
     }
     const cam = this.camera();
     if (!cam.setSize(width, height) && avoidIfPossible && !this.needsRender()) {
-      console.log("Avoided render");
+      //console.log("Avoided render");
       return false;
     }
 
