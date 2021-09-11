@@ -7,9 +7,11 @@ import {
 } from 'parsegraph-direction';
 import {Alignment} from 'parsegraph-layout';
 import Node from './Node';
+import EventNode from './EventNode';
 
 import {Matrix3x3} from 'parsegraph-matrix';
 
+import Viewport from './Viewport';
 import DefaultNodeType, {Type} from './DefaultNodeType';
 import BlockPainter from 'parsegraph-blockpainter';
 import {
@@ -53,7 +55,20 @@ class PaintedElement {
     elem.style.transformOrigin = "center";
     elem.style.transform = `translate(${leftPos}px, ${topPos}px) scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
     elem.style.width = (absScale * node.size().width()) + "px";
+    elem.style.cursor = "pointer";
     elem.style.height = (absScale * node.size().height()) + "px";
+
+    elem.addEventListener("click", ()=>{
+      const viewport = paintContext as Viewport;
+      viewport.showInCamera(node as EventNode);
+      (node as EventNode).click(viewport);
+    });
+    elem.addEventListener("hover", ()=>{
+      (paintContext as Viewport).setCursor("pointer");
+    });
+    elem.addEventListener("blur", ()=>{
+      (paintContext as Viewport).setCursor(null);
+    });
   }
 }
 
