@@ -529,8 +529,8 @@ export default class Viewport extends Component {
         this._menu.render();
       }
     }
+    this._renderedMouse = this.input().mouseVersion();
     if (!needsUpdate) {
-      this._renderedMouse = this.input().mouseVersion();
       this._needsRender = this._needsRepaint;
     }
 
