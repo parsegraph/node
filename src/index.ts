@@ -84,10 +84,19 @@ export const INWARD = Direction.INWARD;
 export const OUTWARD = Direction.OUTWARD;
 export const NULL_DIRECTION:Direction = null;
 
-import render from './render';
+import render, {
+  renderFullscreen,
+  renderSingleScreen,
+  renderFixedWidth,
+  renderFitInWindow
+} from './render';
 
 export {
   render,
+  renderFullscreen,
+  renderSingleScreen,
+  renderFixedWidth,
+  renderFitInWindow,
   copyStyle,
   BUD_RADIUS,
   Camera,

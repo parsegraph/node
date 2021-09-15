@@ -9,11 +9,28 @@ import {BasicWindow, Component, WindowInput} from 'parsegraph-window';
 
 export const FOCUS_SCALE = 1;
 
-interface ViewportDisplayMode {
+const MIN_SPLIT_THRESHOLD = 800;
+const MIN_MENU_THRESHOLD = 400;
+
+export interface ViewportDisplayMode {
   render(viewport:Viewport):boolean;
+  allowSplit(viewport:Viewport):boolean;
+  showMenu(viewport:Viewport):boolean;
 }
 
-class FullscreenViewportDisplayMode implements ViewportDisplayMode {
+abstract class SplittingViewportDisplayMode implements ViewportDisplayMode {
+  abstract render(viewport: Viewport): boolean;
+
+  allowSplit(viewport:Viewport):boolean {
+    return viewport.width() > MIN_SPLIT_THRESHOLD;
+  }
+
+  showMenu(viewport:Viewport):boolean {
+    return viewport.width() > MIN_MENU_THRESHOLD;
+  }
+}
+
+export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode {
   render(viewport:Viewport) {
     const cam = viewport.camera();
     let needsUpdate = false;
@@ -45,7 +62,19 @@ class FullscreenViewportDisplayMode implements ViewportDisplayMode {
   }
 }
 
-class SingleScreenViewportDisplayMode implements ViewportDisplayMode {
+abstract class MenulessViewportDisplayMode implements ViewportDisplayMode {
+  allowSplit():boolean {
+    return false;
+  }
+
+  showMenu():boolean {
+    return false;
+  }
+
+  abstract render(viewport:Viewport):boolean;
+}
+
+export class SingleScreenViewportDisplayMode extends MenulessViewportDisplayMode {
   render(viewport:Viewport) {
     const cam = viewport.camera();
     const root = viewport._world._worldRoots[0];
@@ -69,11 +98,12 @@ class SingleScreenViewportDisplayMode implements ViewportDisplayMode {
   }
 }
 
-class FixedWidthViewportDisplayMode implements ViewportDisplayMode {
+export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode {
   _w:number;
   _h:number;
 
   constructor(w:number, h:number) {
+    super();
     this._w = w;
     this._h = h;
   }
@@ -104,7 +134,7 @@ class FixedWidthViewportDisplayMode implements ViewportDisplayMode {
   }
 }
 
-class FitInWindowViewportDisplayMode implements ViewportDisplayMode {
+export class FitInWindowViewportDisplayMode extends SplittingViewportDisplayMode {
   render(viewport:Viewport) {
     const cam = viewport.camera();
     console.log("Showing");
@@ -175,26 +205,27 @@ export default class Viewport extends Component {
   constructor(world:World) {
     super(viewportType);
     // Construct the graph.
-    this._displayMode = new FullscreenViewportDisplayMode();
     this._world = world;
+    this._displayMode = new FullscreenViewportDisplayMode();
     this._camera = new Camera();
     this._cameraFilter = new CameraFilter(this);
     this._input = new Input(this);
     this._carousel = new Carousel(this);
 
-
     this._menu = new BurgerMenu(this);
-    this._menu.showSplit(true);
+
     // this._piano = new AudioKeyboard(this._camera);
     this._renderedMouse = -1;
     this._needsRender = true;
 
     this._focusScale = FOCUS_SCALE;
+
+    this._menu.showSplit(this._displayMode.allowSplit(this));
   }
 
-  setDisplayMode(displayMode:ViewportDisplayMode, showSplit:boolean) {
+  setDisplayMode(displayMode:ViewportDisplayMode) {
     this._displayMode = displayMode;
-    this._menu.showSplit(showSplit)
+    this._menu.showSplit(this._displayMode.allowSplit(this));
   }
 
   setSingleScreen(single:boolean) {
@@ -205,11 +236,11 @@ export default class Viewport extends Component {
   }
 
   setFixedWidth(w:number, h:number) {
-    this.setDisplayMode(new FixedWidthViewportDisplayMode(w, h), false);
+    this.setDisplayMode(new FixedWidthViewportDisplayMode(w, h));
   }
 
   fitInWindow() {
-    this.setDisplayMode(new FitInWindowViewportDisplayMode(), false);
+    this.setDisplayMode(new FitInWindowViewportDisplayMode());
   }
 
   displayMode() {
@@ -492,8 +523,11 @@ export default class Viewport extends Component {
     // this._piano.render(world, cam.scale());
     if (!this._window.isOffscreen()) {
       this._carousel.render(world);
-      this._menu.paint();
-      this._menu.render();
+      if(this._displayMode.showMenu(this)) {
+        this._menu.showSplit(this._displayMode.allowSplit(this));
+        this._menu.paint();
+        this._menu.render();
+      }
     }
     if (!needsUpdate) {
       this._renderedMouse = this.input().mouseVersion();
