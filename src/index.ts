@@ -33,7 +33,7 @@ import {
 } from 'parsegraph-layout';
 import showGraph from './showGraph';
 import {addEventMethod, addEventListener} from './event';
-import Viewport from './Viewport';
+import Viewport, {FullscreenViewportDisplayMode, SingleScreenViewportDisplayMode, FixedWidthViewportDisplayMode, ViewportDisplayMode, FitInWindowViewportDisplayMode} from './Viewport';
 import Window, {Component, ProxyComponent, LayoutList, TimingBelt} from 'parsegraph-window';
 import World from './World';
 import Caret from './Caret';
@@ -126,6 +126,11 @@ export {
   addEventListener,
   TimingBelt,
   Viewport,
+  FullscreenViewportDisplayMode,
+  SingleScreenViewportDisplayMode,
+  FixedWidthViewportDisplayMode,
+  ViewportDisplayMode,
+  FitInWindowViewportDisplayMode,
   Window,
   ProxyComponent,
   Component,
