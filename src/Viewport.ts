@@ -48,6 +48,7 @@ export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode 
       if(viewport._cameraFilter.render()) {
         viewport._window.log('Camera filter wants render.');
         viewport.scheduleRender();
+        needsUpdate = true;
       }
     } else {
       const root = viewport._world._worldRoots[0];
