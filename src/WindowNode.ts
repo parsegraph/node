@@ -27,6 +27,7 @@ import {
 } from 'parsegraph-direction';
 import {LayoutNode} from 'parsegraph-layout';
 import Viewport from './Viewport';
+import { EventNode } from '.';
 
 class NodeRenderData {
   bounds: Rect;
@@ -264,6 +265,22 @@ export default abstract class WindowNode extends LayoutNode {
             }).observe(elem);
             window.containerFor(paintContext).appendChild(sizer);
             sizer.appendChild(elem);
+
+            sizer.style.display = "block";
+            sizer.style.transformOrigin = "center";
+            sizer.style.cursor = "pointer";
+
+            sizer.addEventListener("click", ()=>{
+              const viewport = paintContext as Viewport;
+              viewport.showInCamera(node as EventNode);
+              (node as EventNode).click(viewport);
+            });
+            sizer.addEventListener("hover", ()=>{
+              (paintContext as Viewport).setCursor("pointer");
+            });
+            sizer.addEventListener("blur", ()=>{
+              (paintContext as Viewport).setCursor(null);
+            });
           }
           node._windowElement.set(paintContext, elem);
         }

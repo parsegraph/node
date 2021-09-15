@@ -57,18 +57,6 @@ class PaintedElement {
     elem.style.width = (absScale * node.size().width()) + "px";
     elem.style.cursor = "pointer";
     elem.style.height = (absScale * node.size().height()) + "px";
-
-    elem.addEventListener("click", ()=>{
-      const viewport = paintContext as Viewport;
-      viewport.showInCamera(node as EventNode);
-      (node as EventNode).click(viewport);
-    });
-    elem.addEventListener("hover", ()=>{
-      (paintContext as Viewport).setCursor("pointer");
-    });
-    elem.addEventListener("blur", ()=>{
-      (paintContext as Viewport).setCursor(null);
-    });
   }
 }
 
