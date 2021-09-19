@@ -253,8 +253,8 @@ export default abstract class WindowNode extends LayoutNode {
               elem.parentNode.removeChild(elem);
             }
             const sizer = document.createElement('div');
-            sizer.style.width = "10000px";
-            sizer.style.height = "10000px";
+            sizer.style.width = "100%";
+            sizer.style.height = "100%";
             sizer.style.display = "none";
             sizer.style.position = "absolute";
             new ResizeObserver(()=>{
