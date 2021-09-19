@@ -1,3 +1,6 @@
+parsegraph-node*.zip
+parsegraph-node*.tgz
+
 # Logs
 logs
 *.log
