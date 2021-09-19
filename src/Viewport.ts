@@ -510,6 +510,13 @@ export default class Viewport extends Component {
     const overlay = this.window().overlay();
     overlay.textBaseline = 'top';
 
+    const elementContainer = this.window().containerFor(this).querySelector(".world") as HTMLElement;
+    if (elementContainer) {
+      const posTranslate = `translate(${cam.x()}px, ${cam.y()}px)`;
+      const cameraScale = `scale(${cam.scale()}, ${cam.scale()})`;
+      elementContainer.style.transform = [cameraScale, posTranslate].join(" ");
+    }
+
     needsUpdate = this._world.render(this._window, cam, this) || needsUpdate;
     if (needsUpdate) {
       this._window.log('World was rendered dirty.');

@@ -243,12 +243,22 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   prepare(window: BasicWindow, paintContext: Component):void {
+    if ((window.containerFor(paintContext) as HTMLElement).children.length == 0) {
+      const worldEle = document.createElement('div');
+      worldEle.className = "world";
+      worldEle.style.width = "100vw";
+      worldEle.style.height = "100vh";
+      worldEle.style.transformOrigin = "top left";
+      worldEle.style.position = "relative";
+      worldEle.style.pointerEvents = "none";
+      window.containerFor(paintContext).appendChild(worldEle);
+    }
     // Loop back to the first node, from the root.
     this.forEachPaintGroup((pg:WindowNode)=>{
       pg.forEachNode((node:WindowNode)=>{
         if (node.element() && !node.elementFor(paintContext)) {
           const elem = node.element()(window);
-          if (elem.parentNode !== window.containerFor(paintContext)) {
+          if (elem.parentNode !== window.containerFor(paintContext).querySelector(".world")) {
             if (elem.parentNode) {
               elem.parentNode.removeChild(elem);
             }
@@ -263,12 +273,14 @@ export default abstract class WindowNode extends LayoutNode {
               (paintContext as Viewport).scheduleUpdate();
               window.scheduleUpdate();
             }).observe(elem);
-            window.containerFor(paintContext).appendChild(sizer);
+            window.containerFor(paintContext).querySelector(".world").appendChild(sizer);
             sizer.appendChild(elem);
 
             sizer.style.display = "block";
             sizer.style.transformOrigin = "center";
             sizer.style.cursor = "pointer";
+            sizer.style.overflow = "hidden";
+            sizer.style.transformOrigin = "top left";
 
             sizer.addEventListener("click", ()=>{
               const viewport = paintContext as Viewport;
@@ -362,7 +374,7 @@ export default abstract class WindowNode extends LayoutNode {
           paintGroup._windowPainter[wid] = painter;
         }
 
-        painter.paint();
+        painter.paint(paintContext);
 
         if (paintGroup.isFrozen()) {
           paintGroup._cache.paint(window);

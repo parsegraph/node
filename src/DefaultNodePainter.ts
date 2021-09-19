@@ -37,35 +37,36 @@ import WindowNode from './WindowNode';
 class PaintedElement {
   _window:BasicWindow;
   _node:WindowNode;
+  _size:Size;
 
   constructor(window:BasicWindow, node:WindowNode) {
     this._window = window;
     this._node = node;
+    this._size = new Size();
   }
 
-  render(camera:Camera, paintContext: Component):void {
+  paint(paintContext:Component):void {
     const node = this._node;
     const elem = node.elementFor(paintContext).parentElement;
+    this._node.size(this._size);
+    const size = this._size;
+    elem.style.width = `${size.width()}px`;
+    elem.style.height = `${size.height()}px`;
     const x = node.groupX();
     const y = node.groupY();
     const absScale = node.groupScale();
-    const leftPos = x + camera.x();
-    const topPos = y + camera.y();
-    elem.style.display = "block";
-    const posTranslate = `translate(${leftPos}px, ${topPos}px)`;
-    const halfSizeTranslate = `translate(${-node.size().width()/2}px, ${-node.size().height()/2}px)`;
-    const cameraScale = `scale(${camera.scale()}, ${camera.scale()})`;
+    const posTranslate = `translate(${x}px, ${y}px)`;
+    const halfSizeTranslate = `translate(${-size.width()/2}px, ${-size.height()/2}px)`;
     const nodeScale = `scale(${absScale}, ${absScale})`;
-    elem.style.transformOrigin = "top left";
-    elem.style.transform = [
-      cameraScale,
+    const newTransform = [
       posTranslate,
       nodeScale,
       halfSizeTranslate
     ].join(" ");
-    elem.style.width = `${node.size().width()}px`;
-    elem.style.height = `${node.size().height()}px`;
-    elem.style.overflow = "hidden";
+    elem.style.transform = newTransform;
+  }
+
+  render(camera:Camera, paintContext: Component):void {
   }
 }
 
@@ -463,6 +464,7 @@ export default class DefaultNodePainter implements NodePainter {
   initBlockBuffer(counts:any) {
     this._consecutiveRenders = 0;
     this._mass = counts.numBlocks;
+    this._elements = [];
     this._blockPainter.initBuffer(counts.numBlocks);
     if (counts.numExtents) {
       this._extentPainter.initBuffer(counts.numExtents);
@@ -556,7 +558,7 @@ export default class DefaultNodePainter implements NodePainter {
     // console.log(node + " Count=" + counts.numBlocks);
   }
 
-  paint():void {
+  paint(paintContext:Component):void {
     const paintGroup = this._node;
     const counts: { [key: string]: number } = {};
     paintGroup.forEachNode((node:Node<DefaultNodeType>)=>{
@@ -568,6 +570,8 @@ export default class DefaultNodePainter implements NodePainter {
     paintGroup.forEachNode((node:Node<DefaultNodeType>)=>{
       this.drawNode(node);
     });
+
+    this._elements.forEach(elem=>elem.paint(paintContext));
   }
 
   drawNode(node:Node<DefaultNodeType>) {

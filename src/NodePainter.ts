@@ -19,7 +19,7 @@ export default interface NodePainter {
   /**
    * Paints this painter's node and all nodes in its group.
    */
-  paint():void;
+  paint(paintContext:Component):void;
 
   /**
    * Renders the painted group.
