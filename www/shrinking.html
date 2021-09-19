@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/environment.css" />
     <script src="parsegraph-checkglerror.js"></script>
-    <script>
-    parsegraph.setIgnoreGLErrors(true);
-    </script>
     <script src="parsegraph-node.js"></script>
     <script>
 
@@ -122,99 +119,64 @@
     'Hungarian',
   ];
 
-  function buildTextDemo(belt, onlyThisLang) {
+  function buildTextDemo() {
     const caret = new parsegraph.Caret();
-    let animating = false;
-
-    let size = 12;
-
     for (let i = 0; i < testLanguages.length; ++i) {
-      const langName = testLanguageNames[i];
-      if (onlyThisLang && onlyThisLang !== langName) {
-        continue;
-      }
       if (i > 0) {
         caret.spawnMove('f', 'u');
+        caret.shrink();
       }
       caret.push();
       caret.pull('d');
       caret.spawnMove('d', 'b');
+      caret.shrink();
       caret.label(testLanguageNames[i]);
-
       const testSentences = testLanguages[i];
-      //testLanguages[i].forEach((testSentence)=>{
       for (let j = 0; j < testSentences.length; ++j) {
-        const testSentence = testSentences[j];
-
-        //caret.spawnMove('d', 'b');
-        //caret.label(testSentence);
         caret.spawnMove('d', 'e');
-        const node = caret.node();
-        caret.element((window)=>{
+        caret.element(()=>{
           const dom = document.createElement('div');
-          dom.style.backgroundColor = "#f88";
-          dom.style.borderRadius = "12px";
-          dom.style.padding = "12px";
-          dom.innerHTML = testSentence;
-          dom.style.fontSize = size + "px";
-          setInterval(()=>{
-            dom.style.fontSize = size + "px";
-          }, 1);
+          dom.innerHTML = `<div style='color:red;margin:0;border-radius: 6px; border: 3px solid black; background:#f88;'>${testSentences[j]}</div>`;
           return dom;
         });
         caret.move('u');
         caret.pull('d');
-        caret.onClick(()=>{
-          animating = !animating;
-          belt.queueJob(()=>{
-            size += 12;
-            size %= 255;
-            return animating;
-          })
-        });
         caret.move('d');
+        caret.shrink();
       }
       caret.pop();
     }
 
-    const world = new parsegraph.World();
-    world.plot(caret.root());
-    return world;
+    return caret.root();
   }
 
       document.addEventListener("DOMContentLoaded", function (event) {
-        const belt = new parsegraph.TimingBelt();
-        parsegraph.render(
-          belt,
-          buildTextDemo(belt, 'English'),
-          document.querySelector("#parsegraph-one")
+        var window = new parsegraph.Window(new parsegraph.Color(0, 0, 0, 0));
+        var world = new parsegraph.World();
+        document.querySelector("#parsegraph").appendChild(window.container());
+        var belt = new parsegraph.TimingBelt();
+        belt.addWindow(window);
+        parsegraph.addEventMethod(
+          top.window,
+          "resize",
+          belt.scheduleUpdate,
+          belt
         );
-        parsegraph.render(
-          belt,
-          buildTextDemo(belt),
-          document.querySelector("#parsegraph-full"),
-          new parsegraph.FullscreenViewportDisplayMode()
-        );
+        var viewport = new parsegraph.Viewport(world);
+        //viewport.setSingleScreen(true);
+        window.addComponent(viewport.component());
+
+        var text = buildTextDemo();
+        world.plot(text);
+        viewport.showInCamera(text);
       });
     </script>
   </head>
-<style>
-
-body {
-  background-color: #222;
-  color: white;
-}
-
-#parsegraph-full {
-  width: 100vw;
-  height: 100vh;
-}
-</style>
-  <body>
-    <h1>Text demo</h1>
-    <p>A single group shows several sentences:</p>
-    <div id="parsegraph-one"></div>
-    <p>The demo should show below:</p>
-    <div id="parsegraph-full"></div>
-  </body>
+  <style>
+    #parsegraph {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+  <body class="parsegraph"><div id="parsegraph"></div></body>
 </html>
