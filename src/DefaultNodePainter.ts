@@ -49,14 +49,19 @@ class PaintedElement {
     const x = node.groupX();
     const y = node.groupY();
     const absScale = node.groupScale();
-    const leftPos = Math.round((x*absScale - (elem.offsetWidth/2)/camera.scale() + camera.x())*camera.scale());
-    const topPos = Math.round((y*absScale - (elem.offsetHeight/2)/camera.scale() + camera.y())*camera.scale());
+    console.log("SCale", absScale);
+    const leftPos = (x - (node.size().width()/2)) + camera.x();
+    const topPos = (y - (node.size().height()/2)) + camera.y();
+    //const leftPos = x;
+    //const topPos = y;
     elem.style.display = "block";
-    elem.style.transformOrigin = "center";
-    elem.style.transform = `translate(${leftPos}px, ${topPos}px) scale(${absScale*camera.scale()}, ${absScale*camera.scale()})`;
-    elem.style.width = (absScale * node.size().width()) + "px";
-    elem.style.cursor = "pointer";
-    elem.style.height = (absScale * node.size().height()) + "px";
+    elem.style.opacity = "0.2";
+    //elem.style.transform = `scale(${camera.scale()}, ${camera.scale()}) translate(${leftPos}px, ${topPos}px)`;
+    elem.style.transform = `scale(${camera.scale()}, ${camera.scale()}) translate(${leftPos}px, ${topPos}px) scale(${absScale}, ${absScale})`;
+    //elem.style.transform = `translate(${-node.size().width()/2}px, ${-node.size().height()/2}px) scale(${absScale}, ${absScale}) translate(${leftPos}px, ${topPos}px) `;// scale(${camera.scale()}, ${camera.scale()})`;
+    elem.style.width = (node.size().width()) + "px";
+    elem.style.height = (node.size().height()) + "px";
+    elem.style.overflow = "hidden";
   }
 }
 
