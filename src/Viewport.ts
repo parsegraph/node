@@ -46,7 +46,6 @@ export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode 
         // console.log("Focused node is visible on screen");
       }
       if(viewport._cameraFilter.render()) {
-        viewport._window.log('Camera filter wants render.');
         viewport.scheduleRender();
         needsUpdate = true;
       }
@@ -85,13 +84,11 @@ export class SingleScreenViewportDisplayMode extends MenulessViewportDisplayMode
     let needsUpdate = false;
     if (size.width() > 0 && size.height() > 0) {
       if (cam.setSize(size.width(), size.height())) {
-        console.log("SETTING EXTENT SIZE:", size.width, size.height());
         viewport._window.setExplicitSize(size.width(), size.height());
         needsUpdate = true;
       }
       root.showInCamera(cam, false);
     } else {
-      console.log("NO EXTENT SIZE");
       needsUpdate = true;
       viewport._world.scheduleRepaint();
     }
@@ -111,7 +108,6 @@ export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode 
 
   render(viewport:Viewport) {
     const cam = viewport.camera();
-    console.log("Showing");
     const root = viewport._world._worldRoots[0];
     root.prepare(viewport._window, viewport);
     const size = root.extentSize();
@@ -121,13 +117,11 @@ export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode 
     let needsUpdate = false;
     if (size.width() > 0 && size.height() > 0) {
       if (cam.setSize(this._w, this._h)) {
-        console.log("SETTING EXTENT SIZE:", size.width, size.height());
         viewport._window.setExplicitSize(this._w, this._h);
         needsUpdate = true;
       }
       root.showInCamera(cam, false);
     } else {
-      console.log("NO EXTENT SIZE");
       needsUpdate = true;
       viewport._world.scheduleRepaint();
     }
@@ -138,7 +132,6 @@ export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode 
 export class FitInWindowViewportDisplayMode extends SplittingViewportDisplayMode {
   render(viewport:Viewport) {
     const cam = viewport.camera();
-    console.log("Showing");
     const root = viewport._world._worldRoots[0];
     root.prepare(viewport._window, viewport);
     const size = root.extentSize();
@@ -146,7 +139,6 @@ export class FitInWindowViewportDisplayMode extends SplittingViewportDisplayMode
     if (size.width() > 0 && size.height() > 0) {
       root.showInCamera(cam, false);
     } else {
-      console.log("NO EXTENT SIZE");
       needsUpdate = true;
       viewport._world.scheduleRepaint();
     }
