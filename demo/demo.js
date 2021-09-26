@@ -12,7 +12,8 @@ async function getDemos() {
       }
       // files is an array of filenames.
       respond(files.map((file)=>{
-        return file.match(/www\/(\w+)\.html/)[1];
+        const m = file.match(/www\/(\w+)\.html/);[1];
+        return m ? m[1] : null;
       }));
     });
   });
@@ -35,7 +36,7 @@ app.get('/', async (req, res) => {
   write(`<h2>Samples &amp; Demos</h2>`);
   write(`<ul>`);
   (await getDemos()).forEach((demo)=>{
-    write(`<li><a href='/${demo}.html'>${demo}</li>`);
+    demo && write(`<li><a href='/${demo}.html'>${demo}</li>`);
   });
   write(`</ul>`);
   write(`</body>`);
