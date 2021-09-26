@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-node",
-  "version": "2.3.3-dev",
+  "version": "2.3.4-dev",
   "description": "node",
   "main": "dist/parsegraph-node.js",
   "types": "dist/parsegraph-node.d.ts",
