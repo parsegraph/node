@@ -2,7 +2,8 @@ const glob = require("glob")
 
 const express = require("express");
 const app = express();
-const port = 3000;
+const args = process.argv.slice(2);
+const port = args.length > 0 ? parseInt(args[0]) : 3001;
 
 async function getDemos() {
   return new Promise((respond, reject)=>{
