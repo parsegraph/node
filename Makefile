@@ -1,5 +1,17 @@
 DIST_NAME = node
 
+SCRIPT_FOLDERS = \
+	src \
+	test \
+	demo
+
+SCRIPT_EXTENSIONS = \
+	.js \
+	.jsx \
+	.ts \
+	.tsx \
+	.cjs
+
 SCRIPT_FILES = \
 	src/index.ts \
 	src/ActionCarousel.ts \
@@ -80,11 +92,11 @@ coverage:
 .PHONY: coverage
 
 prettier:
-	npx prettier --write src test demo
+	npx prettier --write $(SCRIPT_FOLDERS)
 .PHONY: prettier
 
 lint:
-	npx eslint --fix $(SCRIPT_FILES)
+	npx eslint --ext "$(SCRIPT_EXTENSIONS)" --fix $(SCRIPT_FOLDERS)
 .PHONY: lint
 
 esdoc:
