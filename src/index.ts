@@ -6,6 +6,10 @@ import Node from "./Node";
 import EventNode from "./EventNode";
 import EventCaret from "./EventCaret";
 import Label, { Line } from "./Label";
+import TreeListStyle, { BasicTreeListStyle } from "./TreeListStyle";
+import TreeNode from "./TreeNode";
+import ConstantTreeNode from "./ConstantTreeNode";
+import TreeListNode from "./TreeListNode";
 
 import { copyStyle, BUD_RADIUS } from "./DefaultNodeStyle";
 
@@ -15,7 +19,13 @@ import DirectionNode, {
   nameLayoutState,
   namePreferredAxis,
   readPreferredAxis,
+  turnRight,
+  turnLeft,
+  readDirection,
+  turnPositive,
+  turnNegative,
 } from "parsegraph-direction";
+
 import {
   LayoutNode,
   AxisOverlap,
@@ -174,4 +184,14 @@ export {
   Widget,
   Label,
   Line,
+  turnRight,
+  turnLeft,
+  turnPositive,
+  turnNegative,
+  readDirection,
+  TreeNode,
+  TreeListStyle,
+  BasicTreeListStyle,
+  ConstantTreeNode,
+  TreeListNode
 };
