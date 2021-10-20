@@ -52,6 +52,10 @@ SCRIPT_FILES = \
 	src/settings.ts \
 	src/showGraph.ts \
 	src/TexturePainter.ts \
+	src/TreeNode.ts \
+	src/TreeListNode.ts \
+	src/ConstantTreeNode.ts \
+	src/TreeListStyle.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
 	src/WindowCaret.ts \
