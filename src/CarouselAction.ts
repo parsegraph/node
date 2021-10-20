@@ -1,14 +1,14 @@
-import Method from 'parsegraph-method';
-import WindowNode from './WindowNode';
+import Method from "parsegraph-method";
+import WindowNode from "./WindowNode";
 
 export default class CarouselAction {
-  _action:WindowNode;
-  _func:Method;
-  _hotkey:string;
-  _node:WindowNode;
-  _nodeData:any;
+  _action: WindowNode;
+  _func: Method;
+  _hotkey: string;
+  _node: WindowNode;
+  _nodeData: any;
 
-  constructor(action:WindowNode, func:Function, thisArg?:any) {
+  constructor(action: WindowNode, func: Function, thisArg?: any) {
     this._action = action;
     this._func = new Method(func, thisArg);
     this._hotkey = null;
@@ -20,10 +20,10 @@ export default class CarouselAction {
     this._func.call(this._nodeData);
   }
 
-  setAction(action:WindowNode) {
+  setAction(action: WindowNode) {
     this._action = action;
   }
-  
+
   action() {
     return this._action;
   }
@@ -32,7 +32,7 @@ export default class CarouselAction {
     return this._func;
   }
 
-  setNodeData(node:WindowNode, nodeData?:any) {
+  setNodeData(node: WindowNode, nodeData?: any) {
     this._node = node;
     this._nodeData = nodeData;
   }
@@ -45,7 +45,7 @@ export default class CarouselAction {
     return this._node;
   }
 
-  setHotkey(hotkey:string) {
+  setHotkey(hotkey: string) {
     this._hotkey = hotkey;
   }
 

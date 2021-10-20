@@ -1,13 +1,13 @@
-import TestSuite from 'parsegraph-testsuite';
-import Freezer from './Freezer';
-import CameraBox from './CameraBox';
-import {Direction} from 'parsegraph-direction';
-import EventNode from './EventNode';
-import WindowNode from './WindowNode';
-import Caret from './Caret';
-import Rect from 'parsegraph-rect';
-import { BasicWindow, Component } from 'parsegraph-window';
-import Camera from 'parsegraph-camera';
+import TestSuite from "parsegraph-testsuite";
+import Freezer from "./Freezer";
+import CameraBox from "./CameraBox";
+import { Direction } from "parsegraph-direction";
+import EventNode from "./EventNode";
+import WindowNode from "./WindowNode";
+import Caret from "./Caret";
+import Rect from "parsegraph-rect";
+import { BasicWindow, Component } from "parsegraph-window";
+import Camera from "parsegraph-camera";
 
 export default class World {
   _worldPaintingDirty: Map<BasicWindow, boolean>;
@@ -16,7 +16,7 @@ export default class World {
   _previousWorldPaintState: Map<BasicWindow, number>;
   _freezer: Freezer;
   _cameraBox: CameraBox;
-  _repaintListeners:[Function, object][];
+  _repaintListeners: [Function, object][];
 
   constructor() {
     // World-rendered graphs.
@@ -49,7 +49,7 @@ export default class World {
 
   plot(node: EventNode): void {
     if (!node) {
-      throw new Error('Node must not be null');
+      throw new Error("Node must not be null");
     }
     if (!node.localPaintGroup()) {
       node.setPaintGroup(true);
@@ -58,7 +58,7 @@ export default class World {
   }
 
   removePlot(plot: EventNode) {
-    this._worldRoots = this._worldRoots.filter(root=>{
+    this._worldRoots = this._worldRoots.filter((root) => {
       return plot !== root;
     });
     this._previousWorldPaintState.clear();
@@ -109,7 +109,7 @@ export default class World {
     if (!outRect) {
       outRect = new Rect(0, 0, 0, 0);
     }
-    this._worldRoots.forEach(function(plot) {
+    this._worldRoots.forEach(function (plot) {
       plot.commitLayoutIteratively();
 
       // Get plot extent data.
@@ -176,23 +176,23 @@ export default class World {
   }
   scheduleRepaint(): void {
     // console.log(new Error("Scheduling repaint"));
-    this._worldPaintingDirty.forEach((_:boolean, w:BasicWindow)=>{
+    this._worldPaintingDirty.forEach((_: boolean, w: BasicWindow) => {
       this._worldPaintingDirty.set(w, true);
     });
     this._previousWorldPaintState.clear();
-    this._repaintListeners.forEach(onRepaint=>{
+    this._repaintListeners.forEach((onRepaint) => {
       onRepaint[0].call(onRepaint[1]);
     });
   }
 
-  addRepaintListener(onRepaint:Function, onRepaintThisArg?:object) {
-    const listener:[Function, object] = [onRepaint, onRepaintThisArg];
+  addRepaintListener(onRepaint: Function, onRepaintThisArg?: object) {
+    const listener: [Function, object] = [onRepaint, onRepaintThisArg];
     this._repaintListeners.push(listener);
-    return ()=>{
+    return () => {
       this._repaintListeners = this._repaintListeners.filter(
-        cand=>cand!==listener
+        (cand) => cand !== listener
       );
-    }
+    };
   }
 
   nodeUnderCursor(): EventNode {
@@ -233,9 +233,11 @@ export default class World {
     return null;
   }
   needsRepaint(window: BasicWindow): boolean {
-    return !this._worldPaintingDirty.has(window)
-      || this._worldPaintingDirty.get(window)
-      || this._cameraBox.needsRepaint();
+    return (
+      !this._worldPaintingDirty.has(window) ||
+      this._worldPaintingDirty.get(window) ||
+      this._cameraBox.needsRepaint()
+    );
   }
 
   paint(window: BasicWindow, timeout?: number, paintContext?: any): boolean {
@@ -245,17 +247,20 @@ export default class World {
     }
     // console.log("Painting world for window " + window.id() + ", timeout=" + timeout);
     const t: number = new Date().getTime();
-    const pastTime: Function = function() {
+    const pastTime: Function = function () {
       return timeout !== undefined && new Date().getTime() - t > timeout;
     };
-    const timeRemaining: Function = function() {
+    const timeRemaining: Function = function () {
       if (timeout === undefined) {
         return timeout;
       }
       return Math.max(0, timeout - (new Date().getTime() - t));
     };
 
-    if (!this._worldPaintingDirty.has(window) || this._worldPaintingDirty.get(window)) {
+    if (
+      !this._worldPaintingDirty.has(window) ||
+      this._worldPaintingDirty.get(window)
+    ) {
       // console.log("World needs repaint");
       // Restore the last state.
       let i: number = 0;
@@ -272,9 +277,13 @@ export default class World {
         }
         const plot: WindowNode = this._worldRoots[i];
         if (!plot.localPaintGroup()) {
-          throw new Error('World root must have a paint group');
+          throw new Error("World root must have a paint group");
         }
-        const needsUpdate: boolean = plot.paint(window, timeRemaining(), paintContext);
+        const needsUpdate: boolean = plot.paint(
+          window,
+          timeRemaining(),
+          paintContext
+        );
         if (needsUpdate) {
           this._previousWorldPaintState.set(window, i);
           return true;
@@ -290,11 +299,14 @@ export default class World {
 
     this._cameraBox.paint(window);
 
-
     return false;
   }
 
-  render(window: BasicWindow, camera: Camera, paintContext: Component): boolean {
+  render(
+    window: BasicWindow,
+    camera: Camera,
+    paintContext: Component
+  ): boolean {
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -302,16 +314,17 @@ export default class World {
     let needsUpdate: boolean = false;
     for (let i = 0; i < this._worldRoots.length; ++i) {
       needsUpdate =
-        this._worldRoots[i].renderIteratively(window, camera, paintContext) || needsUpdate;
+        this._worldRoots[i].renderIteratively(window, camera, paintContext) ||
+        needsUpdate;
     }
     this._cameraBox.render(window, camera);
     return needsUpdate;
   }
 }
 
-const worldTests = new TestSuite('World');
+const worldTests = new TestSuite("World");
 
-worldTests.addTest('World.plot', function() {
+worldTests.addTest("World.plot", function () {
   const w = new World();
 
   let f = 0;
@@ -323,13 +336,13 @@ worldTests.addTest('World.plot', function() {
     f = 3;
   }
   if (f != 3) {
-    return 'plot must fail with null node';
+    return "plot must fail with null node";
   }
 });
 
-worldTests.addTest('world.plot with caret', function() {
+worldTests.addTest("world.plot with caret", function () {
   const w = new World();
-  const car = new Caret('b');
+  const car = new Caret("b");
   let f = 0;
   try {
     f = 1;
@@ -339,17 +352,17 @@ worldTests.addTest('world.plot with caret', function() {
     f = ex;
   }
   if (f != 2) {
-    return 'plot must handle being passed a Caret: ' + f;
+    return "plot must handle being passed a Caret: " + f;
   }
 });
 
-worldTests.addTest('boundingRect', function() {
+worldTests.addTest("boundingRect", function () {
   const w = new World();
-  const car = new Caret('b');
+  const car = new Caret("b");
   w.plot(car.node());
   const r = w.boundingRect();
   // console.log(r);
   if (isNaN(r.width())) {
-    return 'Width must not be NaN';
+    return "Width must not be NaN";
   }
 });

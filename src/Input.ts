@@ -1,60 +1,56 @@
-import {TimeoutTimer} from 'parsegraph-timing';
-import fuzzyEquals from 'parsegraph-fuzzyequals';
-import {CLICK_DELAY_MILLIS, INTERVAL} from 'parsegraph-window';
-import {matrixTransform2D, makeInverse3x3, Matrix3x3} from 'parsegraph-matrix';
-import {Direction} from 'parsegraph-direction';
-import {Alignment} from 'parsegraph-layout';
-import Color from 'parsegraph-color';
-import BlockPainter from 'parsegraph-blockpainter';
-import AnimatedSpotlight from './AnimatedSpotlight';
-import {Type} from './DefaultNodeType';
-import Viewport from './Viewport';
-import EventNode from './EventNode';
-import Method from 'parsegraph-method';
+import { TimeoutTimer } from "parsegraph-timing";
+import fuzzyEquals from "parsegraph-fuzzyequals";
+import { CLICK_DELAY_MILLIS, INTERVAL } from "parsegraph-window";
+import {
+  matrixTransform2D,
+  makeInverse3x3,
+  Matrix3x3,
+} from "parsegraph-matrix";
+import { Direction } from "parsegraph-direction";
+import { Alignment } from "parsegraph-layout";
+import Color from "parsegraph-color";
+import BlockPainter from "parsegraph-blockpainter";
+import AnimatedSpotlight from "./AnimatedSpotlight";
+import { Type } from "./DefaultNodeType";
+import Viewport from "./Viewport";
+import EventNode from "./EventNode";
+import Method from "parsegraph-method";
 
 export const TOUCH_SENSITIVITY = 1;
 export const MOUSE_SENSITIVITY = 1;
 
 let impulseThreshold = 20;
-let impulseDecay = .0;
-export function getImpulse()
-{
+let impulseDecay = 0.0;
+export function getImpulse() {
   return [impulseThreshold, impulseDecay];
 }
 
-export function setImpulse(threshold:number, decay:number)
-{
+export function setImpulse(threshold: number, decay: number) {
   impulseThreshold = threshold;
   impulseDecay = decay;
 }
 
 let mouseImpulseAdjustment = -0.135;
-export function getMouseImpulseAdjustment()
-{
+export function getMouseImpulseAdjustment() {
   return mouseImpulseAdjustment;
 }
-export function setMouseImpulseAdjustment(value:number)
-{
+export function setMouseImpulseAdjustment(value: number) {
   mouseImpulseAdjustment = value;
 }
 
 let wheelImpulseAdjustment = 0.75;
-export function getWheelImpulseAdjustment()
-{
+export function getWheelImpulseAdjustment() {
   return wheelImpulseAdjustment;
 }
-export function setWheelImpulseAdjustment(value:number)
-{
+export function setWheelImpulseAdjustment(value: number) {
   wheelImpulseAdjustment = value;
 }
 
 let impulseRetention = 1;
-export function getImpulseRetention()
-{
+export function getImpulseRetention() {
   return impulseRetention;
 }
-export function setImpulseRetention(value:number)
-{
+export function setImpulseRetention(value: number) {
   impulseRetention = value;
 }
 
@@ -64,19 +60,19 @@ export const SLIDER_NUDGE = 0.01;
 // How many milliseconds to commit a layout if an input event is detected.
 export const INPUT_LAYOUT_TIME = INTERVAL;
 
-const RESET_CAMERA_KEY = 'Escape';
-const CLICK_KEY = ' ';
+const RESET_CAMERA_KEY = "Escape";
+const CLICK_KEY = " ";
 
 const WHEEL_MOVES_FOCUS = true;
 
-const MOVE_UPWARD_KEY = 'ArrowUp';
-const MOVE_DOWNWARD_KEY = 'ArrowDown';
-const MOVE_BACKWARD_KEY = 'ArrowLeft';
-const MOVE_FORWARD_KEY = 'ArrowRight';
-const MOVE_TO_FORWARD_END_KEY = 'End';
-const MOVE_TO_BACKWARD_END_KEY = 'Home';
-const MOVE_TO_UPWARD_END_KEY = 'PageUp';
-const MOVE_TO_DOWNWARD_END_KEY = 'PageDown';
+const MOVE_UPWARD_KEY = "ArrowUp";
+const MOVE_DOWNWARD_KEY = "ArrowDown";
+const MOVE_BACKWARD_KEY = "ArrowLeft";
+const MOVE_FORWARD_KEY = "ArrowRight";
+const MOVE_TO_FORWARD_END_KEY = "End";
+const MOVE_TO_BACKWARD_END_KEY = "Home";
+const MOVE_TO_UPWARD_END_KEY = "PageUp";
+const MOVE_TO_DOWNWARD_END_KEY = "PageDown";
 const CARET_COLOR = new Color(0, 0, 0, 0.5);
 
 const MIN_CAMERA_SCALE = 0.00125;
@@ -86,36 +82,36 @@ const MIN_CAMERA_SCALE = 0.00125;
 // const MOVE_BACKWARD_KEY = "a";
 // const MOVE_FORWARD_KEY = "d";
 
-const ZOOM_IN_KEY = 'ZoomIn';
-const ZOOM_OUT_KEY = 'ZoomOut';
+const ZOOM_IN_KEY = "ZoomIn";
+const ZOOM_OUT_KEY = "ZoomOut";
 
 const minimum = 0.005;
 
 export default class Input {
-  _viewport:Viewport;
-  _mousedownTime:number;
-  _mouseupTimeout:TimeoutTimer;
-  _updateRepeatedly:boolean;
-  _caretPainter:BlockPainter;
-  _caretPos:number[];
-  _caretColor:Color;
-  _focusedNode:EventNode;
-  _focusedLabel:boolean;
-  _clicksDetected:number;
-  _spotlight:AnimatedSpotlight;
-  _mouseVersion:number;
-  keydowns:{[id:string]:Date};
-  _zoomTouchDistance:number;
-  _selectedSlider:EventNode;
-  listener:Method;
-  _attachedMouseListener:Function;
-  _horizontalJerk:number;
-  _verticalJerk:number;
-  _horizontalImpulse:number;
-  _verticalImpulse:number;
-  _clickedNode:EventNode;
+  _viewport: Viewport;
+  _mousedownTime: number;
+  _mouseupTimeout: TimeoutTimer;
+  _updateRepeatedly: boolean;
+  _caretPainter: BlockPainter;
+  _caretPos: number[];
+  _caretColor: Color;
+  _focusedNode: EventNode;
+  _focusedLabel: boolean;
+  _clicksDetected: number;
+  _spotlight: AnimatedSpotlight;
+  _mouseVersion: number;
+  keydowns: { [id: string]: Date };
+  _zoomTouchDistance: number;
+  _selectedSlider: EventNode;
+  listener: Method;
+  _attachedMouseListener: Function;
+  _horizontalJerk: number;
+  _verticalJerk: number;
+  _horizontalImpulse: number;
+  _verticalImpulse: number;
+  _clickedNode: EventNode;
 
-  constructor(viewport:Viewport) {
+  constructor(viewport: Viewport) {
     this._viewport = viewport;
     this._mousedownTime = null;
     this._mouseupTimeout = new TimeoutTimer();
@@ -148,10 +144,7 @@ export default class Input {
     this.resetImpulse();
   }
 
-  adjustSelectedSlider(
-      newVal:number,
-      isAbsolute?:boolean,
-  ) {
+  adjustSelectedSlider(newVal: number, isAbsolute?: boolean) {
     if (!this._selectedSlider) {
       return;
     }
@@ -162,7 +155,7 @@ export default class Input {
     this._selectedSlider.setValue(newVal);
     this._selectedSlider.layoutWasChanged();
     this.scheduleRepaint();
-  };
+  }
 
   setSelectedSlider() {
     if (this._selectedSlider) {
@@ -170,9 +163,9 @@ export default class Input {
     }
     this._selectedSlider = null;
     this.scheduleRepaint();
-  };
+  }
 
-  sliderKey(keyName:string) {
+  sliderKey(keyName: string) {
     const diff = SLIDER_NUDGE;
     switch (keyName) {
       case MOVE_BACKWARD_KEY:
@@ -181,9 +174,9 @@ export default class Input {
       case MOVE_FORWARD_KEY:
         this.adjustSelectedSlider(diff, false);
         return;
-      case 'Space':
-      case 'Spacebar':
-      case ' ':
+      case "Space":
+      case "Spacebar":
+      case " ":
       case RESET_CAMERA_KEY:
         this._selectedSlider.layoutWasChanged();
         this._attachedMouseListener = null;
@@ -193,9 +186,9 @@ export default class Input {
       default:
         return false;
     }
-  };
+  }
 
-  focusMovementNavKey(keyName:string):boolean {
+  focusMovementNavKey(keyName: string): boolean {
     switch (keyName) {
       case MOVE_BACKWARD_KEY:
         this.clearImpulse();
@@ -217,36 +210,36 @@ export default class Input {
         return this.moveToEnd(Direction.BACKWARD);
       case MOVE_DOWNWARD_KEY:
         this.clearImpulse();
-        return this.moveInwardly(Direction.DOWNWARD)
+        return this.moveInwardly(Direction.DOWNWARD);
       case MOVE_UPWARD_KEY:
         this.clearImpulse();
         return this.moveOutwardly(Direction.UPWARD);
-      case 'Backspace':
+      case "Backspace":
         return this.moveFocus(Direction.OUTWARD);
       default:
         return false;
     }
   }
 
-  focusNavKey(keyName:string, event:any):boolean {
+  focusNavKey(keyName: string, event: any): boolean {
     if (this.focusMovementNavKey(keyName)) {
       return true;
     }
     switch (keyName) {
-      case 'Tab':
+      case "Tab":
         this.clearImpulse();
-        const toNode = event.shiftKey ?
-          this._focusedNode._extended.prevTabNode :
-          this._focusedNode._extended.nextTabNode;
+        const toNode = event.shiftKey
+          ? this._focusedNode._extended.prevTabNode
+          : this._focusedNode._extended.nextTabNode;
         if (toNode) {
           this.setFocusedNode(toNode);
           return true;
         }
         break;
-      case 'Enter':
+      case "Enter":
         this.clearImpulse();
         if (this._focusedNode.hasKeyListener()) {
-          if (this._focusedNode.key('Enter', this.viewport())) {
+          if (this._focusedNode.key("Enter", this.viewport())) {
             // Node handled it.
             return true;
           }
@@ -270,12 +263,14 @@ export default class Input {
         return true;
       case ZOOM_IN_KEY:
         this.clearImpulse();
-        this._viewport.setFocusScale((1/1.1)*this._viewport.getFocusScale());
+        this._viewport.setFocusScale(
+          (1 / 1.1) * this._viewport.getFocusScale()
+        );
         this.scheduleRepaint();
         return true;
       case ZOOM_OUT_KEY:
         this.clearImpulse();
-        this._viewport.setFocusScale((1.1)*this._viewport.getFocusScale());
+        this._viewport.setFocusScale(1.1 * this._viewport.getFocusScale());
         this.scheduleRepaint();
         return true;
       case RESET_CAMERA_KEY:
@@ -284,9 +279,9 @@ export default class Input {
       default:
         return false;
     }
-  };
+  }
 
-  focusKey(keyName:string, event:any) {
+  focusKey(keyName: string, event: any) {
     if (this._focusedNode._label && event.ctrlKey) {
       if (this._focusedNode._label.ctrlKey(keyName)) {
         // console.log("LAYOUT CHANGED");
@@ -311,30 +306,30 @@ export default class Input {
       this._focusedNode.layoutWasChanged();
       this.scheduleRepaint();
       return true;
-    } else 
+    }
     // Didn't move the caret, so interpret it as a key move
     // on the node itself.
-    if(this.focusNavKey(keyName, event)) {
+    else if (this.focusNavKey(keyName, event)) {
       return true;
     } else {
       this._focusedNode.click(this._viewport);
       this._focusedNode.key(keyName, this._viewport);
       this._focusedNode.click(this._viewport);
     }
-  };
+  }
 
   carousel() {
     return this.viewport().carousel();
   }
 
-  navKey(keyName:string, event:any) {
+  navKey(keyName: string, event: any) {
     switch (keyName) {
       case CLICK_KEY:
         // console.log("Q key for click pressed!");
         const mouseInWorld = matrixTransform2D(
-            makeInverse3x3(this.camera().worldMatrix()),
-            event.x,
-            event.y,
+          makeInverse3x3(this.camera().worldMatrix()),
+          event.x,
+          event.y
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], true)
@@ -360,9 +355,9 @@ export default class Input {
         return true;
     }
     return false;
-  };
+  }
 
-  onKeydown(event:any) {
+  onKeydown(event: any) {
     const keyName = getproperkeyname(event);
     if (keyName.length === 0) {
       return true;
@@ -391,9 +386,9 @@ export default class Input {
     this.keydowns[keyName] = new Date();
 
     return this.navKey(keyName, event);
-  };
+  }
 
-  onKeyup(event:any) {
+  onKeyup(event: any) {
     const keyName = getproperkeyname(event);
     // console.log(keyName);
 
@@ -406,9 +401,9 @@ export default class Input {
     switch (keyName) {
       case CLICK_KEY:
         const mouseInWorld = matrixTransform2D(
-            makeInverse3x3(this.camera().worldMatrix()),
-            event.x,
-            event.y,
+          makeInverse3x3(this.camera().worldMatrix()),
+          event.x,
+          event.y
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], false)
@@ -427,15 +422,17 @@ export default class Input {
         return true;
     }
     return false;
-  };
+  }
 
-  moveToEnd(dir:Direction):boolean {
+  moveToEnd(dir: Direction): boolean {
     let moved = false;
-    while(this.moveFocus(dir)) { moved = true; };
+    while (this.moveFocus(dir)) {
+      moved = true;
+    }
     return moved;
-  };
+  }
 
-  moveForwardly(skipHorizontalInward?:boolean, event?:any):boolean {
+  moveForwardly(skipHorizontalInward?: boolean, event?: any): boolean {
     let node = this._focusedNode;
     if (
       node.hasNode(Direction.INWARD) &&
@@ -475,18 +472,18 @@ export default class Input {
     }
     // Continue traversing using the found node.
     return true;
-  };
+  }
 
-  moveInwardly(dir:Direction):boolean {
+  moveInwardly(dir: Direction): boolean {
     return this.moveFocus(dir) || this.moveFocus(Direction.INWARD);
-  };
+  }
 
-  moveOutwardly(dir:Direction):boolean {
+  moveOutwardly(dir: Direction): boolean {
     return this.moveFocus(dir) || this.moveFocus(Direction.OUTWARD);
   }
 
-  moveFocus(dir:Direction):boolean {
-    if(!this._focusedNode) {
+  moveFocus(dir: Direction): boolean {
+    if (!this._focusedNode) {
       return false;
     }
     const neighbor = this._focusedNode.nodeAt(dir);
@@ -495,18 +492,18 @@ export default class Input {
       return true;
     }
     return false;
-  };
+  }
 
   scheduleRepaint() {
     this.world().scheduleRepaint();
     this._viewport.scheduleRepaint();
-  };
+  }
 
-  addImpulse(x:number, y:number):void {
-    this._horizontalJerk = this._horizontalJerk*getImpulseRetention() + x;
-    this._verticalJerk = this._verticalJerk*getImpulseRetention() + y;
+  addImpulse(x: number, y: number): void {
+    this._horizontalJerk = this._horizontalJerk * getImpulseRetention() + x;
+    this._verticalJerk = this._verticalJerk * getImpulseRetention() + y;
     this.scheduleRepaint();
-  };
+  }
 
   clearImpulse() {
     console.log("Clearing impulse");
@@ -514,22 +511,33 @@ export default class Input {
     this._verticalJerk = 0;
     this._horizontalImpulse = 0;
     this._verticalImpulse = 0;
-  };
+  }
 
   resetImpulse() {
     this.clearImpulse();
-  };
+  }
 
   hasImpulse() {
-    console.log("Checking for impulse: " + this._horizontalImpulse + ", " + this._verticalImpulse);
-    return !fuzzyEquals(this._horizontalImpulse, 0, minimum) || !fuzzyEquals(this._verticalImpulse, 0, minimum)
-  };
+    console.log(
+      "Checking for impulse: " +
+        this._horizontalImpulse +
+        ", " +
+        this._verticalImpulse
+    );
+    return (
+      !fuzzyEquals(this._horizontalImpulse, 0, minimum) ||
+      !fuzzyEquals(this._verticalImpulse, 0, minimum)
+    );
+  }
 
   hasJerk() {
-    return !fuzzyEquals(this._horizontalJerk, 0, minimum) || !fuzzyEquals(this._verticalJerk, 0, minimum);
-  };
+    return (
+      !fuzzyEquals(this._horizontalJerk, 0, minimum) ||
+      !fuzzyEquals(this._verticalJerk, 0, minimum)
+    );
+  }
 
-  checkImpulse(THRESHOLD:number, DECAY:number) {
+  checkImpulse(THRESHOLD: number, DECAY: number) {
     // console.log("Before jerk");
     // console.log(this._horizontalImpulse, this._horizontalJerk);
     // console.log(this._verticalImpulse, this._verticalJerk);
@@ -545,14 +553,14 @@ export default class Input {
     // console.log(this._horizontalImpulse, this._horizontalJerk);
     // console.log(this._verticalImpulse, this._verticalJerk);
 
-    const getImpulseDirection = ()=>{
-      if(this._verticalImpulse < -THRESHOLD) {
+    const getImpulseDirection = () => {
+      if (this._verticalImpulse < -THRESHOLD) {
         return Direction.UPWARD;
       } else if (this._verticalImpulse > THRESHOLD) {
         return Direction.DOWNWARD;
-      } else if(this._horizontalImpulse > THRESHOLD) {
+      } else if (this._horizontalImpulse > THRESHOLD) {
         return Direction.FORWARD;
-      } else if(this._horizontalImpulse < -THRESHOLD) {
+      } else if (this._horizontalImpulse < -THRESHOLD) {
         return Direction.BACKWARD;
       } else {
         return Direction.NULL;
@@ -579,13 +587,16 @@ export default class Input {
     // console.log(this._verticalImpulse, this._verticalJerk);
 
     return false;
-  };
+  }
 
-  onWheel(event:any) {
+  onWheel(event: any) {
     console.log(event);
 
     if (WHEEL_MOVES_FOCUS && this._focusedNode) {
-      this.addImpulse(getWheelImpulseAdjustment() * event.spinX, getWheelImpulseAdjustment() * event.spinY);
+      this.addImpulse(
+        getWheelImpulseAdjustment() * event.spinX,
+        getWheelImpulseAdjustment() * event.spinY
+      );
       return true;
     }
 
@@ -602,13 +613,13 @@ export default class Input {
     }
     this.mouseChanged();
     return true;
-  };
+  }
 
   camera() {
     return this._viewport.camera();
-  };
+  }
 
-  onTouchzoom(event:any) {
+  onTouchzoom(event: any) {
     // Zoom.
     const dist = Math.sqrt(Math.pow(event.dx, 2) + Math.pow(event.dy, 2));
     const cam = this.camera();
@@ -621,25 +632,28 @@ export default class Input {
     }
     this._zoomTouchDistance = dist;
     return false;
-  };
+  }
 
-  onTouchmove(event:any) {
+  onTouchmove(event: any) {
     if (event.multiple) {
       return false;
     }
     return this.onMousemove(event);
-  };
+  }
 
-  mouseDragListener(x:number, y:number, dx:number, dy:number) {
+  mouseDragListener(x: number, y: number, dx: number, dy: number) {
     this.mouseChanged();
     // this._viewport.showInCamera(null);
     // const camera = this.camera();
-    this.addImpulse(getMouseImpulseAdjustment() * -dx, getMouseImpulseAdjustment() * -dy);
+    this.addImpulse(
+      getMouseImpulseAdjustment() * -dx,
+      getMouseImpulseAdjustment() * -dy
+    );
     // camera.adjustOrigin(dx / camera.scale(), dy / camera.scale());
     return true;
-  };
+  }
 
-  onMousedown(event:any) {
+  onMousedown(event: any) {
     if (this.menu().onMousedown(event.x, event.y)) {
       // console.log("Menu click processed.");
       return;
@@ -648,9 +662,9 @@ export default class Input {
     console.log("Mouse is down");
 
     const mouseInWorld = matrixTransform2D(
-        makeInverse3x3(this.camera().worldMatrix()),
-        event.x,
-        event.y,
+      makeInverse3x3(this.camera().worldMatrix()),
+      event.x,
+      event.y
     );
     this.mouseChanged();
 
@@ -678,32 +692,34 @@ export default class Input {
     this._attachedMouseListener = this.mouseDragListener;
     // console.log("Repainting graph");
     return true;
-  };
+  }
 
-  onMousemove(event:any) {
+  onMousemove(event: any) {
     if (this._viewport.menu().onMousemove(event.x, event.y)) {
       return true;
     }
 
     const mouseInWorld = matrixTransform2D(
-        makeInverse3x3(this.camera().worldMatrix()),
-        event.x,
-        event.y,
+      makeInverse3x3(this.camera().worldMatrix()),
+      event.x,
+      event.y
     );
 
     if (this.carousel().isCarouselShown()) {
       this.mouseChanged();
 
-      const overClickable:number = this.carousel().mouseOverCarousel(
-        mouseInWorld[0], mouseInWorld[1]);
+      const overClickable: number = this.carousel().mouseOverCarousel(
+        mouseInWorld[0],
+        mouseInWorld[1]
+      );
       switch (overClickable) {
         case 2:
-          this._viewport.setCursor('pointer');
+          this._viewport.setCursor("pointer");
           break;
         case 1:
           break;
         case 0:
-          this._viewport.setCursor('auto');
+          this._viewport.setCursor("auto");
           break;
       }
 
@@ -713,10 +729,10 @@ export default class Input {
     // Moving during a mousedown i.e. dragging (or zooming)
     if (this._attachedMouseListener) {
       return this._attachedMouseListener(
-          mouseInWorld[0],
-          mouseInWorld[1],
-          event.dx,
-          event.dy,
+        mouseInWorld[0],
+        mouseInWorld[1],
+        event.dx,
+        event.dy
       );
     }
 
@@ -727,32 +743,32 @@ export default class Input {
       overClickable = 1;
     } else {
       overClickable = this._viewport
-          .world()
-          .mouseOver(mouseInWorld[0], mouseInWorld[1]);
+        .world()
+        .mouseOver(mouseInWorld[0], mouseInWorld[1]);
     }
     switch (overClickable) {
       case 2:
-        this._viewport.setCursor('pointer');
+        this._viewport.setCursor("pointer");
         break;
       case 1:
         // console.log("World not ready");
         break;
       case 0:
-        this._viewport.setCursor('auto');
+        this._viewport.setCursor("auto");
         break;
     }
     this.mouseChanged();
     return true;
-  };
+  }
 
-  onTouchstart(event:any) {
+  onTouchstart(event: any) {
     if (event.multiple) {
       return false;
     }
     return this.onMousedown(event);
-  };
+  }
 
-  sliderListener(x:number) {
+  sliderListener(x: number) {
     // if(isVerticalDirection(this._selectedSlider.parentDirection())) {
     const nodeWidth = this._selectedSlider.absoluteSize().width();
     let newVal;
@@ -770,7 +786,8 @@ export default class Input {
       // console.log("PCT: " + (x - this._selectedSlider.absoluteX()));
       // console.log("In between: " + ((nodeWidth/2 +
       //   x - this._selectedSlider.absoluteX()) / nodeWidth));
-      newVal = (nodeWidth / 2 + x - this._selectedSlider.absoluteX()) / nodeWidth;
+      newVal =
+        (nodeWidth / 2 + x - this._selectedSlider.absoluteX()) / nodeWidth;
     }
     this.adjustSelectedSlider(newVal, true);
     this._selectedSlider.layoutWasChanged();
@@ -782,9 +799,9 @@ export default class Input {
     this.mouseChanged();
 
     return true;
-  };
+  }
 
-  checkForNodeClick(x:number, y:number, onlySlider?:boolean) {
+  checkForNodeClick(x: number, y: number, onlySlider?: boolean) {
     if (!this.world().commitLayout(INPUT_LAYOUT_TIME)) {
       return null;
     }
@@ -824,7 +841,7 @@ export default class Input {
     // Check if the selected node has a click listener.
     if (selectedNode.hasClickListener()) {
       // console.log("Selected Node has click listener", selectedNode);
-      if(this._focusedNode === selectedNode) {
+      if (this._focusedNode === selectedNode) {
         const rv = selectedNode.click(this._viewport);
         if (rv !== false) {
           return selectedNode;
@@ -845,8 +862,8 @@ export default class Input {
     ) {
       // console.log("Clicked label");
       selectedLabel.click(
-          (x - selectedLabel._x) / selectedLabel._scale,
-          (y - selectedLabel._y) / selectedLabel._scale,
+        (x - selectedLabel._x) / selectedLabel._scale,
+        (y - selectedLabel._y) / selectedLabel._scale
       );
       // console.log(selectedLabel.caretLine());
       // console.log(selectedLabel.caretPos());
@@ -863,7 +880,7 @@ export default class Input {
     }
 
     return null;
-  };
+  }
 
   afterMouseTimeout() {
     // Cancel the timer if we have found a double click
@@ -878,14 +895,14 @@ export default class Input {
     }
 
     this._clicksDetected = 0;
-  };
+  }
 
-  onMouseup(event:any) {
+  onMouseup(event: any) {
     // console.log("MOUSEUP");
     const mouseInWorld = matrixTransform2D(
-        makeInverse3x3(this.camera().worldMatrix()),
-        event.x,
-        event.y,
+      makeInverse3x3(this.camera().worldMatrix()),
+      event.x,
+      event.y
     );
 
     if (
@@ -919,17 +936,17 @@ export default class Input {
       // console.log("Click missed timeout");
     }
     return false;
-  };
+  }
 
-  onTouchend(event:any) {
+  onTouchend(event: any) {
     if (event.multiple) {
       return false;
     }
     this._zoomTouchDistance = 0;
     return this.onMouseup(event);
-  };
+  }
 
-  SetListener(listener:Function, thisArg?:object) {
+  SetListener(listener: Function, thisArg?: object) {
     if (!listener) {
       this.listener = null;
       return;
@@ -938,21 +955,21 @@ export default class Input {
       thisArg = this;
     }
     this.listener = new Method(listener, thisArg);
-  };
+  }
 
   updateRepeatedly() {
     return this._updateRepeatedly || this.carousel().updateRepeatedly();
-  };
+  }
 
   mouseVersion() {
     return this._mouseVersion;
-  };
+  }
 
   mouseChanged() {
     ++this._mouseVersion;
-  };
+  }
 
-  resetCamera(complete?:boolean) {
+  resetCamera(complete?: boolean) {
     const defaultScale = 0.25;
     const cam = this.camera();
     let x = this._viewport.gl().drawingBufferWidth / 2;
@@ -967,9 +984,9 @@ export default class Input {
       y = this._viewport.height() / (2 * defaultScale);
       cam.setOrigin(x, y);
     }
-  };
+  }
 
-  update(t:Date) {
+  update(t: Date) {
     const cam = this.camera();
 
     const xSpeed = 1000 / cam.scale();
@@ -978,8 +995,8 @@ export default class Input {
 
     let needsUpdate = this._viewport.mouseVersion() !== this.mouseVersion();
     this.window().log(
-        'Input.update=' +
-        (this._viewport.mouseVersion() + ' vs ' + this.mouseVersion()),
+      "Input.update=" +
+        (this._viewport.mouseVersion() + " vs " + this.mouseVersion())
     );
 
     this._updateRepeatedly = false;
@@ -1014,9 +1031,9 @@ export default class Input {
       this._updateRepeatedly = true;
       needsUpdate = true;
       cam.zoomToPoint(
-          Math.pow(1.1, scaleSpeed * this.keyElapsed(ZOOM_OUT_KEY, t)),
-          this._viewport.gl().drawingBufferWidth / 2,
-          this._viewport.gl().drawingBufferHeight / 2,
+        Math.pow(1.1, scaleSpeed * this.keyElapsed(ZOOM_OUT_KEY, t)),
+        this._viewport.gl().drawingBufferWidth / 2,
+        this._viewport.gl().drawingBufferHeight / 2
       );
     }
     if (this.getKey(ZOOM_IN_KEY)) {
@@ -1025,9 +1042,9 @@ export default class Input {
       needsUpdate = true;
       if (cam.scale() >= MIN_CAMERA_SCALE) {
         cam.zoomToPoint(
-            Math.pow(1.1, -scaleSpeed * this.keyElapsed(ZOOM_IN_KEY, t)),
-            this._viewport.gl().drawingBufferWidth / 2,
-            this._viewport.gl().drawingBufferHeight / 2,
+          Math.pow(1.1, -scaleSpeed * this.keyElapsed(ZOOM_IN_KEY, t)),
+          this._viewport.gl().drawingBufferWidth / 2,
+          this._viewport.gl().drawingBufferHeight / 2
         );
       }
     }
@@ -1063,13 +1080,13 @@ export default class Input {
 
     // console.log("Input update repeatedly status is " + this._updateRepeatedly);
     return needsUpdate;
-  };
+  }
 
-  getKey(key:string) {
+  getKey(key: string) {
     return this.keydowns[key] ? 1 : 0;
-  };
+  }
 
-  keyElapsed(key:string, t:Date) {
+  keyElapsed(key: string, t: Date) {
     const v = this.keydowns[key];
     if (!v) {
       return 0;
@@ -1077,15 +1094,15 @@ export default class Input {
     const elapsed = (t.getTime() - v.getTime()) / 1000;
     this.keydowns[key] = t;
     return elapsed;
-  };
+  }
 
   window() {
     return this._viewport.window();
-  };
+  }
 
   viewport() {
     return this._viewport;
-  };
+  }
 
   paint() {
     const window = this.window();
@@ -1110,23 +1127,23 @@ export default class Input {
     const cr = label.getCaretRect();
     if (label._x != null && label._y != null) {
       this._caretPainter.drawBlock(
-          label._x + cr.x() * label._scale,
-          label._y + cr.y() * label._scale,
-          label._scale * cr.width(),
-          label._scale * cr.height(),
-          0.01,
-          0.02,
-          1,
+        label._x + cr.x() * label._scale,
+        label._y + cr.y() * label._scale,
+        label._scale * cr.width(),
+        label._scale * cr.height(),
+        0.01,
+        0.02,
+        1
       );
     }
-  };
+  }
 
   focusedNode() {
     return this._focusedNode;
-  };
+  }
 
-  setFocusedNode(focusedNode:EventNode) {
-    if(focusedNode === this._focusedNode) {
+  setFocusedNode(focusedNode: EventNode) {
+    if (focusedNode === this._focusedNode) {
       return;
     }
     this._focusedNode = focusedNode;
@@ -1144,31 +1161,31 @@ export default class Input {
       this.carousel().hideCarousel();
       this.carousel().scheduleCarouselRepaint();
       this._spotlight.restart(this._focusedNode);
-      this._focusedNode.events().emit('carousel-load', this._viewport);
+      this._focusedNode.events().emit("carousel-load", this._viewport);
     }
     this.scheduleRepaint();
-  };
+  }
 
   focusedLabel() {
     return this._focusedLabel;
-  };
+  }
 
   menu() {
     return this._viewport.menu();
-  };
+  }
 
   world() {
     return this._viewport.world();
-  };
+  }
 
-  contextChanged(isLost:boolean) {
+  contextChanged(isLost: boolean) {
     if (this._caretPainter) {
       this._caretPainter.contextChanged(isLost);
     }
     this._spotlight.contextChanged(isLost);
-  };
+  }
 
-  render(world:Matrix3x3, scale:number) {
+  render(world: Matrix3x3, scale: number) {
     const gl = this._viewport.gl();
     if (this._caretPainter) {
       gl.disable(gl.CULL_FACE);
@@ -1181,46 +1198,43 @@ export default class Input {
       return this._spotlight.render(world);
     }
     return false;
-  };
+  }
 }
 
-const properKeyCodes:{[id:number]:string} = {
-  13:"Enter",
-  27:"Escape",
-  37:"ArrowLeft",
-  38:"ArrowUp",
-  39:"ArrowRight",
-  40:"ArrowDown",
-}
-
-const directKeyNames:string[] = [
-  'Enter',
-  'Escape',
-  'ArrowLeft',
-  'ArrowUp',
-  'ArrowRight',
-  'ArrowDown',
-  'PageDown',
-  'PageUp',
-  'Home',
-  'End',
-]
-
-const mappedKeyNames:{[id:string]:string} = {
-  "-":"ZoomIn",
-  "_":"ZoomIn",
-  "+":"ZoomOut",
-  "=":"ZoomOut",
+const properKeyCodes: { [id: number]: string } = {
+  13: "Enter",
+  27: "Escape",
+  37: "ArrowLeft",
+  38: "ArrowUp",
+  39: "ArrowRight",
+  40: "ArrowDown",
 };
 
-export function getproperkeyname(event:KeyboardEvent) {
+const directKeyNames: string[] = [
+  "Enter",
+  "Escape",
+  "ArrowLeft",
+  "ArrowUp",
+  "ArrowRight",
+  "ArrowDown",
+  "PageDown",
+  "PageUp",
+  "Home",
+  "End",
+];
+
+const mappedKeyNames: { [id: string]: string } = {
+  "-": "ZoomIn",
+  _: "ZoomIn",
+  "+": "ZoomOut",
+  "=": "ZoomOut",
+};
+
+export function getproperkeyname(event: KeyboardEvent) {
   const keyName = event.key;
   console.log(keyName + " " + event.keyCode);
   if (directKeyNames.indexOf(keyName) >= 0) {
     return keyName;
-
   }
-  return mappedKeyNames[keyName] ||
-    properKeyCodes[event.keyCode] ||
-    keyName;
+  return mappedKeyNames[keyName] || properKeyCodes[event.keyCode] || keyName;
 }

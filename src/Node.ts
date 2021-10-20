@@ -1,20 +1,16 @@
-import {
-  defaultFont,
-} from './settings';
+import { defaultFont } from "./settings";
 
-import Label from './Label';
-import { BasicWindow } from 'parsegraph-window';
-import NodePainter from './NodePainter';
-import Color from 'parsegraph-color';
-import Font from './Font';
-import Size from 'parsegraph-size';
+import Label from "./Label";
+import { BasicWindow } from "parsegraph-window";
+import NodePainter from "./NodePainter";
+import Color from "parsegraph-color";
+import Font from "./Font";
+import Size from "parsegraph-size";
 
-import NodeType from './NodeType';
+import NodeType from "./NodeType";
 
-import {
-  Direction, NodePalette, PreferredAxis
-} from 'parsegraph-direction';
-import EventNode from './EventNode';
+import { Direction, NodePalette, PreferredAxis } from "parsegraph-direction";
+import EventNode from "./EventNode";
 
 export default class Node<T extends NodeType<T>> extends EventNode {
   _type: T;
@@ -30,11 +26,11 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     this._label = null;
   }
 
-  palette():NodePalette<EventNode> {
+  palette(): NodePalette<EventNode> {
     return this.type().palette();
   }
 
-  newPainter(window:BasicWindow, paintContext: any):NodePainter {
+  newPainter(window: BasicWindow, paintContext: any): NodePainter {
     return this.type().newPainter(window, this, paintContext);
   }
 
@@ -42,11 +38,11 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     return this.type().sizeWithoutPadding(this, bodySize);
   }
 
-  supportsDirection(inDirection:Direction):boolean {
+  supportsDirection(inDirection: Direction): boolean {
     return this.type().supportsDirection(inDirection);
   }
 
-  spawnNode(inDirection:Direction, newType:any):Node<T> {
+  spawnNode(inDirection: Direction, newType: any): Node<T> {
     const node = this.type().palette().spawn(newType) as this;
     this.connectNode(inDirection, node);
     node.setLayoutPreference(PreferredAxis.PERPENDICULAR);
@@ -83,7 +79,7 @@ export default class Node<T extends NodeType<T>> extends EventNode {
   }
 
   toString(): string {
-    return '[Node ' + this._id + ']';
+    return "[Node " + this._id + "]";
   }
 
   backdropColor(): Color {

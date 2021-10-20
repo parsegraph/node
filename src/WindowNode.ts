@@ -1,4 +1,4 @@
-import {elapsed} from 'parsegraph-timing';
+import { elapsed } from "parsegraph-timing";
 
 // The largest scale at which nodes are shown in camera.
 // export const NATURAL_VIEWPORT_SCALE = 0.5;
@@ -14,20 +14,18 @@ import {
   makeScale3x3I,
   makeTranslation3x3I,
   matrixMultiply3x3I,
-  Matrix3x3
-} from 'parsegraph-matrix';
+  Matrix3x3,
+} from "parsegraph-matrix";
 
-import Rect from 'parsegraph-rect';
-import NodePainter from './NodePainter';
-import Camera from 'parsegraph-camera';
-import Freezer from './Freezer';
+import Rect from "parsegraph-rect";
+import NodePainter from "./NodePainter";
+import Camera from "parsegraph-camera";
+import Freezer from "./Freezer";
 
-import {
-  Direction,
-} from 'parsegraph-direction';
-import {LayoutNode} from 'parsegraph-layout';
-import Viewport from './Viewport';
-import { EventNode } from '.';
+import { Direction } from "parsegraph-direction";
+import { LayoutNode } from "parsegraph-layout";
+import Viewport from "./Viewport";
+import { EventNode } from ".";
 
 class NodeRenderData {
   bounds: Rect;
@@ -75,27 +73,28 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   toString(): string {
-    return '[WindowNode ' + this._id + ']';
+    return "[WindowNode " + this._id + "]";
   }
 
   markDirty(): void {
     super.markDirty();
     this._commitLayoutFunc = null;
     for (const wid in this._windowPaintGroup) {
-      if (Object.prototype.hasOwnProperty.call(
-          this._windowPaintGroup,
-          wid)) {
+      if (Object.prototype.hasOwnProperty.call(this._windowPaintGroup, wid)) {
         this._windowPaintGroup[wid] = null;
       }
     }
   }
 
-  abstract newPainter(window:BasicWindow, paintContext: Component): NodePainter;
+  abstract newPainter(
+    window: BasicWindow,
+    paintContext: Component
+  ): NodePainter;
 
   painter(window: BasicWindow): NodePainter {
     if (!window) {
       throw new Error(
-          'A window must be provided for a NodePainter to be selected',
+        "A window must be provided for a NodePainter to be selected"
       );
     }
     return this._windowPainter[window.id()];
@@ -103,7 +102,7 @@ export default abstract class WindowNode extends LayoutNode {
 
   freeze(freezer: Freezer): void {
     if (!this.localPaintGroup()) {
-      throw new Error('A node must be a paint group in order to be frozen.');
+      throw new Error("A node must be a paint group in order to be frozen.");
     }
     this._cache = freezer.cache(this);
   }
@@ -114,7 +113,7 @@ export default abstract class WindowNode extends LayoutNode {
 
   thaw(): void {
     if (!this.localPaintGroup()) {
-      throw new Error('A node must be a paint group in order to be thawed.');
+      throw new Error("A node must be a paint group in order to be thawed.");
     }
     if (this._cache) {
       this._cache.invalidate();
@@ -127,10 +126,10 @@ export default abstract class WindowNode extends LayoutNode {
     const bodySize = this.absoluteSize();
 
     // const bodyRect = new Rect(
-        // this.absoluteX(),
-        // this.absoluteY(),
-        // bodySize[0],
-        // bodySize[1],
+    // this.absoluteX(),
+    // this.absoluteY(),
+    // bodySize[0],
+    // bodySize[1],
     // );
     // if(cam.ContainsAll(bodyRect)) {
     // return;
@@ -160,8 +159,8 @@ export default abstract class WindowNode extends LayoutNode {
     const ax = this.absoluteX();
     const ay = this.absoluteY();
     cam.setOrigin(
-        -ax + screenWidth / (scaleAdjustment * 2),
-        -ay + screenHeight / (scaleAdjustment * 2),
+      -ax + screenWidth / (scaleAdjustment * 2),
+      -ay + screenHeight / (scaleAdjustment * 2)
     );
   }
 
@@ -175,7 +174,7 @@ export default abstract class WindowNode extends LayoutNode {
     const screenHeight = cam.height();
     if (Number.isNaN(screenWidth) || Number.isNaN(screenHeight)) {
       throw new Error(
-          'Camera size must be set before a node can be shown in it.',
+        "Camera size must be set before a node can be shown in it."
       );
     }
 
@@ -201,7 +200,7 @@ export default abstract class WindowNode extends LayoutNode {
     // Get node extents.
     let x;
     let y;
-    const bv:number[] = [null, null, null];
+    const bv: number[] = [null, null, null];
     this.extentsAt(Direction.BACKWARD).boundingValues(bv);
     x = bv[2] * nodeScale;
     this.extentsAt(Direction.UPWARD).boundingValues(bv);
@@ -224,7 +223,7 @@ export default abstract class WindowNode extends LayoutNode {
     if (!this.localPaintGroup()) {
       return;
     }
-    this.forEachPaintGroup((node:WindowNode)=>{
+    this.forEachPaintGroup((node: WindowNode) => {
       node.markDirty();
       for (const wid in node._windowPainter) {
         if (!Object.prototype.hasOwnProperty.call(node._windowPainter, wid)) {
@@ -238,13 +237,15 @@ export default abstract class WindowNode extends LayoutNode {
     });
   }
 
-  elementFor(context: Component):HTMLElement {
+  elementFor(context: Component): HTMLElement {
     return this._windowElement.get(context);
   }
 
-  prepare(window: BasicWindow, paintContext: Component):void {
-    if ((window.containerFor(paintContext) as HTMLElement).children.length == 0) {
-      const worldEle = document.createElement('div');
+  prepare(window: BasicWindow, paintContext: Component): void {
+    if (
+      (window.containerFor(paintContext) as HTMLElement).children.length == 0
+    ) {
+      const worldEle = document.createElement("div");
       worldEle.className = "world";
       worldEle.style.width = "100vw";
       worldEle.style.height = "100vh";
@@ -254,26 +255,32 @@ export default abstract class WindowNode extends LayoutNode {
       window.containerFor(paintContext).appendChild(worldEle);
     }
     // Loop back to the first node, from the root.
-    this.forEachPaintGroup((pg:WindowNode)=>{
-      pg.forEachNode((node:WindowNode)=>{
+    this.forEachPaintGroup((pg: WindowNode) => {
+      pg.forEachNode((node: WindowNode) => {
         if (node.element() && !node.elementFor(paintContext)) {
           const elem = node.element()(window);
-          if (elem.parentNode !== window.containerFor(paintContext).querySelector(".world")) {
+          if (
+            elem.parentNode !==
+            window.containerFor(paintContext).querySelector(".world")
+          ) {
             if (elem.parentNode) {
               elem.parentNode.removeChild(elem);
             }
-            const sizer = document.createElement('div');
+            const sizer = document.createElement("div");
             sizer.style.width = "100%";
             sizer.style.height = "100%";
             sizer.style.display = "none";
             sizer.style.position = "absolute";
-            new ResizeObserver(()=>{
+            new ResizeObserver(() => {
               node.layoutWasChanged();
               (paintContext as Viewport).world().scheduleRepaint();
               (paintContext as Viewport).scheduleUpdate();
               window.scheduleUpdate();
             }).observe(elem);
-            window.containerFor(paintContext).querySelector(".world").appendChild(sizer);
+            window
+              .containerFor(paintContext)
+              .querySelector(".world")
+              .appendChild(sizer);
             sizer.appendChild(elem);
 
             sizer.style.display = "block";
@@ -282,15 +289,15 @@ export default abstract class WindowNode extends LayoutNode {
             sizer.style.overflow = "hidden";
             sizer.style.transformOrigin = "top left";
 
-            sizer.addEventListener("click", ()=>{
+            sizer.addEventListener("click", () => {
               const viewport = paintContext as Viewport;
               viewport.showInCamera(node as EventNode);
               (node as EventNode).click(viewport);
             });
-            sizer.addEventListener("hover", ()=>{
+            sizer.addEventListener("hover", () => {
               (paintContext as Viewport).setCursor("pointer");
             });
-            sizer.addEventListener("blur", ()=>{
+            sizer.addEventListener("blur", () => {
               (paintContext as Viewport).setCursor(null);
             });
           }
@@ -300,9 +307,13 @@ export default abstract class WindowNode extends LayoutNode {
     });
   }
 
-  paint(window: BasicWindow, timeout?: number, paintContext?: Component): boolean {
+  paint(
+    window: BasicWindow,
+    timeout?: number,
+    paintContext?: Component
+  ): boolean {
     if (!this.localPaintGroup()) {
-      throw new Error('A node must be a paint group in order to be painted');
+      throw new Error("A node must be a paint group in order to be painted");
     }
 
     // Load saved state.
@@ -318,12 +329,12 @@ export default abstract class WindowNode extends LayoutNode {
       return false;
     }
     if (timeout <= 0) {
-      window.log('Paint timeout=' + timeout);
+      window.log("Paint timeout=" + timeout);
       return true;
     }
 
     const t: number = new Date().getTime();
-    const pastTime: Function = function(): boolean {
+    const pastTime: Function = function (): boolean {
       const isPast: boolean =
         timeout !== undefined && new Date().getTime() - t > timeout;
       if (isPast) {
@@ -332,7 +343,6 @@ export default abstract class WindowNode extends LayoutNode {
       }
       return isPast;
     };
-
 
     let cont: Function;
     if (this._commitLayoutFunc) {
@@ -394,9 +404,9 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   renderIteratively(
-      window: BasicWindow,
-      camera: Camera,
-      paintContext: Component
+    window: BasicWindow,
+    camera: Camera,
+    paintContext: Component
   ): boolean {
     const start: Date = new Date();
     // console.log("Rendering iteratively");
@@ -405,7 +415,7 @@ export default abstract class WindowNode extends LayoutNode {
     let heaviestPaintGroup: WindowNode = null;
     let mostRenders: number = 0;
 
-    this.forEachPaintGroup((paintGroup:WindowNode)=>{
+    this.forEachPaintGroup((paintGroup: WindowNode) => {
       // console.log("Rendering node " + paintGroup);
       const painter: NodePainter = paintGroup.painter(window);
       if (!paintGroup.render(window, camera, renderData, paintContext)) {
@@ -427,14 +437,14 @@ export default abstract class WindowNode extends LayoutNode {
     //   (dirtyRenders > 0 ? "(" +
     //   dirtyRenders +
     //   " dirty)" : ""));
-    
+
     const renderTime: number = elapsed(start);
     if (renderTimes.length === 11) {
       renderTimes.splice(Math.floor(Math.random() * 11), 1);
     }
     if (mostRenders > 1) {
       renderTimes.push(renderTime);
-      renderTimes.sort(function(a, b) {
+      renderTimes.sort(function (a, b) {
         return a - b;
       });
       const meanRenderTime = renderTimes[Math.floor(renderTimes.length / 2)];
@@ -455,14 +465,14 @@ export default abstract class WindowNode extends LayoutNode {
                 console.log(str);*/
       }
     }
-    //console.log("Drity renders: ", dirtyRenders);
+    // console.log("Drity renders: ", dirtyRenders);
     return dirtyRenders > 0;
   }
 
   getHeaviestNode(window: BasicWindow): WindowNode {
     let heaviest: number = 0;
     let heaviestNode: WindowNode = this;
-    this.forEachPaintGroup((node:WindowNode)=>{
+    this.forEachPaintGroup((node: WindowNode) => {
       const painter: NodePainter = node._windowPainter[window.id()];
       if (!painter) {
         return;
@@ -476,15 +486,15 @@ export default abstract class WindowNode extends LayoutNode {
     return heaviestNode;
   }
   renderOffscreen(
-      window: BasicWindow,
-      renderWorld: Matrix3x3,
-      renderScale: number,
-      forceSimple: boolean,
-      cam:Camera,
-      paintContext:Component
+    window: BasicWindow,
+    renderWorld: Matrix3x3,
+    renderScale: number,
+    forceSimple: boolean,
+    cam: Camera,
+    paintContext: Component
   ): boolean {
     if (!this.localPaintGroup()) {
-      throw new Error('Cannot render a node that is not a paint group');
+      throw new Error("Cannot render a node that is not a paint group");
     }
     const painter: NodePainter = this._windowPainter[window.id()];
     if (!painter) {
@@ -494,14 +504,14 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   render(
-      window: BasicWindow,
-      camera: Camera,
-      renderData: NodeRenderData,
-      paintContext: Component
+    window: BasicWindow,
+    camera: Camera,
+    renderData: NodeRenderData,
+    paintContext: Component
   ): boolean {
     // console.log("RENDERING THE NODE");
     if (!this.localPaintGroup()) {
-      throw new Error('Cannot render a node that is not a paint group');
+      throw new Error("Cannot render a node that is not a paint group");
     }
     const painter: NodePainter = this._windowPainter[window.id()];
     if (!painter) {
@@ -531,19 +541,19 @@ export default abstract class WindowNode extends LayoutNode {
     const world: Matrix3x3 = camera.project();
     makeScale3x3I(renderData.scaleMat, this._absoluteScale);
     makeTranslation3x3I(
-        renderData.transMat,
-        this._absoluteXPos,
-        this._absoluteYPos,
+      renderData.transMat,
+      this._absoluteXPos,
+      this._absoluteYPos
     );
     matrixMultiply3x3I(
-        renderData.worldMat,
-        renderData.scaleMat,
-        renderData.transMat,
+      renderData.worldMat,
+      renderData.scaleMat,
+      renderData.transMat
     );
     const renderWorld: Matrix3x3 = matrixMultiply3x3I(
-        renderData.worldMat,
-        renderData.worldMat,
-        world,
+      renderData.worldMat,
+      renderData.worldMat,
+      world
     );
     const renderScale: number =
       this._absoluteScale * (camera ? camera.scale() : 1);
@@ -551,16 +561,13 @@ export default abstract class WindowNode extends LayoutNode {
     // console.log("Rendering paint group: " +
     //   this.absoluteX() + " " + this.absoluteY() +
     //   " " + this.absoluteScale());
-    if (
-      this._cache &&
-      renderScale < CACHE_ACTIVATION_SCALE
-    ) {
-      window.log('Rendering ' + this + ' from cache.');
+    if (this._cache && renderScale < CACHE_ACTIVATION_SCALE) {
+      window.log("Rendering " + this + " from cache.");
       const cleanRender = this._cache.render(
-          window,
-          renderWorld,
-          renderData,
-          CACHED_RENDERS === 0,
+        window,
+        renderWorld,
+        renderData,
+        CACHED_RENDERS === 0
       );
       if (IMMEDIATE_RENDERS > 0) {
         // console.log("Immediately rendered " +IMMEDIATE_RENDERS + " times");
@@ -578,22 +585,11 @@ export default abstract class WindowNode extends LayoutNode {
     // console.log(this.absoluteX(), this.absoluteY());
     const overlay = window.overlay();
     overlay.save();
+    window.overlay().scale(camera.scale(), camera.scale());
     window
-        .overlay()
-        .scale(
-            camera.scale(),
-            camera.scale()
-        );
-    window
-        .overlay()
-        .translate(camera.x() + this.absoluteX(),
-            camera.y() + this.absoluteY());
-    window
-        .overlay()
-        .scale(
-            this.absoluteScale(),
-            this.absoluteScale()
-        );
+      .overlay()
+      .translate(camera.x() + this.absoluteX(), camera.y() + this.absoluteY());
+    window.overlay().scale(this.absoluteScale(), this.absoluteScale());
     painter.render(renderWorld, renderScale, false, camera, paintContext);
     overlay.restore();
 

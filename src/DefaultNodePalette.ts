@@ -1,17 +1,19 @@
-import {NodePalette} from 'parsegraph-direction';
-import DefaultNodeType, {Type, readType} from './DefaultNodeType';
-import Node from './Node';
+import { NodePalette } from "parsegraph-direction";
+import DefaultNodeType, { Type, readType } from "./DefaultNodeType";
+import Node from "./Node";
 
-export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType>> {
-  _budType:DefaultNodeType;
-  _blockType:DefaultNodeType;
-  _slotType:DefaultNodeType;
-  _sliderType:DefaultNodeType;
-  _sceneType:DefaultNodeType;
-  _elementType:DefaultNodeType;
-  _mathMode:boolean;
+export default class DefaultNodePalette extends NodePalette<
+  Node<DefaultNodeType>
+> {
+  _budType: DefaultNodeType;
+  _blockType: DefaultNodeType;
+  _slotType: DefaultNodeType;
+  _sliderType: DefaultNodeType;
+  _sceneType: DefaultNodeType;
+  _elementType: DefaultNodeType;
+  _mathMode: boolean;
 
-  constructor(mathMode?:boolean) {
+  constructor(mathMode?: boolean) {
     super();
     this._mathMode = mathMode;
   }
@@ -20,18 +22,18 @@ export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType
     return this.spawn();
   }
 
-  spawn(given?:any): Node<DefaultNodeType> {
+  spawn(given?: any): Node<DefaultNodeType> {
     if (given instanceof Node) {
       return given;
     }
     return new Node<DefaultNodeType>(this.readType(given));
   }
 
-  replace(node:Node<DefaultNodeType>, type:any):void {
+  replace(node: Node<DefaultNodeType>, type: any): void {
     node.setType(this.readType(type));
   }
 
-  ensureTypes():void {
+  ensureTypes(): void {
     if (this._budType) {
       return;
     }
@@ -43,21 +45,27 @@ export default class DefaultNodePalette extends NodePalette<Node<DefaultNodeType
     this._elementType = new DefaultNodeType(this, Type.ELEMENT);
   }
 
-  readType(given?: any):DefaultNodeType {
-    if (given && typeof given === 'object') {
+  readType(given?: any): DefaultNodeType {
+    if (given && typeof given === "object") {
       return given;
     }
-    if (typeof given === 'string') {
+    if (typeof given === "string") {
       given = readType(given);
     }
     this.ensureTypes();
     switch (given) {
-    case Type.BLOCK: return this._blockType;
-    case Type.BUD: return this._budType;
-    case Type.SLOT: return this._slotType;
-    case Type.SCENE: return this._sceneType;
-    case Type.SLIDER: return this._sliderType;
-    case Type.ELEMENT: return this._elementType;
+      case Type.BLOCK:
+        return this._blockType;
+      case Type.BUD:
+        return this._budType;
+      case Type.SLOT:
+        return this._slotType;
+      case Type.SCENE:
+        return this._sceneType;
+      case Type.SLIDER:
+        return this._sliderType;
+      case Type.ELEMENT:
+        return this._elementType;
     }
     return this._budType;
   }

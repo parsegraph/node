@@ -3,12 +3,12 @@ const getNumberPartsUArray = new Uint8Array(getNumberPartsFArray.buffer);
 // http://stackoverflow.com/questions/9383593/extracting-the-exponent-and-mantissa-of-a-javascript-number
 
 export interface NumberParts {
-  sign:number;
-  exponent:number;
-  mantissa:number
+  sign: number;
+  exponent: number;
+  mantissa: number;
 }
 
-export function getNumberParts(x:number):NumberParts {
+export function getNumberParts(x: number): NumberParts {
   const float = getNumberPartsFArray;
   const bytes = getNumberPartsUArray;
   float[0] = x;

@@ -1,3 +1,3 @@
-export default function log(msg:any) {
+export default function log(msg: any) {
   return console.log(msg);
 }

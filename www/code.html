@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <script src="parsegraph-checkglerror.js"></script>
+    <script>
+        parsegraph.setIgnoreGLErrors(true);
+    </script>
+    <script src="parsegraph-node.js"></script>
+    <script>
+        function ParsegraphCode(list) {
+            const caret = new parsegraph.Caret(root);
+
+            const buildNode = (child)=>{
+                if (typeof child === "object" && !Array.isArray(child)) {
+                    caret.spawnMove(spawnDir, "type" in child ? child.type : 'b');
+                    if ("value" in child) {
+                        caret.label(child.value);
+                    }
+                    if (!("children" in child)) {
+                        return;
+                    }
+                    child = child.children;
+                    return new 
+                } else if (!Array.isArray(child)) {
+                    return new parsegraph.ConstantTreeNode('No time');
+                }
+                return buildChildren(child);
+            };
+            const buildChildren = (children)=>{
+                const node = new parsegraph.TreeListNode(new parsegraph.BasicTreeListStyle());
+                children.forEach((child, i)=>{
+                    node.appendChild(buildNode(child));
+                });
+            };
+            if (Array.isArray(list)) {
+                buildChildren(list);
+            } else {
+                buildNode(list);
+            }
+        }
+        function refresh() {
+            alert("Refreshing");
+        }
+        document.addEventListener("DOMContentLoaded", ()=>{
+            const belt = new parsegraph.TimingBelt();
+            const world = new parsegraph.World();
+            const caret = new parsegraph.Caret();
+
+            refresh = ()=>{
+                console.log("Refreshing");
+                console.log("children", document.getElementById("children").value);
+                const children = JSON.parse(document.getElementById("children").value);
+                const align = document.getElementById("align").checked ? 'c' : false;
+                console.log(align, typeof align);
+                const spawnDir = document.getElementById('spawnDir').value;
+                caret.moveToRoot();
+                caret.disconnect('f');
+                caret.disconnect('b');
+                caret.disconnect('d');
+                caret.disconnect('u');
+                caret.align(spawnDir, align);
+                ParsegraphCode(caret.root(), children, spawnDir, align);
+                world.scheduleRepaint();
+                belt.scheduleUpdate();
+            }
+            world.plot(caret.root());
+            parsegraph.render(belt, world, document.getElementById("list-of-one"));
+            refresh();
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Parsegraph Code</h1>
+        <div style="display: flex; flex-direction: row;">
+            <div style="display: flex; flex-direction: column;">
+                <div>
+                    <label for="spawnDir">spawnDir:</label>
+                    <select name="spawnDir" id="spawnDir" onchange="refresh()">
+                        <option value="f">Forward</option>
+                        <option value="d">Downward</option>
+                        <option value="b">Backward</option>
+                        <option value="u">Upward</option>
+                    </select>
+                </div>
+                <div>
+                    <input name="align" id="align" type="checkbox" onchange="refresh()">
+                    <label for="align">Align</label>
+                </div>
+                <textarea
+                    style="flex-grow: 1; min-width: 500px"
+                    oninput="refresh()"
+                    id="children">
+{
+    "value":"No time",
+    "children":[
+        "Hello",
+        "Goodbye",
+        {
+            "type": "u",
+            "value": "Groups",
+            "children": [
+                "So",
+                "afraid"
+            ]
+        },
+        [
+            "Afraid",
+            "Awake"
+        ]
+    ]
+}
+                </textarea>
+            </div>
+            <div id="list-of-one"></div>
+        </div>
+    </div>
+</body>
+</html>

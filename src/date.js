@@ -1,4 +1,4 @@
-import TestSuite from 'parsegraph-testsuite';
+import TestSuite from "parsegraph-testsuite";
 
 export function datesEqual(a, b) {
   if (a == undefined || b == undefined) {
@@ -40,43 +40,43 @@ export function dateGreater(a, b) {
   return true;
 }
 
-const dateTests = new TestSuite('Date');
+const dateTests = new TestSuite("Date");
 
-dateTests.addTest('dateGreater', function() {
+dateTests.addTest("dateGreater", function () {
   if (dateGreater(new Date(2016, 0, 1), new Date(2017, 0, 1))) {
-    return '2016 is showing as greater than 2017?!';
+    return "2016 is showing as greater than 2017?!";
   }
   if (!dateGreater(new Date(2018, 0, 1), new Date(2017, 0, 1))) {
-    return '2018 is showing as less than 2017?!';
+    return "2018 is showing as less than 2017?!";
   }
 });
 
 function getListOfDays() {
   return [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
 }
 
 function getListOfMonths() {
   return [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 }
 
@@ -94,51 +94,46 @@ export const TIMEOUT = 40000;
 export function outputMonth(d, includeYear) {
   let str = parsegraph_getListOfMonths()[d.getMonth()];
   if (includeYear || includeYear === undefined) {
-    str += ' ' + d.getFullYear();
+    str += " " + d.getFullYear();
   }
   return str;
 }
 
-export function outputDate(
-    d,
-    includeDate,
-    includeTime,
-    includeToday,
-) {
-  let timeString = '';
+export function outputDate(d, includeDate, includeTime, includeToday) {
+  let timeString = "";
   if (includeDate || includeDate === undefined) {
     if (
       datesEqual(d, new Date()) &&
       (includeToday || includeToday === undefined)
     ) {
-      timeString += 'Today, ';
+      timeString += "Today, ";
     }
 
     const dayOfWeek = getListOfDays();
-    timeString += dayOfWeek[d.getDay()] + ', ';
+    timeString += dayOfWeek[d.getDay()] + ", ";
 
     const months = getListOfMonths();
     timeString +=
-      months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
     if (includeTime || includeTime === undefined) {
-      timeString += ' at ';
+      timeString += " at ";
     }
   }
   if (includeTime || includeTime === undefined) {
-    const outputMinutes = function() {
+    const outputMinutes = function () {
       if (d.getMinutes() < 10) {
-        return '0' + d.getMinutes();
+        return "0" + d.getMinutes();
       }
       return d.getMinutes().toString();
     };
     if (d.getHours() == 12) {
-      timeString += d.getHours() + ':' + outputMinutes() + ' PM';
+      timeString += d.getHours() + ":" + outputMinutes() + " PM";
     } else if (d.getHours() > 12) {
-      timeString += d.getHours() - 12 + ':' + outputMinutes() + ' PM';
+      timeString += d.getHours() - 12 + ":" + outputMinutes() + " PM";
     } else if (d.getHours() == 0) {
-      timeString += '12:' + outputMinutes() + ' AM';
+      timeString += "12:" + outputMinutes() + " AM";
     } else {
-      timeString += d.getHours() + ':' + outputMinutes() + ' AM';
+      timeString += d.getHours() + ":" + outputMinutes() + " AM";
     }
   }
   return timeString;

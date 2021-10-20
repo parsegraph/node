@@ -1,21 +1,18 @@
-import Direction, {
-  readDirection,
-  NodePalette
-} from 'parsegraph-direction';
-import {defaultFont} from './settings';
-import Font from './Font';
-import World from './World';
-import WindowNode from './WindowNode';
-import {LayoutCaret} from 'parsegraph-layout';
+import Direction, { readDirection, NodePalette } from "parsegraph-direction";
+import { defaultFont } from "./settings";
+import Font from "./Font";
+import World from "./World";
+import WindowNode from "./WindowNode";
+import { LayoutCaret } from "parsegraph-layout";
 
 export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
   _font: Font;
-  _world:World;
+  _world: World;
 
   /**
    * Accepts either no arguments, a Node, or a type or a reference to a type.
    */
-  constructor(nodePalette:NodePalette<T>, type?:any) {
+  constructor(nodePalette: NodePalette<T>, type?: any) {
     super(nodePalette, type);
     this._font = defaultFont();
     this._world = null;
@@ -39,7 +36,7 @@ export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
 
   font(): Font {
     if (!this._font) {
-      throw new Error('Caret does not have a Font');
+      throw new Error("Caret does not have a Font");
     }
     return this._font;
   }
@@ -58,7 +55,7 @@ export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
       node = this.node().nodeAt(inDirection);
     }
     if (!this._world) {
-      throw new Error('Caret must have a world in order to freeze nodes');
+      throw new Error("Caret must have a world in order to freeze nodes");
     }
     node.freeze(this._world.freezer());
   }

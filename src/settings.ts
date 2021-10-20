@@ -1,4 +1,4 @@
-import Font from './Font';
+import Font from "./Font";
 
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -25,18 +25,14 @@ export const CAROUSEL_SHOW_DURATION = 200;
 // ////////////////////////////////////////////////////////////////////////////
 
 export const FONT_SIZE = 12;
-export const FONT_UPSCALE = Math.max(1, 72/FONT_SIZE);
+export const FONT_UPSCALE = Math.max(1, 72 / FONT_SIZE);
 export const UPSCALED_FONT_SIZE = FONT_UPSCALE * FONT_SIZE;
 export const LETTER_HEIGHT = 2.0;
 
-let DEFAULT_FONT:Font = null;
+let DEFAULT_FONT: Font = null;
 export function defaultFont() {
   if (!DEFAULT_FONT) {
-    DEFAULT_FONT = new Font(
-        UPSCALED_FONT_SIZE,
-        'sans-serif',
-        'white',
-    );
+    DEFAULT_FONT = new Font(UPSCALED_FONT_SIZE, "sans-serif", "white");
   }
   return DEFAULT_FONT;
 }

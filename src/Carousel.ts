@@ -1,47 +1,52 @@
-import FanPainter from './FanPainter';
-import {matrixMultiply3x3, makeScale3x3, makeTranslation3x3, Matrix3x3} from 'parsegraph-matrix';
-import {CAROUSEL_SHOW_DURATION} from './settings';
-import Color from 'parsegraph-color';
-import {BUD_RADIUS} from './DefaultNodeStyle';
-import Viewport from './Viewport';
-import WindowNode from './WindowNode';
-import CarouselAction from './CarouselAction';
-import Camera from 'parsegraph-camera';
+import FanPainter from "./FanPainter";
+import {
+  matrixMultiply3x3,
+  makeScale3x3,
+  makeTranslation3x3,
+  Matrix3x3,
+} from "parsegraph-matrix";
+import { CAROUSEL_SHOW_DURATION } from "./settings";
+import Color from "parsegraph-color";
+import { BUD_RADIUS } from "./DefaultNodeStyle";
+import Viewport from "./Viewport";
+import WindowNode from "./WindowNode";
+import CarouselAction from "./CarouselAction";
+import Camera from "parsegraph-camera";
 // import {toDegrees} from 'parsegraph-toradians';
 
 class CarouselPlot {
-  node:WindowNode;
-  x:number;
-  y:number;
-  scale:number;
+  node: WindowNode;
+  x: number;
+  y: number;
+  scale: number;
 
-  constructor(node:WindowNode) {
+  constructor(node: WindowNode) {
     this.node = node;
   }
 }
 
 export default class Carousel {
-  _viewport:Viewport;
-  _updateRepeatedly:boolean;
-  _showScale:number;
-  onScheduleRepaint:Function;
-  onScheduleRepaintThisArg:any;
-  _carouselPaintingDirty:boolean;
-  _carouselPlots:CarouselPlot[];
-  _carouselCallbacks:CarouselAction[];
-  _carouselCoords:number[];
-  _carouselSize:number;
-  _showCarousel:boolean;
-  _selectedCarouselPlot:CarouselPlot;
-  _selectedCarouselPlotIndex:number;
-  _carouselHotkeys:{[id:string]:number};
-  _fanPainter:FanPainter;
-  _selectedPlot:WindowNode;
-  _hideTime:Date;
-  _cleaner:Function;
-  _showTime:Date;
+  _viewport: Viewport;
+  _updateRepeatedly: boolean;
+  _showScale: number;
+  onScheduleRepaint: Function;
+  onScheduleRepaintThisArg: any;
+  _carouselPaintingDirty: boolean;
+  _carouselPlots: CarouselPlot[];
+  _carouselCallbacks: CarouselAction[];
+  _carouselCoords: number[];
+  _carouselSize: number;
+  _showCarousel: boolean;
+  _selectedCarouselPlot: CarouselPlot;
+  _selectedCarouselPlotIndex: number;
+  _carouselHotkeys: { [id: string]: number };
+  _fanPainter: FanPainter;
+  _selectedPlot: WindowNode;
+  _hideTime: Date;
+  _cleaner: Function;
+  _showTime: Date;
 
-  constructor(viewport:Viewport) {
+  constructor(viewport: Viewport) {
     this._viewport = viewport;
 
     this._updateRepeatedly = false;
@@ -73,34 +78,34 @@ export default class Carousel {
 
   window() {
     return this._viewport.window();
-  };
+  }
 
   camera() {
     return this._viewport.camera();
-  };
+  }
 
   needsRepaint() {
     return this._carouselPaintingDirty || this._updateRepeatedly;
-  };
+  }
 
-  moveCarousel(worldX:number, worldY:number) {
+  moveCarousel(worldX: number, worldY: number) {
     this._carouselCoords[0] = worldX;
     this._carouselCoords[1] = worldY;
-  };
+  }
 
-  setCarouselSize(size:number) {
+  setCarouselSize(size: number) {
     this._carouselSize = size;
-  };
+  }
 
   showCarousel() {
     this._showCarousel = true;
     this._updateRepeatedly = true;
     this._showTime = new Date();
-  };
+  }
 
   isCarouselShown() {
     return this._showCarousel;
-  };
+  }
 
   hideCarousel() {
     // console.log(new Error("Hiding carousel"));
@@ -109,14 +114,14 @@ export default class Carousel {
     this._showCarousel = false;
     this._hideTime = new Date();
     this._viewport.scheduleRepaint();
-  };
+  }
 
-  addToCarousel(action:CarouselAction) {
+  addToCarousel(action: CarouselAction) {
     console.log("Adding to carousel", action);
     this._carouselCallbacks.push(action);
     const node = action.action();
     if (!node) {
-      throw new Error('Node must not be null');
+      throw new Error("Node must not be null");
     }
     if (!node.localPaintGroup()) {
       node.setPaintGroup(true);
@@ -126,7 +131,7 @@ export default class Carousel {
       this._carouselHotkeys[action.hotkey()] = this._carouselPlots.length - 1;
     }
     // console.log("Added to carousel");
-  };
+  }
 
   clearCarousel() {
     console.log("carousel cleared");
@@ -135,20 +140,22 @@ export default class Carousel {
     this._carouselHotkeys = {};
     this._selectedCarouselPlot = null;
     this._selectedCarouselPlotIndex = null;
-    if(this._cleaner) {
+    if (this._cleaner) {
       const cleaner = this._cleaner;
       this._cleaner = null;
       cleaner();
     }
-  };
+  }
 
-  setCleaner(func:Function) {
+  setCleaner(func: Function) {
     this._cleaner = func;
-  };
+  }
 
-  clearHotfixActionIndex(i:number) {
+  clearHotfixActionIndex(i: number) {
     for (const hotkey in this._carouselHotkeys) {
-      if (!Object.prototype.hasOwnProperty.call(this._carouselHotkeys, hotkey)) {
+      if (
+        !Object.prototype.hasOwnProperty.call(this._carouselHotkeys, hotkey)
+      ) {
         continue;
       }
       if (this._carouselHotkeys[hotkey] === i) {
@@ -157,11 +164,11 @@ export default class Carousel {
       }
     }
     return false;
-  };
+  }
 
-  removeFromCarousel(node:WindowNode) {
+  removeFromCarousel(node: WindowNode) {
     if (!node) {
-      throw new Error('Node must not be null');
+      throw new Error("Node must not be null");
     }
     if (!node.localPaintGroup && node.root) {
       // Passed a Caret.
@@ -183,13 +190,13 @@ export default class Carousel {
       return removed;
     }
     return null;
-  };
+  }
 
   updateRepeatedly() {
     return this._updateRepeatedly;
-  };
+  }
 
-  clickCarousel(x:number, y:number, asDown:boolean) {
+  clickCarousel(x: number, y: number, asDown: boolean) {
     if (!this.isCarouselShown()) {
       return false;
     }
@@ -203,8 +210,8 @@ export default class Carousel {
     }
 
     const dist = Math.sqrt(
-        Math.pow(Math.abs(x - this._carouselCoords[0]), 2) +
-        Math.pow(Math.abs(y - this._carouselCoords[1]), 2),
+      Math.pow(Math.abs(x - this._carouselCoords[0]), 2) +
+        Math.pow(Math.abs(y - this._carouselCoords[1]), 2)
     );
     if (dist < (this._carouselSize * 0.75) / this.camera().scale()) {
       if (asDown) {
@@ -227,8 +234,8 @@ export default class Carousel {
 
     const angleSpan = (2 * Math.PI) / this._carouselPlots.length;
     let mouseAngle = Math.atan2(
-        y - this._carouselCoords[1],
-        x - this._carouselCoords[0],
+      y - this._carouselCoords[1],
+      x - this._carouselCoords[0]
     );
     // console.log(
     //   toDegrees(mouseAngle) +
@@ -249,29 +256,29 @@ export default class Carousel {
     // Click was within a carousel caret; invoke the listener.
     this.runAction(i);
     return true;
-  };
+  }
 
-  runAction(i:number) {
+  runAction(i: number) {
     this.hideCarousel();
     try {
       const action = this._carouselCallbacks[i];
       action.call();
     } catch (ex) {
-      console.log('Error occurred while running command:', ex);
+      console.log("Error occurred while running command:", ex);
     }
     this.scheduleCarouselRepaint();
-  };
+  }
 
-  carouselKey(key:string) {
+  carouselKey(key: string) {
     if (!(key in this._carouselHotkeys)) {
       return false;
     }
     const i = this._carouselHotkeys[key];
     this.runAction(i);
     return true;
-  };
+  }
 
-  mouseOverCarousel(x:number, y:number) {
+  mouseOverCarousel(x: number, y: number) {
     if (!this.isCarouselShown()) {
       return 0;
     }
@@ -281,8 +288,8 @@ export default class Carousel {
       Math.PI +
       Math.atan2(y - this._carouselCoords[1], x - this._carouselCoords[0]);
     const dist = Math.sqrt(
-        Math.pow(Math.abs(x - this._carouselCoords[0]), 2) +
-        Math.pow(Math.abs(y - this._carouselCoords[1]), 2),
+      Math.pow(Math.abs(x - this._carouselCoords[0]), 2) +
+        Math.pow(Math.abs(y - this._carouselCoords[1]), 2)
     );
 
     if (
@@ -321,11 +328,11 @@ export default class Carousel {
       this.scheduleCarouselRepaint();
       return 0;
     }
-  };
+  }
 
   showScale() {
     return this._showScale;
-  };
+  }
 
   arrangeCarousel() {
     if (this._carouselPlots.length === 0) {
@@ -358,7 +365,7 @@ export default class Carousel {
     // console.log("Show scale is " + this._showScale);
 
     let minScale = 1;
-    this._carouselPlots.forEach(function(carouselData, i) {
+    this._carouselPlots.forEach(function (carouselData, i) {
       const root = carouselData.node;
       root.commitLayoutIteratively();
 
@@ -390,25 +397,25 @@ export default class Carousel {
       //   1/Math.max(xShrinkFactor,
       //   yShrinkFactor));
       minScale = Math.min(
-          minScale,
-          this._showScale / Math.max(xShrinkFactor, yShrinkFactor),
+        minScale,
+        this._showScale / Math.max(xShrinkFactor, yShrinkFactor)
       );
     }, this);
 
-    this._carouselPlots.forEach(function(carouselData, i) {
+    this._carouselPlots.forEach(function (carouselData, i) {
       if (i === this._selectedCarouselPlotIndex) {
         carouselData.scale = 1.25 * minScale;
       } else {
         carouselData.scale = minScale;
       }
     }, this);
-  };
+  }
 
-  setOnScheduleRepaint(func:Function, thisArg?:any) {
+  setOnScheduleRepaint(func: Function, thisArg?: any) {
     thisArg = thisArg || this;
     this.onScheduleRepaint = func;
     this.onScheduleRepaintThisArg = thisArg;
-  };
+  }
 
   scheduleCarouselRepaint() {
     // console.log("Scheduling carousel repaint.");
@@ -416,18 +423,18 @@ export default class Carousel {
     if (this.onScheduleRepaint) {
       this.onScheduleRepaint.call(this.onScheduleRepaintThisArg);
     }
-  };
+  }
 
-  contextChanged(isLost:boolean) {
+  contextChanged(isLost: boolean) {
     this._carouselPaintingDirty = true;
     if (this._fanPainter) {
       this._fanPainter.contextChanged(isLost);
     }
-    this._carouselPlots.forEach((carouselData)=>{
+    this._carouselPlots.forEach((carouselData) => {
       const root = carouselData.node;
       root.contextChanged(isLost, this.window());
     });
-  };
+  }
 
   paint(paintContext?: any) {
     if (
@@ -440,7 +447,7 @@ export default class Carousel {
     // Paint the carousel.
     // console.log("Painting the carousel");
     this.arrangeCarousel();
-    this._carouselPlots.forEach((carouselData)=>{
+    this._carouselPlots.forEach((carouselData) => {
       carouselData.node.paint(this.window(), 1000, paintContext);
     });
 
@@ -452,24 +459,18 @@ export default class Carousel {
     }
     const fanPadding = 1.2;
     this._fanPainter.setAscendingRadius(
-        this.showScale() * fanPadding * this._carouselSize,
+      this.showScale() * fanPadding * this._carouselSize
     );
     this._fanPainter.setDescendingRadius(
-        this.showScale() * fanPadding * 2 * this._carouselSize,
+      this.showScale() * fanPadding * 2 * this._carouselSize
     );
-    this._fanPainter.selectRad(
-        0,
-        0,
-        0,
-        Math.PI * 2,
-        new Color(1, 1, 1, 1)
-    );
+    this._fanPainter.selectRad(0, 0, 0, Math.PI * 2, new Color(1, 1, 1, 1));
 
     this._carouselPaintingDirty = false;
     return this._updateRepeatedly;
-  };
+  }
 
-  render(world:Matrix3x3) {
+  render(world: Matrix3x3) {
     if (!this._showCarousel) {
       return;
     }
@@ -478,9 +479,9 @@ export default class Carousel {
     }
 
     world = matrixMultiply3x3(
-        makeScale3x3(1 / this.camera().scale()),
-        makeTranslation3x3(this._carouselCoords[0], this._carouselCoords[1]),
-        world,
+      makeScale3x3(1 / this.camera().scale()),
+      makeTranslation3x3(this._carouselCoords[0], this._carouselCoords[1]),
+      world
     );
 
     // console.log("Rendering " + this + " in scene.");
@@ -488,22 +489,14 @@ export default class Carousel {
     const window = this.window();
     const camera = this.camera();
     window.overlay().resetTransform();
+    window.overlay().scale(camera.scale(), camera.scale());
     window
-        .overlay()
-        .scale(
-            camera.scale(),
-            camera.scale()
-        );
-    window
-        .overlay()
-        .translate(camera.x() + this._carouselCoords[0],
-            camera.y() + this._carouselCoords[1]);
-    window
-        .overlay()
-        .scale(
-            1/camera.scale(),
-            1/camera.scale()
-        );
+      .overlay()
+      .translate(
+        camera.x() + this._carouselCoords[0],
+        camera.y() + this._carouselCoords[1]
+      );
+    window.overlay().scale(1 / camera.scale(), 1 / camera.scale());
     /* window
         .overlay()
         .scale(
@@ -518,27 +511,27 @@ export default class Carousel {
     this._fanPainter.render(world);
 
     // Render the carousel if requested.
-    this._carouselPlots.forEach((carouselData)=>{
+    this._carouselPlots.forEach((carouselData) => {
       const root = carouselData.node;
       window.overlay().save();
       window.overlay().translate(carouselData.x, carouselData.y);
       window.overlay().scale(carouselData.scale, carouselData.scale);
       root.renderOffscreen(
-          this.window(),
-          // scale * trans * world
+        this.window(),
+        // scale * trans * world
+        matrixMultiply3x3(
+          makeScale3x3(carouselData.scale),
           matrixMultiply3x3(
-              makeScale3x3(carouselData.scale),
-              matrixMultiply3x3(
-                  makeTranslation3x3(carouselData.x, carouselData.y),
-                  world,
-              ),
-          ),
-          1.0,
-          false,
-          new Camera(),
-          null
+            makeTranslation3x3(carouselData.x, carouselData.y),
+            world
+          )
+        ),
+        1.0,
+        false,
+        new Camera(),
+        null
       );
       window.overlay().restore();
     });
-  };
+  }
 }

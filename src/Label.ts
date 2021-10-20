@@ -1,55 +1,55 @@
-import {defaultUnicode} from 'parsegraph-unicode';
-import {RIGHT_TO_LEFT, defaultFont} from './settings';
-import Caret from './Caret';
-import Rect from 'parsegraph-rect';
-import Font, { GlyphData } from './Font';
-import GlyphPainter from './GlyphPainter';
+import { defaultUnicode } from "parsegraph-unicode";
+import { RIGHT_TO_LEFT, defaultFont } from "./settings";
+import Caret from "./Caret";
+import Rect from "parsegraph-rect";
+import Font, { GlyphData } from "./Font";
+import GlyphPainter from "./GlyphPainter";
 
-const ctrlKeys:string[] = [
-  'Control',
-  'Alt',
-  'Shift',
-  'ArrowLeft',
-  'ArrowRight',
-  'ArrowDown',
-  'ArrowUp',
-  'Delete',
-  'Escape',
-  'PageUp',
-  'PageDown',
-  'Home',
-  'End',
-  'CapsLock',
-  'ScrollLock',
-  'NumLock',
-  'Insert',
-  'Break',
-  'Insert',
-  'Enter',
-  'Tab',
-  'Backspace',
-  'F1',
-  'F2',
-  'F3',
-  'F4',
-  'F5',
-  'F6',
-  'F7',
-  'F8',
-  'F9',
-  'F10',
-  'F11',
-  'F12',
+const ctrlKeys: string[] = [
+  "Control",
+  "Alt",
+  "Shift",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowDown",
+  "ArrowUp",
+  "Delete",
+  "Escape",
+  "PageUp",
+  "PageDown",
+  "Home",
+  "End",
+  "CapsLock",
+  "ScrollLock",
+  "NumLock",
+  "Insert",
+  "Break",
+  "Insert",
+  "Enter",
+  "Tab",
+  "Backspace",
+  "F1",
+  "F2",
+  "F3",
+  "F4",
+  "F5",
+  "F6",
+  "F7",
+  "F8",
+  "F9",
+  "F10",
+  "F11",
+  "F12",
 ];
 
 export class GlyphIterator {
-  font:Font;
-  index:number;
-  len:number;
-  prevLetter:number;
-  text:string;
+  font: Font;
+  index: number;
+  len: number;
+  prevLetter: number;
+  text: string;
 
-  constructor(font:Font, text:string) {
+  constructor(font: Font, text: string) {
     this.font = font;
     this.index = 0;
     this.len = text.length;
@@ -120,9 +120,9 @@ export class GlyphIterator {
       //           ^-given
       //              ^-prev
       const cursiveLetter = unicode.cursive(
-          givenLetter,
-          this.prevLetter,
-          nextLetterChar,
+        givenLetter,
+        this.prevLetter,
+        nextLetterChar
       );
       if (cursiveLetter != null) {
         // console.log("Found cursive char " +
@@ -146,7 +146,7 @@ export class GlyphIterator {
         letter = this.text.substring(this.index, this.index + 2);
       }
       if (llen == 2 && this.index == this.len - 1) {
-        throw new Error('Unterminated UTF-16 character');
+        throw new Error("Unterminated UTF-16 character");
       }
 
       if (unicode.isMark(letter)) {
@@ -170,20 +170,20 @@ export class GlyphIterator {
     let trueText = this.text.substring(startIndex, startIndex + len);
     trueText = String.fromCodePoint(givenLetter) + trueText.substring(1);
     return this.font.getGlyph(trueText);
-  };
+  }
 }
 
 export class Line {
-  _label:Label;
-  _glyphs:GlyphData[];
-  _width:number;
-  _height:number;
-  _text:string;
-  _linePos:number;
+  _label: Label;
+  _glyphs: GlyphData[];
+  _width: number;
+  _height: number;
+  _text: string;
+  _linePos: number;
 
-  constructor(label:Label, text?:string) {
+  constructor(label: Label, text?: string) {
     if (!label) {
-      throw new Error('Label must not be null');
+      throw new Error("Label must not be null");
     }
     this._label = label;
 
@@ -196,7 +196,7 @@ export class Line {
     this._glyphs = [];
     this._width = 0;
     this._height = 0;
-    this._text = '';
+    this._text = "";
     if (arguments.length > 1 && text.length > 0) {
       this.appendText(text);
     }
@@ -204,23 +204,23 @@ export class Line {
 
   isEmpty() {
     return this._width === 0;
-  };
+  }
 
   font() {
     return this._label.font();
-  };
+  }
 
-  remove(pos:number, count:number) {
+  remove(pos: number, count: number) {
     const removed = this._glyphs.splice(pos, count);
-    removed.forEach(function(glyphData) {
+    removed.forEach(function (glyphData) {
       this._width -= glyphData.width;
     }, this);
-  };
+  }
 
-  appendText(text:string) {
+  appendText(text: string) {
     const font = this.font();
     if (!font) {
-      throw new Error('Line cannot add text without the label having a font.');
+      throw new Error("Line cannot add text without the label having a font.");
     }
 
     const gi = new GlyphIterator(font, text);
@@ -233,17 +233,17 @@ export class Line {
     }
 
     this._text += text;
-  };
+  }
 
-  insertText(pos:number, text:string) {
+  insertText(pos: number, text: string) {
     const font = this.font();
     if (!font) {
-      throw new Error('Line cannot add text without the label having a font.');
+      throw new Error("Line cannot add text without the label having a font.");
     }
 
     const gi = new GlyphIterator(font, text);
     let glyphData = null;
-    const spliced:GlyphData[] = [];
+    const spliced: GlyphData[] = [];
     for (let i = 0; (glyphData = gi.next()) != null; ++i) {
       spliced.push(glyphData);
       this._height = Math.max(this._height, glyphData.height);
@@ -256,22 +256,22 @@ export class Line {
       this._text.slice(0, pos) +
       text +
       this._text.slice(pos + 1, this._text.length - pos);
-  };
+  }
 
   length() {
     let len = 0;
-    this._glyphs.forEach(function(glyphData) {
+    this._glyphs.forEach(function (glyphData) {
       len += glyphData.letter.length;
     });
     return len;
-  };
+  }
 
-  glyphCount(counts:{[id:number]:number}, pagesPerTexture:number) {
+  glyphCount(counts: { [id: number]: number }, pagesPerTexture: number) {
     if (counts) {
-      this._glyphs.forEach(function(glyphData) {
+      this._glyphs.forEach(function (glyphData) {
         const bufIndex = Math.floor(glyphData.glyphPage._id / pagesPerTexture);
         if (Number.isNaN(bufIndex)) {
-          throw new Error('Glyph page index must not be NaN');
+          throw new Error("Glyph page index must not be NaN");
         }
         if (!(bufIndex in counts)) {
           counts[bufIndex] = 1;
@@ -281,55 +281,55 @@ export class Line {
       });
     }
     return this._glyphs.length;
-  };
+  }
 
   getText() {
-    let t = '';
-    this._glyphs.forEach(function(glyphData) {
+    let t = "";
+    this._glyphs.forEach(function (glyphData) {
       t += glyphData.letter;
     });
     return t;
-  };
+  }
   text() {
     return this.getText();
   }
 
   linePos() {
     return this._linePos;
-  };
+  }
 
   label() {
     return this._label;
-  };
+  }
 
   width() {
     return this._width;
-  };
+  }
 
   height() {
     return this._height;
-  };
+  }
 
-  posAt(limit:number):number {
+  posAt(limit: number): number {
     let w = 0;
     for (let i = 0; i < limit && i < this._glyphs.length; ++i) {
       w += this._glyphs[i].width;
     }
     return w;
-  };
+  }
 
   glyphs() {
     return this._glyphs;
-  };
+  }
 
   drawLTRGlyphRun(
-      painter:GlyphPainter,
-      worldX:number,
-      worldY:number,
-      pos:any[],
-      fontScale:number,
-      startRun:number,
-      endRun:number,
+    painter: GlyphPainter,
+    worldX: number,
+    worldY: number,
+    pos: any[],
+    fontScale: number,
+    startRun: number,
+    endRun: number
   ) {
     painter.drawLine(this._text, worldX, worldY, fontScale);
     // log("Drawing LTR run from %d to %d.", startRun, endRun);
@@ -341,23 +341,23 @@ export class Line {
     for (let q = startRun; q <= endRun; ++q) {
       const glyphData = this._glyphs[q];
       painter.drawGlyph(
-          glyphData,
-          worldX + pos[0],
-          worldY + pos[1] + maxAscent,
-          fontScale,
+        glyphData,
+        worldX + pos[0],
+        worldY + pos[1] + maxAscent,
+        fontScale
       );
       pos[0] += (glyphData.advance - 1) * fontScale;
     }
-  };
+  }
 
   drawRTLGlyphRun(
-      painter:GlyphPainter,
-      worldX:number,
-      worldY:number,
-      pos:any[],
-      fontScale:number,
-      startRun:number,
-      endRun:number,
+    painter: GlyphPainter,
+    worldX: number,
+    worldY: number,
+    pos: any[],
+    fontScale: number,
+    startRun: number,
+    endRun: number
   ) {
     painter.drawLine(this._text, worldX, worldY, fontScale);
     let runWidth = 0;
@@ -372,54 +372,54 @@ export class Line {
       const glyphData = this._glyphs[q];
       advance += (glyphData.advance - 1) * fontScale;
       painter.drawGlyph(
-          glyphData,
-          worldX + pos[0] + runWidth - advance,
-          worldY + pos[1] + maxAscent,
-          fontScale,
+        glyphData,
+        worldX + pos[0] + runWidth - advance,
+        worldY + pos[1] + maxAscent,
+        fontScale
       );
     }
     pos[0] += runWidth;
-  };
+  }
 
   drawGlyphRun(
-      painter:GlyphPainter,
-      worldX:number,
-      worldY:number,
-      pos:any[],
-      fontScale:number,
-      startRun:number,
-      endRun:number,
+    painter: GlyphPainter,
+    worldX: number,
+    worldY: number,
+    pos: any[],
+    fontScale: number,
+    startRun: number,
+    endRun: number
   ) {
     // Draw the run.
-    if (pos[2] === 'L' || (!RIGHT_TO_LEFT && pos[2] === 'WS')) {
+    if (pos[2] === "L" || (!RIGHT_TO_LEFT && pos[2] === "WS")) {
       this.drawLTRGlyphRun(
-          painter,
-          worldX,
-          worldY,
-          pos,
-          fontScale,
-          startRun,
-          endRun,
+        painter,
+        worldX,
+        worldY,
+        pos,
+        fontScale,
+        startRun,
+        endRun
       );
     } else {
       this.drawRTLGlyphRun(
-          painter,
-          worldX,
-          worldY,
-          pos,
-          fontScale,
-          startRun,
-          endRun,
+        painter,
+        worldX,
+        worldY,
+        pos,
+        fontScale,
+        startRun,
+        endRun
       );
     }
-  };
+  }
 
   paint(
-      painter:GlyphPainter,
-      worldX:number,
-      worldY:number,
-      pos:any[],
-      fontScale:number,
+    painter: GlyphPainter,
+    worldX: number,
+    worldY: number,
+    pos: any[],
+    fontScale: number
   ) {
     let startRun = 0;
     const unicode = defaultUnicode();
@@ -430,7 +430,7 @@ export class Line {
       const glyphData = this._glyphs[j];
       const glyphDirection =
         unicode.getGlyphDirection(glyphData.letter) || pos[2];
-      if (pos[2] === 'WS' && glyphDirection !== 'WS') {
+      if (pos[2] === "WS" && glyphDirection !== "WS") {
         // Use the glyph's direction if there is none currently in use.
         pos[2] = glyphDirection;
       }
@@ -446,29 +446,29 @@ export class Line {
     }
     pos[1] += this.height() * fontScale;
     pos[0] = 0;
-  };
+  }
 }
 
 export default class Label {
-  _font:Font;
-  _wrapWidth:number;
-  _lines:Line[];
-  _caretLine:number;
-  _caretPos:number;
-  _editable:boolean;
-  _onTextChangedListener:Function;
-  _onTextChangedListenerThisArg:object;
-  _width:number;
-  _height:number;
-  _x:number;
-  _y:number;
-  _scale:number;
-  _currentPos:number;
-  _currentLine:number;
+  _font: Font;
+  _wrapWidth: number;
+  _lines: Line[];
+  _caretLine: number;
+  _caretPos: number;
+  _editable: boolean;
+  _onTextChangedListener: Function;
+  _onTextChangedListenerThisArg: object;
+  _width: number;
+  _height: number;
+  _x: number;
+  _y: number;
+  _scale: number;
+  _currentPos: number;
+  _currentLine: number;
 
-  constructor(font:Font) {
+  constructor(font: Font) {
     if (!font) {
-      throw new Error('Label requires a font.');
+      throw new Error("Label requires a font.");
     }
     this._font = font;
     this._wrapWidth = null;
@@ -491,7 +491,7 @@ export default class Label {
 
   font() {
     return this._font;
-  };
+  }
 
   isEmpty() {
     for (let i = 0; i < this._lines.length; ++i) {
@@ -501,78 +501,81 @@ export default class Label {
       }
     }
     return true;
-  };
+  }
 
-  forEach(func:Function, funcThisArg?:any) {
+  forEach(func: Function, funcThisArg?: any) {
     if (!funcThisArg) {
       funcThisArg = this;
     }
-    this._lines.forEach((line)=>{
+    this._lines.forEach((line) => {
       func.call(funcThisArg, line);
     });
-  };
+  }
 
   getText() {
-    let t = '';
-    this._lines.forEach(function(l) {
+    let t = "";
+    this._lines.forEach(function (l) {
       if (t.length > 0) {
-        t += '\n';
+        t += "\n";
       }
       t += l.getText();
     });
     return t;
-  };
+  }
   text() {
     return this.getText();
   }
 
   clear() {
     this._lines = [];
-  };
+  }
 
   length() {
     let totallen = 0;
-    this._lines.forEach(function(l, i) {
+    this._lines.forEach(function (l, i) {
       if (i > 0) {
         totallen += 1;
       }
       totallen += l.length();
     });
     return totallen;
-  };
+  }
 
-  glyphCount(counts:{[id:number]:number}, pagesPerTexture:number):number {
+  glyphCount(
+    counts: { [id: number]: number },
+    pagesPerTexture: number
+  ): number {
     let totallen = 0;
-    this._lines.forEach(function(l) {
+    this._lines.forEach(function (l) {
       totallen += l.glyphCount(counts, pagesPerTexture);
     });
     return totallen;
-  };
+  }
 
-  setText(text:any):void {
-    if (typeof text !== 'string') {
-      text = '' + text;
+  setText(text: any): void {
+    if (typeof text !== "string") {
+      text = "" + text;
     }
     this._lines = [];
     this._currentLine = 0;
     this._currentPos = 0;
     this._width = 0;
     this._height = 0;
-    text.split(/\n/).forEach(function(textLine:string) {
+    text.split(/\n/).forEach(function (textLine: string) {
       const l = new Line(this, textLine);
       this._lines.push(l);
       this._width = Math.max(this._width, l.width());
       this._height += l.height();
     }, this);
-  };
+  }
 
   moveCaretDown() {
-    console.log('Moving caret down');
-  };
+    console.log("Moving caret down");
+  }
 
   moveCaretUp() {
-    console.log('Moving caret up');
-  };
+    console.log("Moving caret up");
+  }
 
   moveCaretBackward() {
     if (this._caretPos === 0) {
@@ -585,7 +588,7 @@ export default class Label {
     }
     this._caretPos--;
     return true;
-  };
+  }
 
   moveCaretForward() {
     if (this._caretPos == this._lines[this._caretLine]._glyphs.length) {
@@ -599,7 +602,7 @@ export default class Label {
     }
     this._caretPos++;
     return true;
-  };
+  }
 
   backspaceCaret() {
     const line = this._lines[this._caretLine];
@@ -618,7 +621,7 @@ export default class Label {
     this._width = null;
     this.textChanged();
     return true;
-  };
+  }
 
   deleteCaret() {
     const line = this._lines[this._caretLine];
@@ -629,30 +632,30 @@ export default class Label {
     this._width = null;
     this.textChanged();
     return true;
-  };
+  }
 
-  ctrlKey(key:string) {
+  ctrlKey(key: string) {
     if (ctrlKeys.indexOf(key) >= 0) {
       return true;
     }
     return false;
-  };
+  }
 
-  key(key:string) {
+  key(key: string) {
     if (ctrlKeys.indexOf(key) >= 0) {
       switch (key) {
-      case 'ArrowLeft':
-        return this.moveCaretBackward();
-      case 'ArrowRight':
-        return this.moveCaretForward();
-      case 'ArrowDown':
-        return this.moveCaretDown();
-      case 'ArrowUp':
-        return this.moveCaretUp();
-      case 'Delete':
-        return this.deleteCaret();
-      case 'Backspace':
-        return this.backspaceCaret();
+        case "ArrowLeft":
+          return this.moveCaretBackward();
+        case "ArrowRight":
+          return this.moveCaretForward();
+        case "ArrowDown":
+          return this.moveCaretDown();
+        case "ArrowUp":
+          return this.moveCaretUp();
+        case "Delete":
+          return this.deleteCaret();
+        case "Backspace":
+          return this.backspaceCaret();
       }
       return false;
     }
@@ -677,34 +680,31 @@ export default class Label {
     this._caretPos += key.length;
     this.textChanged();
     return true;
-  };
+  }
 
-  onTextChanged(
-      listener:Function,
-      listenerThisArg:object,
-  ) {
+  onTextChanged(listener: Function, listenerThisArg: object) {
     this._onTextChangedListener = listener;
     this._onTextChangedListenerThisArg = listenerThisArg;
-  };
+  }
 
   textChanged() {
     if (this._onTextChangedListener) {
       return this._onTextChangedListener.call(
-          this._onTextChangedListenerThisArg,
-          this,
+        this._onTextChangedListenerThisArg,
+        this
       );
     }
-  };
+  }
 
   editable() {
     return this._editable;
-  };
+  }
 
-  setEditable(editable:boolean) {
+  setEditable(editable: boolean) {
     this._editable = editable;
-  };
+  }
 
-  click(x:number, y:number) {
+  click(x: number, y: number) {
     if (y < 0 && x < 0) {
       this._caretLine = 0;
       this._caretPos = 0;
@@ -744,22 +744,22 @@ export default class Label {
       this._caretPos = line._glyphs.length;
       return;
     }
-    throw new Error('click fall-through that should not be reached');
-  };
+    throw new Error("click fall-through that should not be reached");
+  }
 
-  lineAt(n:number):Line {
+  lineAt(n: number): Line {
     return this._lines[n];
-  };
+  }
 
   caretLine() {
     return this._caretLine;
-  };
+  }
 
   caretPos() {
     return this._caretPos;
-  };
+  }
 
-  getCaretRect(outRect?:Rect):Rect {
+  getCaretRect(outRect?: Rect): Rect {
     if (!outRect) {
       outRect = new Rect();
     }
@@ -775,50 +775,49 @@ export default class Label {
     outRect.setY(y + line.height() / 2);
     outRect.setHeight(line.height());
     return outRect;
-  };
+  }
 
   glyphPos() {
     return this._caretPos;
-  };
+  }
 
   fontSize() {
     return this._font.fontSize();
-  };
+  }
 
   width() {
     if (this._width === null) {
       this._width = 0;
-      this._lines.forEach(function(l) {
+      this._lines.forEach(function (l) {
         this._width = Math.max(this._width, l.width());
       }, this);
     }
     return this._width;
-  };
+  }
 
   height() {
     return this._height;
-  };
+  }
 
   paint(
-      painter:GlyphPainter,
-      worldX:number,
-      worldY:number,
-      fontScale:number,
+    painter: GlyphPainter,
+    worldX: number,
+    worldY: number,
+    fontScale: number
   ) {
     if (this.font() !== painter.font()) {
       throw new Error(
-          'Painter must use the same font as this label: ' +
+        "Painter must use the same font as this label: " +
           this.font() +
-          ', ' +
-          painter.font(),
+          ", " +
+          painter.font()
       );
     }
-    const pos = [0, 0, 'WS'];
+    const pos = [0, 0, "WS"];
 
     for (let i = 0; i < this._lines.length; ++i) {
       const l = this._lines[i];
       l.paint(painter, worldX, worldY, pos, fontScale);
     }
-  };
+  }
 }
-

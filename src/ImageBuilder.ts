@@ -1,18 +1,18 @@
 import { AnimationTimer, elapsed } from "parsegraph-timing";
-import {ImageWindow, INTERVAL} from 'parsegraph-window';
+import { ImageWindow, INTERVAL } from "parsegraph-window";
 import Viewport from "./Viewport";
 import World from "./World";
 
 export default class ImageBuilder {
-  _renderTimer:AnimationTimer;
-  _window:ImageWindow;
-  _world:World;
-  _viewport:Viewport;
+  _renderTimer: AnimationTimer;
+  _window: ImageWindow;
+  _world: World;
+  _viewport: Viewport;
 
-  _jobs:any[];
-  _builders:any[];
+  _jobs: any[];
+  _builders: any[];
 
-  constructor(width:number, height:number) {
+  constructor(width: number, height: number) {
     this._renderTimer = new AnimationTimer();
     this._renderTimer.setListener(this.cycle, this);
 
@@ -29,25 +29,25 @@ export default class ImageBuilder {
 
   scheduleUpdate() {
     this._renderTimer.schedule();
-  };
+  }
 
   window() {
     return this._window;
-  };
+  }
 
   viewport() {
     return this._viewport;
-  };
+  }
 
   world() {
     return this._world;
-  };
+  }
 
   createImage(
-      creatorFunc:Function,
-      creatorFuncThisArg?:any,
-      callbackFunc?:Function,
-      callbackFuncThisArg?:any,
+    creatorFunc: Function,
+    creatorFuncThisArg?: any,
+    callbackFunc?: Function,
+    callbackFuncThisArg?: any
   ) {
     this._jobs.push({
       creatorFunc: creatorFunc,
@@ -55,28 +55,25 @@ export default class ImageBuilder {
       callbackFunc: callbackFunc,
       callbackFuncThisArg: callbackFuncThisArg,
     });
-  };
+  }
 
-  queueJob(
-      builderFunc:Function,
-      builderFuncThisArg?:any,
-  ) {
+  queueJob(builderFunc: Function, builderFuncThisArg?: any) {
     const job = this._jobs[0];
     if (!job) {
       throw new Error(
-          'ImageBuilder must have a scene in progress to queue a builder.',
+        "ImageBuilder must have a scene in progress to queue a builder."
       );
     }
     if (!job.builders) {
       job.builders = [];
     }
     job.builders.push([builderFunc, builderFuncThisArg]);
-  };
+  }
 
   cycle() {
     const timeout = INTERVAL;
     const startTime = new Date();
-    const timeLeft = function() {
+    const timeLeft = function () {
       return timeout - elapsed(startTime);
     };
     const job = this._jobs[0];
@@ -122,5 +119,5 @@ export default class ImageBuilder {
       this._world.removePlot(job.root);
     }
     this.scheduleUpdate();
-  };
+  }
 }

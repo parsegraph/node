@@ -1,4 +1,4 @@
-import Window, {TimingBelt} from 'parsegraph-window';
+import Window, { TimingBelt } from "parsegraph-window";
 import World from "./World";
 import Viewport from "./Viewport";
 import EventNode from "./EventNode";
@@ -6,7 +6,7 @@ import EventNode from "./EventNode";
 /**
  * Show a basic graph given a node.
  */
-export default function showGraph(rootNode:EventNode) {
+export default function showGraph(rootNode: EventNode) {
   const window = new Window();
   const world = new World();
 

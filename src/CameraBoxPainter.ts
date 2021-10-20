@@ -1,27 +1,24 @@
-import {defaultFont} from './settings';
-import {timediffMs} from 'parsegraph-timing';
-import Color from 'parsegraph-color';
-import Label from './Label';
-import GlyphPainter from './GlyphPainter';
-import BlockPainter from 'parsegraph-blockpainter';
-import { BasicWindow } from 'parsegraph-window';
-import Rect from 'parsegraph-rect';
-import { Matrix3x3 } from 'parsegraph-matrix';
+import { defaultFont } from "./settings";
+import { timediffMs } from "parsegraph-timing";
+import Color from "parsegraph-color";
+import Label from "./Label";
+import GlyphPainter from "./GlyphPainter";
+import BlockPainter from "parsegraph-blockpainter";
+import { BasicWindow } from "parsegraph-window";
+import Rect from "parsegraph-rect";
+import { Matrix3x3 } from "parsegraph-matrix";
 
 export default class CameraBoxPainter {
-  _blockPainter:BlockPainter;
-  _glyphPainter:GlyphPainter;
-  _borderColor:Color;
-  _backgroundColor:Color;
-  _textColor:Color;
-  _fontSize:number;
+  _blockPainter: BlockPainter;
+  _glyphPainter: GlyphPainter;
+  _borderColor: Color;
+  _backgroundColor: Color;
+  _textColor: Color;
+  _fontSize: number;
 
-  constructor(window:BasicWindow) {
+  constructor(window: BasicWindow) {
     this._blockPainter = new BlockPainter(window);
-    this._glyphPainter = new GlyphPainter(
-        window,
-        defaultFont(),
-    );
+    this._glyphPainter = new GlyphPainter(window, defaultFont());
 
     this._borderColor = new Color(1, 1, 1, 0.1);
     this._backgroundColor = new Color(1, 1, 1, 0.1);
@@ -29,26 +26,26 @@ export default class CameraBoxPainter {
     this._fontSize = 24;
   }
 
-  contextChanged(isLost:boolean) {
+  contextChanged(isLost: boolean) {
     if (!isLost) {
       return;
     }
     this._blockPainter.contextChanged(isLost);
     this._glyphPainter.contextChanged();
-  };
+  }
 
   clear() {
     this._glyphPainter.clear();
     this._blockPainter.clear();
-  };
+  }
 
   drawBox(
-      name:string,
-      rect:Rect,
-      scale:number,
-      mouseX:number,
-      mouseY:number,
-      when:Date,
+    name: string,
+    rect: Rect,
+    scale: number,
+    mouseX: number,
+    mouseY: number,
+    when: Date
   ) {
     const painter = this._blockPainter;
 
@@ -68,13 +65,13 @@ export default class CameraBoxPainter {
     this._glyphPainter.backgroundColor().setA(interp);
 
     painter.drawBlock(
-        rect.x(),
-        rect.y(),
-        rect.width(),
-        rect.height(),
-        0.01,
-        0.1,
-        scale,
+      rect.x(),
+      rect.y(),
+      rect.width(),
+      rect.height(),
+      0.01,
+      0.1,
+      scale
     );
     const font = this._glyphPainter.font();
     const label = new Label(font);
@@ -98,17 +95,17 @@ export default class CameraBoxPainter {
     }
 
     label.paint(
-        this._glyphPainter,
-        rect.x() - lw / 2 - rect.width() / 2 + mouseX / scale,
-        rect.y() - lh / 2 - rect.height() / 2 + mouseY / scale,
-        this._fontSize / font.fontSize() / scale,
+      this._glyphPainter,
+      rect.x() - lw / 2 - rect.width() / 2 + mouseX / scale,
+      rect.y() - lh / 2 - rect.height() / 2 + mouseY / scale,
+      this._fontSize / font.fontSize() / scale
     );
 
     return interp > 0;
-  };
+  }
 
-  render(world:Matrix3x3, scale:number) {
+  render(world: Matrix3x3, scale: number) {
     this._blockPainter.render(world, scale);
     this._glyphPainter.render(world, scale);
-  };
+  }
 }

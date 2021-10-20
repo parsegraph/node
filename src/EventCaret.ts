@@ -1,12 +1,8 @@
-import {
-  Direction,
-  readDirection,
-} from 'parsegraph-direction';
-import EventNode from './EventNode';
-import WindowCaret from './WindowCaret';
+import { Direction, readDirection } from "parsegraph-direction";
+import EventNode from "./EventNode";
+import WindowCaret from "./WindowCaret";
 
 export default class EventCaret<T extends EventNode> extends WindowCaret<T> {
-
   clone(): EventCaret<T> {
     const car = new EventCaret<T>(this.palette(), this.node());
     car.setFont(this.font());
@@ -38,7 +34,7 @@ export default class EventCaret<T extends EventNode> extends WindowCaret<T> {
         font = this.font();
         break;
       case 2:
-        if (typeof args[1] === 'object') {
+        if (typeof args[1] === "object") {
           node = this.node();
           text = args[0];
           font = args[1];

@@ -1,23 +1,23 @@
-import SpotlightPainter from 'parsegraph-spotlightpainter';
-import Color from 'parsegraph-color';
-import Animator from 'parsegraph-animator';
-import lerp from 'parsegraph-lerp';
-import smoothstep from 'parsegraph-smoothstep';
-import Viewport from './Viewport';
-import {LayoutNode} from 'parsegraph-layout';
-import { Matrix3x3 } from 'parsegraph-matrix';
+import SpotlightPainter from "parsegraph-spotlightpainter";
+import Color from "parsegraph-color";
+import Animator from "parsegraph-animator";
+import lerp from "parsegraph-lerp";
+import smoothstep from "parsegraph-smoothstep";
+import Viewport from "./Viewport";
+import { LayoutNode } from "parsegraph-layout";
+import { Matrix3x3 } from "parsegraph-matrix";
 
 const FOCUSED_SPOTLIGHT_COLOR = new Color(1, 1, 1, 0.5);
 const FOCUSED_SPOTLIGHT_SCALE = 6;
 
 export default class AnimatedSpotlight {
-  _viewport:Viewport;
-  _painter:SpotlightPainter;
-  _animator:Animator;
-  _fromNode:LayoutNode;
-  _toNode:LayoutNode;
-  _spotlightColor:Color;
-  constructor(viewport:Viewport) {
+  _viewport: Viewport;
+  _painter: SpotlightPainter;
+  _animator: Animator;
+  _fromNode: LayoutNode;
+  _toNode: LayoutNode;
+  _spotlightColor: Color;
+  constructor(viewport: Viewport) {
     this._viewport = viewport;
     this._painter = null;
     this._animator = new Animator(480);
@@ -26,7 +26,7 @@ export default class AnimatedSpotlight {
     this._spotlightColor = FOCUSED_SPOTLIGHT_COLOR;
   }
 
-  contextChanged(isLost:boolean) {
+  contextChanged(isLost: boolean) {
     if (this._painter) {
       this._painter.contextChanged(isLost);
     }
@@ -42,15 +42,11 @@ export default class AnimatedSpotlight {
     return this._toNode;
   }
 
-  getSpotlightScale(node:LayoutNode) {
+  getSpotlightScale(node: LayoutNode) {
     const s = node.absoluteSize();
     const srad = Math.min(
-        FOCUSED_SPOTLIGHT_SCALE *
-        s.width() *
-        node.absoluteScale(),
-        FOCUSED_SPOTLIGHT_SCALE *
-        s.height() *
-        node.absoluteScale(),
+      FOCUSED_SPOTLIGHT_SCALE * s.width() * node.absoluteScale(),
+      FOCUSED_SPOTLIGHT_SCALE * s.height() * node.absoluteScale()
     );
     return srad;
   }
@@ -59,10 +55,10 @@ export default class AnimatedSpotlight {
     const node = this.focusedNode();
     const srad = this.getSpotlightScale(node);
     this.drawSpotlight(
-        node.absoluteX(),
-        node.absoluteY(),
-        srad,
-        this._spotlightColor,
+      node.absoluteX(),
+      node.absoluteY(),
+      srad,
+      this._spotlightColor
     );
   }
 
@@ -70,14 +66,14 @@ export default class AnimatedSpotlight {
     return this._animator;
   }
 
-  restart(toNode:LayoutNode) {
+  restart(toNode: LayoutNode) {
     this.animator().restart();
     this._fromNode = this._toNode;
     this._toNode = toNode;
     this._viewport.scheduleRepaint();
   }
 
-  drawSpotlight(x:number, y:number, srad:number, color:Color) {
+  drawSpotlight(x: number, y: number, srad: number, color: Color) {
     if (!this._painter) {
       this._painter = new SpotlightPainter(this._viewport.window());
     }
@@ -89,8 +85,8 @@ export default class AnimatedSpotlight {
     return this.animator().animating();
   }
 
-  animate(t:number) {
-    if(!this._toNode) {
+  animate(t: number) {
+    if (!this._toNode) {
       throw new Error("Cannot animate to nothing");
     }
     t = smoothstep(t);
@@ -113,7 +109,7 @@ export default class AnimatedSpotlight {
     }
   }
 
-  render(world:Matrix3x3) {
+  render(world: Matrix3x3) {
     // console.log("Rendering animated spotlight");
     if (this.animator().animating()) {
       this.clear();
@@ -128,4 +124,4 @@ export default class AnimatedSpotlight {
     }
     return this.animating();
   }
-};
+}

@@ -1,19 +1,14 @@
-import Color from 'parsegraph-color';
-import * as Settings from './settings';
+import Color from "parsegraph-color";
+import * as Settings from "./settings";
 
-import {Type, readType} from './DefaultNodeType';
+import { Type, readType } from "./DefaultNodeType";
 
 export const LINE_COLOR = new Color(0.8, 0.8, 0.8, 0.6);
-export const SELECTED_LINE_COLOR = new Color(
-    0.8,
-    0.8,
-    0.8,
-    1,
-);
+export const SELECTED_LINE_COLOR = new Color(0.8, 0.8, 0.8, 1);
 
 export const BUD_RADIUS = 2;
 
-export const LINE_THICKNESS = 12 * BUD_RADIUS / 8;
+export const LINE_THICKNESS = (12 * BUD_RADIUS) / 8;
 
 export const MIN_BLOCK_HEIGHT = BUD_RADIUS * 12;
 export const MIN_BLOCK_WIDTH = BUD_RADIUS * 15;
@@ -33,8 +28,7 @@ const VERTICAL_SEPARATION_PADDING_MATH = 2;
  */
 export const BUD_LEAF_SEPARATION = 4.2;
 
-export const BUD_TO_BUD_VERTICAL_SEPARATION =
-  BUD_RADIUS * 4.5;
+export const BUD_TO_BUD_VERTICAL_SEPARATION = BUD_RADIUS * 4.5;
 
 const BUD_STYLE = {
   minWidth: BUD_RADIUS * 3,
@@ -197,24 +191,14 @@ const ELEMENT_STYLE = {
   horizontalSeparation: 7 * HORIZONTAL_SEPARATION_PADDING,
 };
 
-export const EXTENT_BORDER_COLOR = new Color(
-    1,
-    1,
-    0,
-    0.1,
-);
-export const EXTENT_BACKGROUND_COLOR = new Color(
-    1,
-    0,
-    0,
-    0.5,
-);
+export const EXTENT_BORDER_COLOR = new Color(1, 1, 0, 0.1);
+export const EXTENT_BACKGROUND_COLOR = new Color(1, 0, 0, 0.5);
 
 export const EXTENT_BORDER_ROUNDEDNESS = BUD_RADIUS;
 export const EXTENT_BORDER_THICKNESS = BUD_RADIUS;
 
-export function cloneStyle(style:any):any {
-  const rv:any = {};
+export function cloneStyle(style: any): any {
+  const rv: any = {};
   for (const styleName in style) {
     if (Object.prototype.hasOwnProperty.call(style, styleName)) {
       rv[styleName] = style[styleName];
@@ -223,9 +207,9 @@ export function cloneStyle(style:any):any {
   return rv;
 }
 
-export function copyStyle(type:any):any {
-  const rv:any = {};
-  const copiedStyle:any = style(type);
+export function copyStyle(type: any): any {
+  const rv: any = {};
+  const copiedStyle: any = style(type);
 
   for (const styleName in copiedStyle) {
     if (Object.prototype.hasOwnProperty.call(copiedStyle, styleName)) {
@@ -236,7 +220,7 @@ export function copyStyle(type:any):any {
   return rv;
 }
 
-export default function style(type:Type|string, mathMode?:boolean):any {
+export default function style(type: Type | string, mathMode?: boolean): any {
   if (typeof type === "string") {
     type = readType(type);
   }
@@ -256,7 +240,7 @@ export default function style(type:Type|string, mathMode?:boolean):any {
     case Type.SCENE: {
       return SCENE_STYLE;
     }
-    case Type.ELEMENT : {
+    case Type.ELEMENT: {
       return ELEMENT_STYLE;
     }
   }

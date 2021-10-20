@@ -1,20 +1,19 @@
-import {
-  Direction,
-  readDirection,
-} from 'parsegraph-direction';
-import TestSuite from 'parsegraph-testsuite';
-import DefaultNodePalette from './DefaultNodePalette';
-import DefaultNodeType, { Type } from './DefaultNodeType';
-import EventCaret from './EventCaret';
-import Node from './Node';
+import { Direction, readDirection } from "parsegraph-direction";
+import TestSuite from "parsegraph-testsuite";
+import DefaultNodePalette from "./DefaultNodePalette";
+import DefaultNodeType, { Type } from "./DefaultNodeType";
+import EventCaret from "./EventCaret";
+import Node from "./Node";
 
 export default class Caret extends EventCaret<Node<DefaultNodeType>> {
-
-  constructor(given?:Node<DefaultNodeType>|string|Type, mathMode?:boolean) {
+  constructor(
+    given?: Node<DefaultNodeType> | string | Type,
+    mathMode?: boolean
+  ) {
     super(new DefaultNodePalette(mathMode), given);
   }
 
-  element(elem?:any):any {
+  element(elem?: any): any {
     if (elem === undefined) {
       return this.node().element();
     }
@@ -41,7 +40,7 @@ export default class Caret extends EventCaret<Node<DefaultNodeType>> {
         font = this.font();
         break;
       case 2:
-        if (typeof args[1] === 'object') {
+        if (typeof args[1] === "object") {
           node = this.node();
           text = args[0];
           font = args[1];
@@ -89,21 +88,21 @@ export default class Caret extends EventCaret<Node<DefaultNodeType>> {
   }
 }
 
-const caretTests = new TestSuite('Caret');
-caretTests.addTest('new Caret', function() {
+const caretTests = new TestSuite("Caret");
+caretTests.addTest("new Caret", function () {
   const dnp = new DefaultNodePalette();
-  let car = new Caret('s');
-  const n = dnp.spawn('b');
+  let car = new Caret("s");
+  const n = dnp.spawn("b");
   car = new Caret(n);
   car = new Caret();
   if (car.node().type() !== dnp.spawn().type()) {
-    return car.node().type() + ' is not the default.';
+    return car.node().type() + " is not the default.";
   }
 });
 
-caretTests.addTest('Caret.onKey', function() {
+caretTests.addTest("Caret.onKey", function () {
   const car = new Caret();
-  car.onKey(function() {
-    console.log('Key pressed');
+  car.onKey(function () {
+    console.log("Key pressed");
   });
 });

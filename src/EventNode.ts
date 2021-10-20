@@ -1,16 +1,14 @@
-import Method from 'parsegraph-method';
-import Viewport from './Viewport';
+import Method from "parsegraph-method";
+import Viewport from "./Viewport";
 
-import Direction, {
-  NodePalette
-} from 'parsegraph-direction';
-import WindowNode from './WindowNode';
-import Font from './Font';
+import Direction, { NodePalette } from "parsegraph-direction";
+import WindowNode from "./WindowNode";
+import Font from "./Font";
 
 export function chainTab(
-    a: EventNode,
-    b: EventNode,
-    swappedOut?: EventNode[],
+  a: EventNode,
+  b: EventNode,
+  swappedOut?: EventNode[]
 ): void {
   a.ensureExtended();
   b.ensureExtended();
@@ -27,7 +25,7 @@ export function chainTab(
   }
 }
 
-export function chainAllTabs(...args:EventNode[]): void {
+export function chainAllTabs(...args: EventNode[]): void {
   if (args.length < 2) {
     return;
   }
@@ -40,9 +38,9 @@ export function chainAllTabs(...args:EventNode[]): void {
   chainTab(lastNode, firstNode);
 }
 
-export function arrayRemove(list:any[], key:any):boolean {
-  for(let i = 0; i < list.length; ++i) {
-    if(list[i] === key) {
+export function arrayRemove(list: any[], key: any): boolean {
+  for (let i = 0; i < list.length; ++i) {
+    if (list[i] === key) {
       list.splice(i, 1);
       return true;
     }
@@ -50,9 +48,9 @@ export function arrayRemove(list:any[], key:any):boolean {
   return false;
 }
 
-export function arrayRemoveAll(list:any[], key:any):number {
+export function arrayRemoveAll(list: any[], key: any): number {
   let removals = 0;
-  while(arrayRemove(list, key)) {
+  while (arrayRemove(list, key)) {
     ++removals;
   }
   return removals;
@@ -65,17 +63,17 @@ export class CustomEvents {
     this._listeners = null;
   }
 
-  emit(...args:any): void {
+  emit(...args: any): void {
     console.log("Emitting ", ...args);
     if (!this._listeners) {
       return;
     }
-    this._listeners.forEach((listener)=>{
+    this._listeners.forEach((listener) => {
       listener.apply(args);
     });
   }
 
-  listen(func:Function, funcThisArg?:object): Method {
+  listen(func: Function, funcThisArg?: object): Method {
     if (!this._listeners) {
       this._listeners = [];
     }
@@ -84,7 +82,7 @@ export class CustomEvents {
     return method;
   }
 
-  stopListening(method:Method): boolean {
+  stopListening(method: Method): boolean {
     if (!this._listeners) {
       return false;
     }
@@ -142,13 +140,13 @@ export default abstract class EventNode extends WindowNode {
   _selected: boolean;
 
   // XXX Hacks for build because of Input errors
-  _label:any;
+  _label: any;
 
-  type():any {
+  type(): any {
     return null;
   }
 
-  abstract palette():NodePalette<EventNode>;
+  abstract palette(): NodePalette<EventNode>;
 
   constructor(fromNode?: EventNode, parentDirection?: Direction) {
     super(fromNode, parentDirection);
@@ -170,7 +168,7 @@ export default abstract class EventNode extends WindowNode {
   }
 
   toString(): string {
-    return '[EventNode ' + this._id + ']';
+    return "[EventNode " + this._id + "]";
   }
 
   ensureExtended(): ExtendedNode {
@@ -242,14 +240,14 @@ export default abstract class EventNode extends WindowNode {
     return this._extended && this._extended.changeListener != null;
   }
 
-  valueChanged(...args:any): any {
+  valueChanged(...args: any): any {
     // Invoke the listener.
     if (!this.hasChangeListener()) {
       return;
     }
     return this._extended.changeListener.apply(
-        this._extended.changeListenerThisArg,
-        ...args,
+      this._extended.changeListenerThisArg,
+      ...args
     );
   }
 
@@ -259,9 +257,9 @@ export default abstract class EventNode extends WindowNode {
       return;
     }
     return this._extended.clickListener.call(
-        this._extended.clickListenerThisArg,
-        viewport,
-        this
+      this._extended.clickListenerThisArg,
+      viewport,
+      this
     );
   }
 
@@ -287,15 +285,15 @@ export default abstract class EventNode extends WindowNode {
     return this._extended && this._extended.keyListener != null;
   }
 
-  key(keyName:string, viewport?:Viewport): any {
+  key(keyName: string, viewport?: Viewport): any {
     // Invoke the key listener.
     if (!this.hasKeyListener()) {
       return;
     }
     return this._extended.keyListener.call(
-        this._extended.keyListenerThisArg,
-        keyName,
-        viewport,
+      this._extended.keyListenerThisArg,
+      keyName,
+      viewport
     );
   }
 

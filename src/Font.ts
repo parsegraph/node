@@ -1,17 +1,17 @@
-import TinySDF, {SDF_RADIUS} from 'parsegraph-sdf';
-import { BasicWindow } from 'parsegraph-window';
+import TinySDF, { SDF_RADIUS } from "parsegraph-sdf";
+import { BasicWindow } from "parsegraph-window";
 
 // The width in pixels of a font's glyph page.
 export const MAX_PAGE_WIDTH = 512;
 
 export class GlyphPage {
-  _id:number;
-  _glyphTexture:{[id:string]:WebGLTexture};
-  _firstGlyph:GlyphData;
-  _lastGlyph:GlyphData;
-  next:GlyphPage;
+  _id: number;
+  _glyphTexture: { [id: string]: WebGLTexture };
+  _firstGlyph: GlyphData;
+  _lastGlyph: GlyphData;
+  next: GlyphPage;
 
-  constructor(font:Font) {
+  constructor(font: Font) {
     this._id = font._maxPage++;
     this._glyphTexture = {};
     this._firstGlyph = null;
@@ -21,31 +21,31 @@ export class GlyphPage {
 }
 
 export class GlyphData {
-  glyphPage:GlyphPage;
-  x:number;
-  y:number;
-  width:number;
-  height:number;
-  ascent:number;
-  descent:number;
-  advance:number;
-  radius:number;
-  letter:string;
-  length:number;
-  painted:boolean;
-  next:GlyphData;
+  glyphPage: GlyphPage;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  ascent: number;
+  descent: number;
+  advance: number;
+  radius: number;
+  letter: string;
+  length: number;
+  painted: boolean;
+  next: GlyphData;
 
   constructor(
-    glyphPage:GlyphPage,
-    glyph:string,
-    x:number,
-    y:number,
-    width:number,
-    height:number,
-    ascent:number,
-    descent:number,
-    advance:number,
-    radius:number,
+    glyphPage: GlyphPage,
+    glyph: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    ascent: number,
+    descent: number,
+    advance: number,
+    radius: number
   ) {
     this.glyphPage = glyphPage;
     this.letter = glyph;
@@ -63,13 +63,13 @@ export class GlyphData {
 }
 
 export class FontWindow {
-  _glTextureSize:number;
-  _numGlyphs:number;
-  _textureArray:Uint8Array;
-  _window:BasicWindow;
-  _font:Font;
+  _glTextureSize: number;
+  _numGlyphs: number;
+  _textureArray: Uint8Array;
+  _window: BasicWindow;
+  _font: Font;
 
-  constructor(font:Font, window:BasicWindow) {
+  constructor(font: Font, window: BasicWindow) {
     this._font = font;
     this._window = window;
     this._glTextureSize = null;
@@ -89,41 +89,37 @@ export class FontWindow {
  */
 let fontCount = 0;
 export default class Font {
-  _id:number;
-  _fontSize:number;
-  _fontName:string;
-  _fillStyle:string;
-  _measureCanvas:HTMLCanvasElement;
-  _measureCtx:CanvasRenderingContext2D;
-  _windows:{[id:string]:FontWindow};
-  _renderCanvas:HTMLCanvasElement;
-  _renderCtx:CanvasRenderingContext2D;
-  _glyphData:{[id:string]:GlyphData};
-  _pages:GlyphPage[];
-  _numGlyphs:number;
-  _currentRowHeight:number;
-  _padding:number;
-  _x:number;
-  _y:number;
-  _maxPage:number;
-  _sdf:TinySDF;
-  constructor(fontSizePixels:number, fontName:string, fillStyle?:string) {
+  _id: number;
+  _fontSize: number;
+  _fontName: string;
+  _fillStyle: string;
+  _measureCanvas: HTMLCanvasElement;
+  _measureCtx: CanvasRenderingContext2D;
+  _windows: { [id: string]: FontWindow };
+  _renderCanvas: HTMLCanvasElement;
+  _renderCtx: CanvasRenderingContext2D;
+  _glyphData: { [id: string]: GlyphData };
+  _pages: GlyphPage[];
+  _numGlyphs: number;
+  _currentRowHeight: number;
+  _padding: number;
+  _x: number;
+  _y: number;
+  _maxPage: number;
+  _sdf: TinySDF;
+  constructor(fontSizePixels: number, fontName: string, fillStyle?: string) {
     this._id = fontCount++;
     this._fontSize = fontSizePixels;
     this._fontName = fontName;
     this._fillStyle = fillStyle;
     // console.log("Creating font " + this);
 
-    this._measureCanvas = document.createElement('canvas');
-    this._measureCtx = this._measureCanvas.getContext('2d');
+    this._measureCanvas = document.createElement("canvas");
+    this._measureCtx = this._measureCanvas.getContext("2d");
     this._measureCtx.font = this.font();
     this._measureCtx.fillStyle = this._fillStyle;
     // this._measureCtx.textBaseline = 'top';
-    console.log(
-        'Font font',
-        this._measureCtx.font,
-        this._measureCtx.fillStyle,
-    );
+    console.log("Font font", this._measureCtx.font, this._measureCtx.fillStyle);
 
     this._windows = {};
     this._renderCanvas = null;
@@ -147,19 +143,13 @@ export default class Font {
 
   toString() {
     return (
-      '[Font ' +
-      this._id +
-      ': ' +
-      this._fontName +
-      ' ' +
-      this._fillStyle +
-      ']'
+      "[Font " + this._id + ": " + this._fontName + " " + this._fillStyle + "]"
     );
-  };
+  }
 
-  getGlyph(glyphOrCode:string|number) {
-    let glyph:string;
-    if (typeof glyphOrCode !== 'string') {
+  getGlyph(glyphOrCode: string | number) {
+    let glyph: string;
+    if (typeof glyphOrCode !== "string") {
       glyph = String.fromCharCode(glyphOrCode as number);
     } else {
       glyph = glyphOrCode as string;
@@ -204,16 +194,16 @@ export default class Font {
     }
 
     glyphData = new GlyphData(
-        glyphPage,
-        glyph,
-        this._x,
-        this._y,
-        letterWidth,
-        letterHeight,
-        letterAscent,
-        letterDescent,
-        advance,
-        this._sdf.radius,
+      glyphPage,
+      glyph,
+      this._x,
+      this._y,
+      letterWidth,
+      letterHeight,
+      letterAscent,
+      letterDescent,
+      advance,
+      this._sdf.radius
     );
     this._glyphData[glyph] = glyphData;
 
@@ -229,30 +219,30 @@ export default class Font {
     ++this._numGlyphs;
 
     return glyphData;
-  };
+  }
 
-  get(glyphOrCode:string|number):GlyphData {
+  get(glyphOrCode: string | number): GlyphData {
     return this.getGlyph(glyphOrCode);
   }
 
-  hasGlyph(glyph:string|number):boolean {
+  hasGlyph(glyph: string | number): boolean {
     const glyphData = this._glyphData[glyph];
     return glyphData !== undefined;
-  };
-  has(glyph:string|number):boolean {
+  }
+  has(glyph: string | number): boolean {
     return this.hasGlyph(glyph);
   }
 
-  contextChanged(isLost:boolean, window:BasicWindow) {
+  contextChanged(isLost: boolean, window: BasicWindow) {
     if (!isLost) {
       return;
     }
     this.dispose(window);
-  };
+  }
 
-  update(window:BasicWindow) {
+  update(window: BasicWindow) {
     if (!window) {
-      throw new Error('Window must be provided');
+      throw new Error("Window must be provided");
     }
     let gl = window.gl();
     if (gl.isContextLost()) {
@@ -271,13 +261,15 @@ export default class Font {
     if (!ctx._glTextureSize) {
       ctx._glTextureSize = window.textureSize();
       // console.log("GLTEXTURESIZE=" + ctx._glTextureSize);
-      ctx._textureArray = new Uint8Array(ctx._glTextureSize * ctx._glTextureSize);
+      ctx._textureArray = new Uint8Array(
+        ctx._glTextureSize * ctx._glTextureSize
+      );
     }
     if (!this._renderCanvas) {
-      this._renderCanvas = document.createElement('canvas');
+      this._renderCanvas = document.createElement("canvas");
       this._renderCanvas.width = pageTextureSize;
       this._renderCanvas.height = pageTextureSize;
-      this._renderCtx = this._renderCanvas.getContext('2d');
+      this._renderCtx = this._renderCanvas.getContext("2d");
       this._renderCtx.font = this.font();
       this._renderCtx.fillStyle = this._fillStyle;
     }
@@ -317,22 +309,22 @@ export default class Font {
         curTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, curTexture);
         gl.texImage2D(
-            gl.TEXTURE_2D,
-            0,
-            gl.ALPHA,
-            ctx._glTextureSize,
-            ctx._glTextureSize,
-            0,
-            gl.ALPHA,
-            gl.UNSIGNED_BYTE,
-            ctx._textureArray,
+          gl.TEXTURE_2D,
+          0,
+          gl.ALPHA,
+          ctx._glTextureSize,
+          ctx._glTextureSize,
+          0,
+          gl.ALPHA,
+          gl.UNSIGNED_BYTE,
+          ctx._textureArray
         );
         // console.log("Upload time: " + elapsed(ut));
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(
-            gl.TEXTURE_2D,
-            gl.TEXTURE_MIN_FILTER,
-            gl.LINEAR_MIPMAP_LINEAR,
+          gl.TEXTURE_2D,
+          gl.TEXTURE_MIN_FILTER,
+          gl.LINEAR_MIPMAP_LINEAR
         );
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         // Prevents t-coordinate wrapping (repeating).
@@ -342,13 +334,13 @@ export default class Font {
 
       // Draw from 2D canvas.
       gl.texSubImage2D(
-          gl.TEXTURE_2D,
-          0,
-          pageX,
-          pageY,
-          gl.ALPHA,
-          gl.UNSIGNED_BYTE,
-          this._renderCanvas,
+        gl.TEXTURE_2D,
+        0,
+        pageX,
+        pageY,
+        gl.ALPHA,
+        gl.UNSIGNED_BYTE,
+        this._renderCanvas
       );
       pageX += pageTextureSize;
       if (pageX >= ctx._glTextureSize) {
@@ -363,10 +355,10 @@ export default class Font {
       }
       // ++pagesUpdated;
     }
-    this._renderCanvas.style.position = 'absolute';
-    this._renderCanvas.style.pointerEvents = 'none';
-    this._renderCanvas.style.right = '0';
-    this._renderCanvas.style.top = '0';
+    this._renderCanvas.style.position = "absolute";
+    this._renderCanvas.style.pointerEvents = "none";
+    this._renderCanvas.style.right = "0";
+    this._renderCanvas.style.top = "0";
     // document.body.appendChild(this._renderCanvas);
     if (curTexture) {
       gl.generateMipmap(gl.TEXTURE_2D);
@@ -377,9 +369,9 @@ export default class Font {
     //   " page(s) in " +
     //   elapsed(td) +
     //   "ms");
-  };
+  }
 
-  dispose(window:BasicWindow) {
+  dispose(window: BasicWindow) {
     const ctx = this._windows[window.id()];
     if (!ctx) {
       return;
@@ -396,7 +388,7 @@ export default class Font {
       }
     }
     ctx._numGlyphs = 0;
-  };
+  }
 
   clear() {
     for (let i = 0; i < this._pages.length; ++i) {
@@ -418,33 +410,33 @@ export default class Font {
         this._windows[wid]._numGlyphs = 0;
       }
     }
-  };
+  }
 
   font() {
-    return this._fontSize + 'px ' + this._fontName;
-  };
+    return this._fontSize + "px " + this._fontName;
+  }
 
   pageTextureSize() {
     return MAX_PAGE_WIDTH;
-  };
+  }
 
   fontBaseline() {
     return this.fontSize();
-  };
+  }
 
   fontSize() {
     return this._fontSize;
-  };
+  }
 
   fullName() {
-    return this._fontName + ' ' + this._fillStyle;
-  };
+    return this._fontName + " " + this._fillStyle;
+  }
 
   fontName() {
     return this._fontName;
-  };
+  }
 
-  isNewline(c:string) {
-    return c === '\n';
-  };
+  isNewline(c: string) {
+    return c === "\n";
+  }
 }

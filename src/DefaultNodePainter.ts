@@ -1,19 +1,19 @@
-import checkGLError from 'parsegraph-checkglerror';
+import checkGLError from "parsegraph-checkglerror";
 import {
   Direction,
   forEachCardinalDirection,
   isVerticalDirection,
   directionSign,
-} from 'parsegraph-direction';
-import {Alignment} from 'parsegraph-layout';
-import Node from './Node';
-import EventNode from './EventNode';
+} from "parsegraph-direction";
+import { Alignment } from "parsegraph-layout";
+import Node from "./Node";
+import EventNode from "./EventNode";
 
-import {Matrix3x3} from 'parsegraph-matrix';
+import { Matrix3x3 } from "parsegraph-matrix";
 
-import Viewport from './Viewport';
-import DefaultNodeType, {Type} from './DefaultNodeType';
-import BlockPainter from 'parsegraph-blockpainter';
+import Viewport from "./Viewport";
+import DefaultNodeType, { Type } from "./DefaultNodeType";
+import BlockPainter from "parsegraph-blockpainter";
 import {
   SELECTED_LINE_COLOR,
   LINE_COLOR,
@@ -22,30 +22,30 @@ import {
   EXTENT_BORDER_THICKNESS,
   EXTENT_BORDER_COLOR,
   EXTENT_BACKGROUND_COLOR,
-} from './DefaultNodeStyle';
-import Size from 'parsegraph-size';
-import GlyphPainter from './GlyphPainter';
-import Rect from 'parsegraph-rect';
-import { BasicWindow, Component } from 'parsegraph-window';
-import Color from 'parsegraph-color';
-import Font from './Font';
-import TexturePainter from './TexturePainter';
-import NodePainter from './NodePainter';
-import Camera from 'parsegraph-camera';
-import WindowNode from './WindowNode';
+} from "./DefaultNodeStyle";
+import Size from "parsegraph-size";
+import GlyphPainter from "./GlyphPainter";
+import Rect from "parsegraph-rect";
+import { BasicWindow, Component } from "parsegraph-window";
+import Color from "parsegraph-color";
+import Font from "./Font";
+import TexturePainter from "./TexturePainter";
+import NodePainter from "./NodePainter";
+import Camera from "parsegraph-camera";
+import WindowNode from "./WindowNode";
 
 class PaintedElement {
-  _window:BasicWindow;
-  _node:WindowNode;
-  _size:Size;
+  _window: BasicWindow;
+  _node: WindowNode;
+  _size: Size;
 
-  constructor(window:BasicWindow, node:WindowNode) {
+  constructor(window: BasicWindow, node: WindowNode) {
     this._window = window;
     this._node = node;
     this._size = new Size();
   }
 
-  paint(paintContext:Component):void {
+  paint(paintContext: Component): void {
     const node = this._node;
     const elem = node.elementFor(paintContext).parentElement;
     this._node.size(this._size);
@@ -56,18 +56,15 @@ class PaintedElement {
     const y = node.groupY();
     const absScale = node.groupScale();
     const posTranslate = `translate(${x}px, ${y}px)`;
-    const halfSizeTranslate = `translate(${-size.width()/2}px, ${-size.height()/2}px)`;
+    const halfSizeTranslate = `translate(${-size.width() / 2}px, ${
+      -size.height() / 2
+    }px)`;
     const nodeScale = `scale(${absScale}, ${absScale})`;
-    const newTransform = [
-      posTranslate,
-      nodeScale,
-      halfSizeTranslate
-    ].join(" ");
+    const newTransform = [posTranslate, nodeScale, halfSizeTranslate].join(" ");
     elem.style.transform = newTransform;
   }
 
-  render(camera:Camera, paintContext: Component):void {
-  }
+  render(camera: Camera, paintContext: Component): void {}
 }
 
 export default class DefaultNodePainter implements NodePainter {
@@ -91,11 +88,15 @@ export default class DefaultNodePainter implements NodePainter {
   _renderedElements: Map<Component, PaintedElement[]>;
   bodySize: Size;
 
-  consecutiveRenders():number {
+  consecutiveRenders(): number {
     return this._consecutiveRenders;
   }
 
-  constructor(window: BasicWindow, node:Node<DefaultNodeType>, paintContext: Component) {
+  constructor(
+    window: BasicWindow,
+    node: Node<DefaultNodeType>,
+    paintContext: Component
+  ) {
     this._window = window;
     this._paintContext = paintContext;
     this._node = node;
@@ -129,7 +130,7 @@ export default class DefaultNodePainter implements NodePainter {
         fontPainter.contextChanged();
       }
     }
-    this._textures.forEach(function(/* t */) {
+    this._textures.forEach(function (/* t */) {
       // t.contextChanged(isLost);
     });
     this._pagesPerGlyphTexture = NaN;
@@ -157,7 +158,7 @@ export default class DefaultNodePainter implements NodePainter {
     return this._window.gl();
   }
 
-  setBackground(r:any, ...args: any[]): void {
+  setBackground(r: any, ...args: any[]): void {
     if (args.length > 0) {
       return this.setBackground(new Color(r, ...args));
     }
@@ -179,7 +180,7 @@ export default class DefaultNodePainter implements NodePainter {
     }
 
     // const gl = this.gl();
-    this._textures.forEach(function(t) {
+    this._textures.forEach(function (t) {
       t.clear();
       // gl.deleteTexture(t._texture);
     });
@@ -193,13 +194,13 @@ export default class DefaultNodePainter implements NodePainter {
     const style = node.blockStyle();
     const painter = this._blockPainter;
 
-    const drawLine: Function = function(
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        thickness: number,
-        color: Color,
+    const drawLine: Function = function (
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      thickness: number,
+      color: Color
     ) {
       const cx = x1 + (x2 - x1) / 2;
       const cy = y1 + (y2 - y1) / 2;
@@ -208,22 +209,20 @@ export default class DefaultNodePainter implements NodePainter {
       if (x1 == x2) {
         // Vertical line.
         size = new Size(
-            LINE_THICKNESS * node.groupScale() * thickness,
-            Math.abs(y2 - y1),
+          LINE_THICKNESS * node.groupScale() * thickness,
+          Math.abs(y2 - y1)
         );
       } else {
         // Horizontal line.
         size = new Size(
-            Math.abs(x2 - x1),
-            LINE_THICKNESS * node.groupScale() * thickness,
+          Math.abs(x2 - x1),
+          LINE_THICKNESS * node.groupScale() * thickness
         );
       }
 
       if (color === undefined) {
         if (node.isSelected()) {
-          color = SELECTED_LINE_COLOR.premultiply(
-              style.backgroundColor,
-          );
+          color = SELECTED_LINE_COLOR.premultiply(style.backgroundColor);
         } else {
           color = LINE_COLOR.premultiply(style.backgroundColor);
         }
@@ -231,13 +230,13 @@ export default class DefaultNodePainter implements NodePainter {
       painter.setBorderColor(color);
       painter.setBackgroundColor(color);
       painter.drawBlock(
-          node.groupX() + cx,
-          node.groupY() + cy,
-          size.width(),
-          size.height(),
-          0,
-          0,
-          node.groupScale(),
+        node.groupX() + cx,
+        node.groupY() + cy,
+        size.width(),
+        size.height(),
+        0,
+        0,
+        node.groupScale()
       );
     };
 
@@ -272,17 +271,17 @@ export default class DefaultNodePainter implements NodePainter {
 
     if (node.isSelected()) {
       painter.setBorderColor(
-          style.selectedBorderColor.premultiply(node.backdropColor()),
+        style.selectedBorderColor.premultiply(node.backdropColor())
       );
       painter.setBackgroundColor(
-          style.selectedBackgroundColor.premultiply(node.backdropColor()),
+        style.selectedBackgroundColor.premultiply(node.backdropColor())
       );
     } else {
       painter.setBorderColor(
-          style.borderColor.premultiply(node.backdropColor()),
+        style.borderColor.premultiply(node.backdropColor())
       );
       painter.setBackgroundColor(
-          style.backgroundColor.premultiply(node.backdropColor()),
+        style.backgroundColor.premultiply(node.backdropColor())
       );
     }
 
@@ -292,16 +291,16 @@ export default class DefaultNodePainter implements NodePainter {
     }
     const thumbWidth = groupSize.height() / 1.5;
     painter.drawBlock(
-        node.groupX() -
+      node.groupX() -
         sliderWidth / 2 +
         thumbWidth / 2 +
         (sliderWidth - thumbWidth) * value,
-        node.groupY(),
-        groupSize.height() / 1.5,
-        groupSize.height() / 1.5,
-        style.borderRoundness / 1.5,
-        style.borderThickness / 1.5,
-        node.groupScale(),
+      node.groupY(),
+      groupSize.height() / 1.5,
+      groupSize.height() / 1.5,
+      style.borderRoundness / 1.5,
+      style.borderThickness / 1.5,
+      node.groupScale()
     );
     // }
 
@@ -315,7 +314,7 @@ export default class DefaultNodePainter implements NodePainter {
     //        fontScale * style.fontSize * node.groupScale()
     //    );
     fontPainter.setColor(
-      node.isSelected() ? style.selectedFontColor : style.fontColor,
+      node.isSelected() ? style.selectedFontColor : style.fontColor
     );
 
     // fontPainter.setFontSize(
@@ -340,7 +339,8 @@ export default class DefaultNodePainter implements NodePainter {
     node._label[1] = node.groupY() - textMetrics[1] / 2;
     fontPainter.setPosition(node._label[0], node._label[1]);
     fontPainter.drawText(node.label());
-  */}
+  */
+  }
 
   drawElement(node: Node<DefaultNodeType>): void {
     if (!node.element()) {
@@ -377,37 +377,37 @@ export default class DefaultNodePainter implements NodePainter {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          sceneSize.width(),
-          sceneSize.height(),
-          0,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          null,
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        sceneSize.width(),
+        sceneSize.height(),
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        null
       );
 
       const renderbuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
       gl.renderbufferStorage(
-          gl.RENDERBUFFER,
-          gl.DEPTH_COMPONENT16,
-          sceneSize.width(),
-          sceneSize.height(),
+        gl.RENDERBUFFER,
+        gl.DEPTH_COMPONENT16,
+        sceneSize.width(),
+        sceneSize.height()
       );
       gl.framebufferTexture2D(
-          gl.FRAMEBUFFER,
-          gl.COLOR_ATTACHMENT0,
-          gl.TEXTURE_2D,
-          t,
-          0,
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        t,
+        0
       );
       gl.framebufferRenderbuffer(
-          gl.FRAMEBUFFER,
-          gl.DEPTH_ATTACHMENT,
-          gl.RENDERBUFFER,
-          renderbuffer,
+        gl.FRAMEBUFFER,
+        gl.DEPTH_ATTACHMENT,
+        gl.RENDERBUFFER,
+        renderbuffer
       );
 
       shaders.framebufferTexture = t;
@@ -417,7 +417,7 @@ export default class DefaultNodePainter implements NodePainter {
       gl.bindRenderbuffer(gl.RENDERBUFFER, shaders.framebufferRenderBuffer);
       gl.bindFramebuffer(gl.FRAMEBUFFER, shaders.framebuffer);
 
-      this._textures.forEach(function(t) {
+      this._textures.forEach(function (t) {
         // gl.deleteTexture(t._texture);
         t.clear();
       });
@@ -425,10 +425,10 @@ export default class DefaultNodePainter implements NodePainter {
     }
 
     gl.clearColor(
-        this._backgroundColor.r(),
-        this._backgroundColor.g(),
-        this._backgroundColor.b(),
-        this._backgroundColor.a(),
+      this._backgroundColor.r(),
+      this._backgroundColor.g(),
+      this._backgroundColor.b(),
+      this._backgroundColor.a()
     );
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.disable(gl.BLEND);
@@ -442,17 +442,17 @@ export default class DefaultNodePainter implements NodePainter {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     const p = new TexturePainter(
-        this.window(),
-        shaders.framebufferTexture as number,
-        sceneSize.width(),
-        sceneSize.height(),
+      this.window(),
+      shaders.framebufferTexture as number,
+      sceneSize.width(),
+      sceneSize.height()
     );
     p.drawWholeTexture(
-        sceneX - sceneSize.width() / 2,
-        sceneY - sceneSize.height() / 2,
-        sceneSize.width(),
-        sceneSize.height(),
-        node.groupScale(),
+      sceneX - sceneSize.width() / 2,
+      sceneY - sceneSize.height() / 2,
+      sceneSize.width(),
+      sceneSize.height(),
+      node.groupScale()
     );
     this._textures.push(p);
   }
@@ -461,7 +461,7 @@ export default class DefaultNodePainter implements NodePainter {
     return this._mass * this._consecutiveRenders;
   }
 
-  initBlockBuffer(counts:any) {
+  initBlockBuffer(counts: any) {
     this._consecutiveRenders = 0;
     this._mass = counts.numBlocks;
     this._elements = [];
@@ -471,9 +471,9 @@ export default class DefaultNodePainter implements NodePainter {
     }
     if (counts.numGlyphs) {
       for (const fullFontName in counts.numGlyphs) {
-        if (Object.prototype.hasOwnProperty.call(
-            counts.numGlyphs,
-            fullFontName)) {
+        if (
+          Object.prototype.hasOwnProperty.call(counts.numGlyphs, fullFontName)
+        ) {
           const numGlyphs = counts.numGlyphs[fullFontName];
           let fontPainter = this._fontPainters[fullFontName];
           if (!fontPainter) {
@@ -486,7 +486,7 @@ export default class DefaultNodePainter implements NodePainter {
     }
   }
 
-  countNode(node:Node<DefaultNodeType>, counts:any):void {
+  countNode(node: Node<DefaultNodeType>, counts: any): void {
     if (!counts.numBlocks) {
       counts.numBlocks = 0;
     }
@@ -495,7 +495,7 @@ export default class DefaultNodePainter implements NodePainter {
       if (!counts.numExtents) {
         counts.numExtents = 0;
       }
-      forEachCardinalDirection(function(direction:Direction) {
+      forEachCardinalDirection(function (direction: Direction) {
         const extent = node.extentsAt(direction);
         counts.numExtents += extent.numBounds();
       }, this);
@@ -511,7 +511,7 @@ export default class DefaultNodePainter implements NodePainter {
       // One for the block.
       ++counts.numBlocks;
     } else {
-      forEachCardinalDirection(function(direction:Direction) {
+      forEachCardinalDirection(function (direction: Direction) {
         if (node.parentDirection() == direction) {
           return;
         }
@@ -550,7 +550,7 @@ export default class DefaultNodePainter implements NodePainter {
 
     let numGlyphs = counts.numGlyphs[font.fullName()];
     if (!numGlyphs) {
-      numGlyphs = {font: font};
+      numGlyphs = { font: font };
       counts.numGlyphs[font.fullName()] = numGlyphs;
     }
 
@@ -558,23 +558,23 @@ export default class DefaultNodePainter implements NodePainter {
     // console.log(node + " Count=" + counts.numBlocks);
   }
 
-  paint(paintContext:Component):void {
+  paint(paintContext: Component): void {
     const paintGroup = this._node;
     const counts: { [key: string]: number } = {};
-    paintGroup.forEachNode((node:Node<DefaultNodeType>)=>{
+    paintGroup.forEachNode((node: Node<DefaultNodeType>) => {
       // console.log("Counting node " + node);
       this.countNode(node, counts);
     });
     // console.log("Glyphs: " + counts.numGlyphs);
     this.initBlockBuffer(counts);
-    paintGroup.forEachNode((node:Node<DefaultNodeType>)=>{
+    paintGroup.forEachNode((node: Node<DefaultNodeType>) => {
       this.drawNode(node);
     });
 
-    this._elements.forEach(elem=>elem.paint(paintContext));
+    this._elements.forEach((elem) => elem.paint(paintContext));
   }
 
-  drawNode(node:Node<DefaultNodeType>) {
+  drawNode(node: Node<DefaultNodeType>) {
     const gl = this.gl();
     if (gl.isContextLost()) {
       return;
@@ -582,7 +582,7 @@ export default class DefaultNodePainter implements NodePainter {
     if (this.isExtentRenderingEnabled() && !node.isRoot()) {
       this.paintExtent(node);
     }
-    checkGLError(gl, 'Before Node drawNode');
+    checkGLError(gl, "Before Node drawNode");
 
     switch (node.type().type()) {
       case Type.SLIDER:
@@ -599,10 +599,10 @@ export default class DefaultNodePainter implements NodePainter {
         this.paintLines(node);
         this.paintBlock(node);
     }
-    checkGLError(gl, 'After Node drawNode');
+    checkGLError(gl, "After Node drawNode");
   }
 
-  drawLine(direction:Direction, node:Node<DefaultNodeType>) {
+  drawLine(direction: Direction, node: Node<DefaultNodeType>) {
     if (node.parentDirection() == direction) {
       return;
     }
@@ -613,7 +613,7 @@ export default class DefaultNodePainter implements NodePainter {
     const directionData = node.neighborAt(direction);
 
     const selectedColor = SELECTED_LINE_COLOR.premultiply(
-        this.backgroundColor(),
+      this.backgroundColor()
     );
     const color = LINE_COLOR.premultiply(this.backgroundColor());
 
@@ -629,17 +629,14 @@ export default class DefaultNodePainter implements NodePainter {
 
     const parentScale = node.groupScale();
     const scale = directionData.getNode().groupScale();
-    if (typeof scale !== 'number' || isNaN(scale)) {
+    if (typeof scale !== "number" || isNaN(scale)) {
       console.log(directionData.node);
       throw new Error(
-          directionData.node +
-          '\'s groupScale must be a number but was ' +
-          scale,
+        directionData.node + "'s groupScale must be a number but was " + scale
       );
     }
 
-    const thickness =
-      LINE_THICKNESS * scale * directionData.getNode().scale();
+    const thickness = LINE_THICKNESS * scale * directionData.getNode().scale();
     // console.log(thickness, scale);
     if (isVerticalDirection(direction)) {
       const length =
@@ -647,13 +644,13 @@ export default class DefaultNodePainter implements NodePainter {
         parentScale *
         (directionData.lineLength + LINE_THICKNESS / 2);
       painter.drawBlock(
-          node.groupX(),
-          node.groupY() + length / 2,
-          thickness,
-          Math.abs(length),
-          0,
-          0,
-          scale,
+        node.groupX(),
+        node.groupY() + length / 2,
+        thickness,
+        Math.abs(length),
+        0,
+        0,
+        scale
       );
     } else {
       // Horizontal line.
@@ -662,47 +659,49 @@ export default class DefaultNodePainter implements NodePainter {
         parentScale *
         (directionData.lineLength + LINE_THICKNESS / 2);
       painter.drawBlock(
-          node.groupX() + length / 2,
-          node.groupY(),
-          Math.abs(length),
-          thickness,
-          0,
-          0,
-          scale,
+        node.groupX() + length / 2,
+        node.groupY(),
+        Math.abs(length),
+        thickness,
+        0,
+        0,
+        scale
       );
     }
   }
 
-  paintLines(node:Node<DefaultNodeType>) {
-    forEachCardinalDirection((dir:Direction)=>{this.drawLine(dir, node)});
+  paintLines(node: Node<DefaultNodeType>) {
+    forEachCardinalDirection((dir: Direction) => {
+      this.drawLine(dir, node);
+    });
   }
 
-  paintBound(node:Node<DefaultNodeType>, rect:Rect) {
+  paintBound(node: Node<DefaultNodeType>, rect: Rect) {
     if (isNaN(rect.height()) || isNaN(rect.width())) {
       return;
     }
     this._extentPainter.drawBlock(
-        rect.x() + rect.width() / 2,
-        rect.y() + rect.height() / 2,
-        rect.width(),
-        rect.height(),
-        EXTENT_BORDER_ROUNDEDNESS,
-        EXTENT_BORDER_THICKNESS,
-        node.groupScale(),
+      rect.x() + rect.width() / 2,
+      rect.y() + rect.height() / 2,
+      rect.width(),
+      rect.height(),
+      EXTENT_BORDER_ROUNDEDNESS,
+      EXTENT_BORDER_THICKNESS,
+      node.groupScale()
     );
-  };
+  }
 
-  paintDownwardExtent(node:Node<DefaultNodeType>) {
+  paintDownwardExtent(node: Node<DefaultNodeType>) {
     const extent = node.extentsAt(Direction.DOWNWARD);
     const rect = new Rect(
-        node.groupX() -
+      node.groupX() -
         node.groupScale() * node.extentOffsetAt(Direction.DOWNWARD),
-        node.groupY(),
-        0,
-        0,
+      node.groupY(),
+      0,
+      0
     );
 
-    extent.forEach((length:number, size:number)=>{
+    extent.forEach((length: number, size: number) => {
       length *= node.groupScale();
       size *= node.groupScale();
       rect.setWidth(length);
@@ -710,19 +709,18 @@ export default class DefaultNodePainter implements NodePainter {
       this.paintBound(node, rect);
       rect.setX(rect.x() + length);
     });
-  };
+  }
 
-  paintUpwardExtent(node:Node<DefaultNodeType>) {
+  paintUpwardExtent(node: Node<DefaultNodeType>) {
     const extent = node.extentsAt(Direction.UPWARD);
     const rect = new Rect(
-        node.groupX() -
-        node.groupScale() * node.extentOffsetAt(Direction.UPWARD),
-        0,
-        0,
-        0,
+      node.groupX() - node.groupScale() * node.extentOffsetAt(Direction.UPWARD),
+      0,
+      0,
+      0
     );
 
-    extent.forEach((length:number, size:number)=>{
+    extent.forEach((length: number, size: number) => {
       length *= node.groupScale();
       size *= node.groupScale();
       rect.setY(node.groupY() - size);
@@ -731,19 +729,19 @@ export default class DefaultNodePainter implements NodePainter {
       this.paintBound(node, rect);
       rect.setX(rect.x() + length);
     });
-  };
+  }
 
-  paintBackwardExtent(node:Node<DefaultNodeType>) {
+  paintBackwardExtent(node: Node<DefaultNodeType>) {
     const extent = node.extentsAt(Direction.BACKWARD);
     const rect = new Rect(
-        0,
-        node.groupY() -
+      0,
+      node.groupY() -
         node.groupScale() * node.extentOffsetAt(Direction.BACKWARD),
-        0,
-        0,
+      0,
+      0
     );
 
-    extent.forEach((length:number, size:number)=>{
+    extent.forEach((length: number, size: number) => {
       length *= node.groupScale();
       size *= node.groupScale();
       rect.setHeight(length);
@@ -752,19 +750,19 @@ export default class DefaultNodePainter implements NodePainter {
       this.paintBound(node, rect);
       rect.setY(rect.y() + length);
     });
-  };
+  }
 
-  paintForwardExtent(node:Node<DefaultNodeType>) {
+  paintForwardExtent(node: Node<DefaultNodeType>) {
     const extent = node.extentsAt(Direction.FORWARD);
     const rect = new Rect(
-        node.groupX(),
-        node.groupY() -
+      node.groupX(),
+      node.groupY() -
         node.extentOffsetAt(Direction.FORWARD) * node.groupScale(),
-        0,
-        0,
+      0,
+      0
     );
 
-    extent.forEach((length:number, size:number)=>{
+    extent.forEach((length: number, size: number) => {
       length *= node.groupScale();
       size *= node.groupScale();
       rect.setHeight(length);
@@ -774,7 +772,7 @@ export default class DefaultNodePainter implements NodePainter {
     });
   }
 
-  paintExtent(node:Node<DefaultNodeType>) {
+  paintExtent(node: Node<DefaultNodeType>) {
     const painter = this._extentPainter;
     painter.setBorderColor(EXTENT_BORDER_COLOR);
     painter.setBackgroundColor(EXTENT_BACKGROUND_COLOR);
@@ -785,7 +783,7 @@ export default class DefaultNodePainter implements NodePainter {
     // this.paintForwardExtent(node);
   }
 
-  paintBlock(node:Node<DefaultNodeType>):void {
+  paintBlock(node: Node<DefaultNodeType>): void {
     const style = node.blockStyle();
     const painter = this._blockPainter;
 
@@ -803,10 +801,10 @@ export default class DefaultNodePainter implements NodePainter {
             );
         } else */ {
       painter.setBorderColor(
-          style.borderColor.premultiply(node.backdropColor()),
+        style.borderColor.premultiply(node.backdropColor())
       );
       painter.setBackgroundColor(
-          style.backgroundColor.premultiply(node.backdropColor()),
+        style.backgroundColor.premultiply(node.backdropColor())
       );
     }
 
@@ -818,13 +816,13 @@ export default class DefaultNodePainter implements NodePainter {
     //   ", " +
     //   node.groupY());
     painter.drawBlock(
-        node.groupX(),
-        node.groupY(),
-        size.width(),
-        size.height(),
-        style.borderRoundness,
-        style.borderThickness,
-        node.groupScale(),
+      node.groupX(),
+      node.groupY(),
+      size.width(),
+      size.height(),
+      style.borderRoundness,
+      style.borderThickness,
+      node.groupScale()
     );
 
     // Draw the label.
@@ -837,11 +835,13 @@ export default class DefaultNodePainter implements NodePainter {
     let labelY;
     const fontPainter = this.getFontPainter(label.font());
     fontPainter.setColor(
-      node.isSelected() ? style.selectedFontColor : style.fontColor,
+      node.isSelected() ? style.selectedFontColor : style.fontColor
     );
     if (node.hasNode(Direction.INWARD)) {
       const nodeSize = node.sizeWithoutPadding(this.bodySize);
-      if (node.nodeAlignmentMode(Direction.INWARD) == Alignment.INWARD_VERTICAL) {
+      if (
+        node.nodeAlignmentMode(Direction.INWARD) == Alignment.INWARD_VERTICAL
+      ) {
         // Align vertical.
         labelX = node.groupX() - (fontScale * label.width()) / 2;
         labelY = node.groupY() - (node.groupScale() * nodeSize.height()) / 2;
@@ -852,7 +852,7 @@ export default class DefaultNodePainter implements NodePainter {
       }
     } else {
       labelX = node.groupX() - (fontScale * label.width()) / 2;
-      labelY = node.groupY() ;
+      labelY = node.groupY();
     }
     const l = node.realLabel();
     l._x = labelX;
@@ -861,7 +861,13 @@ export default class DefaultNodePainter implements NodePainter {
     label.paint(fontPainter, labelX, labelY, fontScale);
   }
 
-  render(world: Matrix3x3, scale: number, forceSimple: boolean, camera:Camera, paintContext:Component): void {
+  render(
+    world: Matrix3x3,
+    scale: number,
+    forceSimple: boolean,
+    camera: Camera,
+    paintContext: Component
+  ): void {
     // console.log("RENDERING THE NODE from nodepainter");
     ++this._consecutiveRenders;
     const gl = this.gl();
@@ -880,9 +886,9 @@ export default class DefaultNodePainter implements NodePainter {
     if (!forceSimple && this._renderText) {
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       for (const fontName in this._fontPainters) {
-        if (Object.prototype.hasOwnProperty.call(
-            this._fontPainters,
-            fontName)) {
+        if (
+          Object.prototype.hasOwnProperty.call(this._fontPainters, fontName)
+        ) {
           const fontPainter = this._fontPainters[fontName];
           fontPainter.render(world, scale);
         }
@@ -890,12 +896,12 @@ export default class DefaultNodePainter implements NodePainter {
     }
 
     if (this._textures.length > 0) {
-      this._textures.forEach(function(t) {
+      this._textures.forEach(function (t) {
         t.render(world);
       });
     }
 
-    this._elements.forEach(elem=>elem.render(camera, paintContext));
+    this._elements.forEach((elem) => elem.render(camera, paintContext));
   }
 
   enableExtentRendering(): void {
