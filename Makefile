@@ -75,6 +75,7 @@ GLSL_SCRIPTS = \
 all: build lint test coverage esdoc
 
 build: dist/parsegraph-$(DIST_NAME).js
+	echo Build complete.
 .PHONY: build
 
 build-prod: dist-prod/parsegraph-$(DIST_NAME).js
