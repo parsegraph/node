@@ -484,7 +484,7 @@ export default class Viewport extends Component {
     return this._cameraFilter;
   }
 
-  render(width: number, height: number, avoidIfPossible?: boolean): boolean {
+  render(width: number, height: number, avoidIfPossible: boolean): boolean {
     const gl = this._window.gl();
     if (gl.isContextLost()) {
       return false;
