@@ -6,10 +6,11 @@
   "types": "dist/parsegraph-node.d.ts",
   "scripts": {
     "coverage": "nyc npm run test",
-    "test": "mocha -r @babel/register -r jsdom-global/register --recursive",
+    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha",
+    "autotest": "cross-env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha --watch",
     "demo": "node demo/demo.js",
-    "autobuild": "webpack --watch --config webpack.config.js",
-    "build": "webpack --config webpack.config.js",
+    "autobuild": "webpack --watch --config webpack.config.cjs",
+    "build": "webpack --config webpack.config.cjs",
     "build-prod": "NODE_ENV=production webpack --config webpack.prod.js"
   },
   "repository": {
