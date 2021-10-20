@@ -62,7 +62,9 @@ class PaintedElement {
     elem.style.transform = newTransform;
   }
 
-  render(camera: Camera, paintContext: Component): void {}
+  render(camera: Camera, paintContext: Component): void {
+    console.log(camera, paintContext);
+  }
 }
 
 export default class DefaultNodePainter implements NodePainter {
