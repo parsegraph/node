@@ -1,6 +1,5 @@
 import { defaultUnicode } from "parsegraph-unicode";
-import { RIGHT_TO_LEFT, defaultFont } from "./settings";
-import Caret from "./Caret";
+import { RIGHT_TO_LEFT } from "./settings";
 import Rect from "parsegraph-rect";
 import Font, { GlyphData } from "./Font";
 import GlyphPainter from "./GlyphPainter";

@@ -7,11 +7,9 @@ import {
 } from "parsegraph-direction";
 import { Alignment } from "parsegraph-layout";
 import Node from "./Node";
-import EventNode from "./EventNode";
 
 import { Matrix3x3 } from "parsegraph-matrix";
 
-import Viewport from "./Viewport";
 import DefaultNodeType, { Type } from "./DefaultNodeType";
 import BlockPainter from "parsegraph-blockpainter";
 import {
