@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist-types/",
     "noImplicitAny": true,
-    "module": "es6",
+    "module": "es2015",
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
@@ -10,5 +10,9 @@
     "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true
-  }
+  },
+  "exclude": [
+           "node_modules",
+           "test"
+  ]
 }
