@@ -9,6 +9,7 @@
     "sourceMap":true,
     "moduleResolution": "node",
     "declaration": true,
+    "allowSyntheticDefaultImports":true,
     "declarationMap": true
   },
   "exclude": [
