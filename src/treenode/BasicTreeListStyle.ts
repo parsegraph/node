@@ -39,26 +39,30 @@ export default class BasicTreeListStyle
     return node;
   }
 
-  appendSpecial(): Node<DefaultNodeType> {
-    throw new Error("No special types supported for BasicTreeListStyle");
+  appendSpecial(_: any, rootValue: any): Node<DefaultNodeType> {
+    return rootValue.lastRow;
   }
 
   appendInitialChild(
     root: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>
+    child: Node<DefaultNodeType>,
+    rootValue: any
   ): Node<DefaultNodeType> {
     const car = new Caret(root);
     car.connect("f", child);
     car.shrink('f');
+    rootValue.lastRow = root;
     return car.root();
   }
 
   appendChild(
     lastChild: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>
+    child: Node<DefaultNodeType>,
+    rootValue: any
   ): Node<DefaultNodeType> {
     const car = new Caret(lastChild);
     car.spawnMove("d", "u");
+    rootValue.lastRow = car.node();
     car.connect("f", child);
     car.shrink('f');
     return car.node();

@@ -13,7 +13,8 @@ module.exports = {
     lib: path.resolve(__dirname, "src/index.ts"),
     list: path.resolve(__dirname, "src/demo/list.tsx"),
     tree: path.resolve(__dirname, "src/demo/tree.tsx"),
-    parsetree: path.resolve(__dirname, "src/demo/parsetree.tsx")
+    parsetree: path.resolve(__dirname, "src/demo/parsetree.tsx"),
+    lisp: path.resolve(__dirname, "src/demo/lisp.tsx")
   },
   output: {
     path: path.resolve(__dirname, "dist"),
