@@ -1,5 +1,5 @@
 import TestSuite from "parsegraph-testsuite";
-import { Caret, Label, Line, defaultFont } from "../dist/parsegraph-node";
+import { Caret, Label, Line, defaultFont } from "../dist/parsegraph-node.lib";
 
 const lineTests = new TestSuite("Line");
 

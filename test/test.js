@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Caret } from "../dist/parsegraph-node";
+import { Caret } from "../dist/parsegraph-node.lib";
 
 describe("Package", function () {
   it("works", () => {

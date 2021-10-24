@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ConstantTreeNode, TreeListNode } from "../dist/parsegraph-node";
+import { ConstantTreeNode, TreeListNode } from "../dist/parsegraph-node.lib";
 
 describe("TreeNode", function () {
   it("works as list", () => {
