@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree</title>
+    <script src="parsegraph-checkglerror.js"></script>
+    <script>
+        parsegraph.setIgnoreGLErrors(true);
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Parsegraph Tree</h1>
+        <div style="display: flex; flex-direction: row;">
+            <div style="display: flex; flex-direction: column;">
+                <textarea
+                    style="flex-grow: 1; min-width: 500px"
+                    id="children">
+["Hello", "No Time",
+    "Do see the problem?",
+    ["There", "is", "nothing", "left"],
+    "We've been dead for days."
+]
+                </textarea>
+            </div>
+            <div id="parsegraph-tree"></div>
+        </div>
+    </div>
+    <script src="parsegraph-node.tree.js"></script>
+</body>
+</html>

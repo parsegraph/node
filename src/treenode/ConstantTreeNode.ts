@@ -1,6 +1,6 @@
 import TreeNode from "./TreeNode";
-import WindowNode from "./WindowNode";
-import Caret from "./Caret";
+import WindowNode from "../WindowNode";
+import Caret from "../Caret";
 
 export default class ConstantTreeNode implements TreeNode {
   _label: string;
@@ -8,6 +8,9 @@ export default class ConstantTreeNode implements TreeNode {
   constructor(type: any, label: string) {
     this._type = type;
     this._label = label;
+  }
+  getValue(): any {
+    return this._label;
   }
   root(): WindowNode {
     const car = new Caret(this._type);

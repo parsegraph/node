@@ -6,10 +6,6 @@ import Node from "./Node";
 import EventNode from "./EventNode";
 import EventCaret from "./EventCaret";
 import Label, { Line } from "./Label";
-import TreeListStyle, { BasicTreeListStyle } from "./TreeListStyle";
-import TreeNode from "./TreeNode";
-import ConstantTreeNode from "./ConstantTreeNode";
-import TreeListNode from "./TreeListNode";
 
 import { copyStyle, BUD_RADIUS } from "./DefaultNodeStyle";
 
@@ -106,6 +102,15 @@ import render, {
   renderFitInWindow,
 } from "./render";
 
+// Tree Node
+import TreeListStyle from "./treenode/TreeListStyle";
+import BasicTreeListStyle from "./treenode/BasicTreeListStyle";
+import InlineTreeListStyle from "./treenode/InlineTreeListStyle";
+import WrappingTreeListStyle from "./treenode/WrappingTreeListStyle";
+import TreeNode from "./treenode/TreeNode";
+import ConstantTreeNode from "./treenode/ConstantTreeNode";
+import TreeListNode from "./treenode/TreeListNode";
+
 export {
   render,
   renderFullscreen,
@@ -192,6 +197,8 @@ export {
   TreeNode,
   TreeListStyle,
   BasicTreeListStyle,
+  InlineTreeListStyle,
+  WrappingTreeListStyle,
   ConstantTreeNode,
-  TreeListNode
+  TreeListNode,
 };

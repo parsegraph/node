@@ -52,10 +52,10 @@ SCRIPT_FILES = \
 	src/settings.ts \
 	src/showGraph.ts \
 	src/TexturePainter.ts \
-	src/TreeNode.ts \
-	src/TreeListNode.ts \
-	src/ConstantTreeNode.ts \
-	src/TreeListStyle.ts \
+	src/treenode/TreeNode.ts \
+	src/treenode/TreeListNode.ts \
+	src/treenode/ConstantTreeNode.ts \
+	src/treenode/TreeListStyle.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
 	src/WindowCaret.ts \
@@ -101,7 +101,7 @@ prettier:
 .PHONY: prettier
 
 lint:
-	npx eslint --ext "$(SCRIPT_EXTENSIONS)" --fix $(SCRIPT_FOLDERS)
+	npx eslint --ext "$(SCRIPT_EXTENSIONS)" --fix $(SCRIPT_FILES)
 .PHONY: lint
 
 esdoc:
@@ -135,6 +135,10 @@ parsegraph-$(DIST_NAME)-dev.tgz: dist/parsegraph-$(DIST_NAME).js
 
 dist/parsegraph-$(DIST_NAME).js: package.json package-lock.json $(SCRIPT_FILES) $(GLSL_SCRIPTS)
 	npm run build
+	test ! -e dist-types/src/demo || (mkdir -p dist/demo && mv -v dist-types/src/demo/* dist/demo)
+	rm -rf dist-types/src/demo
+	test ! -e dist-types/src/treenode || (mkdir -p dist/treenode && mv -v dist-types/src/treenode/* dist/treenode)
+	rm -rf dist-types/src/treenode
 	mv -v dist-types/src/* dist/
 	mv dist/index.d.ts dist/parsegraph-node.d.ts
 	mv dist/index.d.ts.map dist/parsegraph-node.d.ts.map
