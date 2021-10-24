@@ -330,7 +330,7 @@ export class Line {
     startRun: number,
     endRun: number
   ) {
-    painter.drawLine(this._text, worldX, worldY, fontScale);
+    painter.drawLine(this._text, worldX + pos[0], worldY + pos[1], fontScale);
     // log("Drawing LTR run from %d to %d.", startRun, endRun);
     let maxAscent = 0;
     for (let q = startRun; q <= endRun; ++q) {
@@ -814,9 +814,10 @@ export default class Label {
     }
     const pos = [0, 0, "WS"];
 
+    let offset = fontScale*(-this.height() + this._lines[0].height()) / 2;
     for (let i = 0; i < this._lines.length; ++i) {
       const l = this._lines[i];
-      l.paint(painter, worldX, worldY, pos, fontScale);
+      l.paint(painter, worldX, offset + worldY, pos, fontScale);
     }
   }
 }
