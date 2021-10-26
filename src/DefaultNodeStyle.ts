@@ -15,7 +15,7 @@ export const MIN_BLOCK_WIDTH = BUD_RADIUS * 15;
 
 // Inter-node spacing
 export const HORIZONTAL_SEPARATION_PADDING = BUD_RADIUS;
-export const VERTICAL_SEPARATION_PADDING = BUD_RADIUS/2;
+export const VERTICAL_SEPARATION_PADDING = BUD_RADIUS / 2;
 
 // Configures graphs to appear grid-like; I call it 'math-mode'.
 const MIN_BLOCK_WIDTH_MATH = BUD_RADIUS * 40;
@@ -28,7 +28,7 @@ const VERTICAL_SEPARATION_PADDING_MATH = 2;
  */
 export const BUD_LEAF_SEPARATION = 4.2;
 
-export const BUD_TO_BUD_VERTICAL_SEPARATION = VERTICAL_SEPARATION_PADDING/2;//BUD_RADIUS * 4.5;
+export const BUD_TO_BUD_VERTICAL_SEPARATION = VERTICAL_SEPARATION_PADDING / 2; // BUD_RADIUS * 4.5;
 
 const BUD_STYLE = {
   minWidth: BUD_RADIUS * 3,

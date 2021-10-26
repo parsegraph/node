@@ -814,7 +814,7 @@ export default class Label {
     }
     const pos = [0, 0, "WS"];
 
-    let offset = fontScale*(-this.height() + this._lines[0].height()) / 2;
+    const offset = (fontScale * (-this.height() + this._lines[0].height())) / 2;
     for (let i = 0; i < this._lines.length; ++i) {
       const l = this._lines[i];
       l.paint(painter, worldX, offset + worldY, pos, fontScale);
