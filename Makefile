@@ -135,6 +135,8 @@ parsegraph-$(DIST_NAME)-dev.tgz: dist/parsegraph-$(DIST_NAME).js
 
 dist/parsegraph-$(DIST_NAME).js: package.json package-lock.json $(SCRIPT_FILES) $(GLSL_SCRIPTS)
 	npm run build
+	test ! -e dist-types/src/demo/anthonylisp || (mkdir -p dist/demo/anthonylisp && mv -v dist-types/src/demo/anthonylisp/* dist/demo/anthonylisp)
+	rm -rf dist-types/src/demo/anthonylisp
 	test ! -e dist-types/src/demo || (mkdir -p dist/demo && mv -v dist-types/src/demo/* dist/demo)
 	rm -rf dist-types/src/demo
 	test ! -e dist-types/src/treenode || (mkdir -p dist/treenode && mv -v dist-types/src/treenode/* dist/treenode)
