@@ -4,38 +4,38 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from '../treenode/TreeListNode';
+import TreeListNode from "../treenode/TreeListNode";
 import TreeListStyle from "../treenode/TreeListStyle";
 import BasicTreeListStyle from "../treenode/BasicTreeListStyle";
 import WrappingTreeListStyle from "../treenode/WrappingTreeListStyle";
 
 class JSONASTNode {
-  type:string;
-  value:string;
-  children:JSONASTNode[];
-  constructor(type:string, value:string) {
+  type: string;
+  value: string;
+  children: JSONASTNode[];
+  constructor(type: string, value: string) {
     this.type = type;
     this.value = value;
     this.children = [];
   }
 }
 
-function parseWithNewlines(text:string) {
+function parseWithNewlines(text: string) {
   let stack = [];
   let idx = 0;
   text = text.trim();
   while (idx < text.length) {
     const chr = text.charAt(idx);
-    if (chr === ',') {
+    if (chr === ",") {
       ++idx;
       continue;
     }
-    if (chr === '\n') {
-      const node = new JSONASTNode('newline', null);
+    if (chr === "\n") {
+      const node = new JSONASTNode("newline", null);
       stack[stack.length - 1].children.push(node);
       ++idx;
     }
-    if (chr === ' ' || chr === '\t') {
+    if (chr === " " || chr === "\t") {
       ++idx;
       continue;
     }
@@ -43,7 +43,7 @@ function parseWithNewlines(text:string) {
       const start = idx + 1;
       const endQuote = text.indexOf('"', start);
       const str = text.substring(start, endQuote);
-      const node = new JSONASTNode('string', str);
+      const node = new JSONASTNode("string", str);
       if (stack.length > 0) {
         stack[stack.length - 1].children.push(node);
       } else {
@@ -52,15 +52,15 @@ function parseWithNewlines(text:string) {
       idx = endQuote + 1;
       continue;
     }
-    if (chr === '[') {
-      const node = new JSONASTNode('list', null);
+    if (chr === "[") {
+      const node = new JSONASTNode("list", null);
       if (stack.length > 0) {
         stack[stack.length - 1].children.push(node);
       }
       stack.push(node);
       ++idx;
     }
-    if (chr === ']') {
+    if (chr === "]") {
       if (stack.length > 1) {
         stack.pop();
       }
@@ -78,15 +78,15 @@ function graphWithNewlines(
   if (!style) {
     style = new WrappingTreeListStyle();
   }
-  list.forEach(child=>{
+  list.forEach((child) => {
     let newNode = style.createList();
     style.setType(newNode, child.type);
     root.appendChild(newNode);
     switch (child.type) {
-      case 'string':
+      case "string":
         style.setLabel(newNode, child.value);
         break;
-      case 'list':
+      case "list":
         graphWithNewlines(newNode, child.children, style);
         break;
     }
@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const refresh = () => {
     console.log("Refreshing");
-    const text = (document.getElementById("children") as HTMLInputElement).value;
+    const text = (document.getElementById("children") as HTMLInputElement)
+      .value;
     console.log("children", text);
     const children = parseWithNewlines(text);
     console.log(children);
@@ -109,9 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("b");
     caret.disconnect("d");
     caret.disconnect("u");
-    const root = new TreeListNode<Node<DefaultNodeType>>(new BasicTreeListStyle());
+    const root = new TreeListNode<Node<DefaultNodeType>>(
+      new BasicTreeListStyle()
+    );
     graphWithNewlines(root, [children]);
-    caret.connect('f', root.root());
+    caret.connect("f", root.root());
     world.scheduleRepaint();
     belt.scheduleUpdate();
   };

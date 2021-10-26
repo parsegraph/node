@@ -69,7 +69,11 @@ export default class TreeListNode<T extends WindowNode> implements TreeNode {
       if (!childRoot) {
         lastChild = this._style.appendSpecial(child.getValue(), this._value);
       } else if (i == 0) {
-        lastChild = this._style.appendInitialChild(this._root, childRoot, this._value);
+        lastChild = this._style.appendInitialChild(
+          this._root,
+          childRoot,
+          this._value
+        );
       } else {
         lastChild = this._style.appendChild(lastChild, childRoot, this._value);
       }

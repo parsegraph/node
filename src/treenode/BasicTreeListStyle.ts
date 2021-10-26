@@ -1,16 +1,19 @@
-import TreeListStyle from './TreeListStyle';
+import TreeListStyle from "./TreeListStyle";
 import Caret from "../Caret";
-import {DefaultNodePalette} from "..";
+import { DefaultNodePalette } from "..";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
 import TreeListNode from "./TreeListNode";
 
 export default class BasicTreeListStyle
   implements TreeListStyle<Node<DefaultNodeType>> {
-  _palette:DefaultNodePalette;
-  _childStyle:TreeListStyle<Node<DefaultNodeType>>
+  _palette: DefaultNodePalette;
+  _childStyle: TreeListStyle<Node<DefaultNodeType>>;
 
-  constructor(palette?:DefaultNodePalette, childStyle?:TreeListStyle<Node<DefaultNodeType>>) {
+  constructor(
+    palette?: DefaultNodePalette,
+    childStyle?: TreeListStyle<Node<DefaultNodeType>>
+  ) {
     this._palette = palette || new DefaultNodePalette(false);
     this._childStyle = childStyle || this;
   }
@@ -19,19 +22,19 @@ export default class BasicTreeListStyle
     return new TreeListNode<Node<DefaultNodeType>>(this._childStyle);
   }
 
-  createValue():any {
-    return {type:'b', label:''};
+  createValue(): any {
+    return { type: "b", label: "" };
   }
 
-  setType(node:TreeListNode<Node<DefaultNodeType>>, type:any) {
+  setType(node: TreeListNode<Node<DefaultNodeType>>, type: any) {
     node._value.type = type;
   }
 
-  setLabel(node:TreeListNode<Node<DefaultNodeType>>, label:string) {
+  setLabel(node: TreeListNode<Node<DefaultNodeType>>, label: string) {
     node._value.label = label;
   }
 
-  createNode(value?:any): Node<DefaultNodeType> {
+  createNode(value?: any): Node<DefaultNodeType> {
     const node = this._palette.spawn(value.type);
     if (typeof value.label === "string") {
       node.setLabel(value.label);
@@ -50,7 +53,7 @@ export default class BasicTreeListStyle
   ): Node<DefaultNodeType> {
     const car = new Caret(root);
     car.connect("f", child);
-    car.shrink('f');
+    car.shrink("f");
     rootValue.lastRow = root;
     return car.root();
   }
@@ -64,7 +67,7 @@ export default class BasicTreeListStyle
     car.spawnMove("d", "u");
     rootValue.lastRow = car.node();
     car.connect("f", child);
-    car.shrink('f');
+    car.shrink("f");
     return car.node();
   }
 }

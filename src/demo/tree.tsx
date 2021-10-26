@@ -4,7 +4,7 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from '../treenode/TreeListNode';
+import TreeListNode from "../treenode/TreeListNode";
 import TreeListStyle from "../treenode/TreeListStyle";
 import BasicTreeListStyle from "../treenode/BasicTreeListStyle";
 import InlineTreeListStyle from "../treenode/InlineTreeListStyle";
@@ -37,7 +37,7 @@ function ParsegraphTree(
       return;
     }
     const newNode = style.createList();
-    style.setType(newNode, 'u');
+    style.setType(newNode, "u");
     ParsegraphTree(newNode, child, style);
     root.appendChild(newNode);
   };
@@ -60,7 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const refresh = () => {
     console.log("Refreshing");
-    const text = (document.getElementById("children") as HTMLInputElement).value;
+    const text = (document.getElementById("children") as HTMLInputElement)
+      .value;
     console.log("children", text);
     const children = JSON.parse(text);
     caret.moveToRoot();
@@ -69,11 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("d");
     caret.disconnect("u");
     const childStyle = new InlineTreeListStyle();
-    const style = new BasicTreeListStyle(null, childStyle)
+    const style = new BasicTreeListStyle(null, childStyle);
     const root = style.createList();
     //style.setType(root, 'u');
     ParsegraphTree(root, children, style);
-    caret.connect('f', root.root());
+    caret.connect("f", root.root());
     world.scheduleRepaint();
     belt.scheduleUpdate();
   };
