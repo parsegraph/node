@@ -1,24 +1,17 @@
-import TreeListStyle from "./TreeListStyle";
 import Caret from "../Caret";
 import { DefaultNodePalette } from "..";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from "./TreeListNode";
+import AbstractTreeList from "./AbstractTreeList";
 
-export default class WrappingTreeListStyle
-  implements TreeListStyle<Node<DefaultNodeType>> {
+export default class WrappingTreeList extends AbstractTreeList<
+  Node<DefaultNodeType>
+> {
   _palette: DefaultNodePalette;
 
   constructor(palette?: DefaultNodePalette) {
+    super();
     this._palette = palette || new DefaultNodePalette(false);
-  }
-
-  createList(): TreeListNode<Node<DefaultNodeType>> {
-    return new TreeListNode<Node<DefaultNodeType>>(this);
-  }
-
-  createValue(): any {
-    return { type: "string", label: "" };
   }
 
   setType(node: TreeListNode<Node<DefaultNodeType>>, type: any) {
@@ -27,6 +20,10 @@ export default class WrappingTreeListStyle
 
   setLabel(node: TreeListNode<Node<DefaultNodeType>>, label: string) {
     node._value.label = label;
+  }
+
+  createValue(): any {
+    return { type: "string", label: "" };
   }
 
   palette(): DefaultNodePalette {
@@ -56,7 +53,7 @@ export default class WrappingTreeListStyle
     }
   }
 
-  appendSpecial(value: any, rootValue: any): Node<DefaultNodeType> {
+  connectSpecial(value: any, rootValue: any): Node<DefaultNodeType> {
     if (value.type !== "newline") {
       throw new Error("Unexpected special: " + value.type);
     }
@@ -67,7 +64,7 @@ export default class WrappingTreeListStyle
     return car.node();
   }
 
-  appendInitialChild(
+  connectInitialChild(
     root: Node<DefaultNodeType>,
     child: Node<DefaultNodeType>,
     rootValue: any
@@ -78,7 +75,7 @@ export default class WrappingTreeListStyle
     return child;
   }
 
-  appendChild(
+  connectChild(
     lastChild: Node<DefaultNodeType>,
     child: Node<DefaultNodeType>,
     rootValue: any

@@ -55,7 +55,6 @@ SCRIPT_FILES = \
 	src/treenode/TreeNode.ts \
 	src/treenode/TreeListNode.ts \
 	src/treenode/ConstantTreeNode.ts \
-	src/treenode/TreeListStyle.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
 	src/WindowCaret.ts \

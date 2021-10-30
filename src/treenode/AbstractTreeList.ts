@@ -1,24 +1,34 @@
 import TreeNode from "./TreeNode";
+import TreeList from "./TreeList";
 import WindowNode from "../WindowNode";
-import TreeListStyle from "./TreeListStyle";
 
-export default class TreeListNode<T extends WindowNode> implements TreeNode {
+export default abstract class AbstractTreeList<T extends WindowNode>
+  implements TreeList {
   _children: TreeNode[];
-  _root: T;
-  _style: TreeListStyle<T>;
-  _value: any;
+  _root: TreeNode;
 
-  constructor(style: TreeListStyle<T>, children?: TreeNode[]) {
-    this._style = style;
+  abstract connectSpecial(childValue: TreeNode, rootValue: TreeNode): T;
+  abstract connectInitialChild(
+    root: WindowNode,
+    child: WindowNode,
+    rootValue: TreeNode
+  ): T;
+  abstract connectChild(
+    lastChild: WindowNode,
+    child: WindowNode,
+    rootValue: TreeNode
+  ): T;
+
+  constructor(root: TreeNode, children: TreeNode[]) {
     if (children) {
       this._children = [...children];
     } else {
       this._children = [];
     }
-    this._value = this._style.createValue();
+    this._root = root;
   }
 
-  getValue(): any {
+  getValue(): V {
     return this._value;
   }
 
@@ -59,7 +69,7 @@ export default class TreeListNode<T extends WindowNode> implements TreeNode {
   }
 
   render() {
-    this._root = this._style.createNode(this._value);
+    this._root = this.createNode(this._value);
     if (!this._root) {
       return;
     }
@@ -67,15 +77,15 @@ export default class TreeListNode<T extends WindowNode> implements TreeNode {
     this._children.forEach((child, i) => {
       const childRoot = child.root();
       if (!childRoot) {
-        lastChild = this._style.appendSpecial(child.getValue(), this._value);
+        lastChild = this.connectSpecial(child.getValue(), this._value);
       } else if (i == 0) {
-        lastChild = this._style.appendInitialChild(
+        lastChild = this.connectInitialChild(
           this._root,
           childRoot,
           this._value
         );
       } else {
-        lastChild = this._style.appendChild(lastChild, childRoot, this._value);
+        lastChild = this.connectChild(lastChild, childRoot, this._value);
       }
     });
   }
