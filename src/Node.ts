@@ -2,35 +2,154 @@ import { defaultFont } from "./settings";
 
 import Label from "./Label";
 import { BasicWindow } from "parsegraph-window";
-import NodePainter from "./NodePainter";
+import WindowNodePainter from "./WindowNodePainter";
 import Color from "parsegraph-color";
 import Font from "./Font";
 import Size from "parsegraph-size";
 
 import NodeType from "./NodeType";
 
-import { Direction, NodePalette, PreferredAxis } from "parsegraph-direction";
-import EventNode from "./EventNode";
+import {
+  Direction,
+  Axis,
+  NodePalette,
+  PreferredAxis,
+} from "parsegraph-direction";
+import Method from "parsegraph-method";
+import WindowNode from "./WindowNode";
+import { Alignment } from "parsegraph-layout";
 
-export default class Node<T extends NodeType<T>> extends EventNode {
+export function arrayRemove(list: any[], key: any): boolean {
+  for (let i = 0; i < list.length; ++i) {
+    if (list[i] === key) {
+      list.splice(i, 1);
+      return true;
+    }
+  }
+  return false;
+}
+
+export function arrayRemoveAll(list: any[], key: any): number {
+  let removals = 0;
+  while (arrayRemove(list, key)) {
+    ++removals;
+  }
+  return removals;
+}
+
+export class CustomEvents {
+  _listeners: Method[];
+
+  constructor() {
+    this._listeners = null;
+  }
+
+  emit(...args: any): void {
+    console.log("Emitting ", ...args);
+    if (!this._listeners) {
+      return;
+    }
+    this._listeners.forEach((listener) => {
+      listener.apply(args);
+    });
+  }
+
+  listen(func: Function, funcThisArg?: object): Method {
+    if (!this._listeners) {
+      this._listeners = [];
+    }
+    const method = new Method(func, funcThisArg);
+    this._listeners.push(method);
+    return method;
+  }
+
+  stopListening(method: Method): boolean {
+    if (!this._listeners) {
+      return false;
+    }
+    const removed = arrayRemove(this._listeners, method);
+    if (this._listeners.length == 0) {
+      this._listeners = null;
+    }
+    return removed;
+  }
+}
+
+export default class Node<T extends NodeType<T>> extends WindowNode {
   _type: T;
   _scene: any;
   _label: Label;
+  _selected: boolean;
+  _events: CustomEvents;
+  _value: any;
+  _style: object;
 
   constructor(newType: T, fromNode?: Node<T>, parentDirection?: Direction) {
     super(fromNode, parentDirection);
     this._type = newType;
     this._type.applyStyle(this);
+    this._style = {};
 
     this._scene = null;
     this._label = null;
+    this._selected = false;
   }
 
-  palette(): NodePalette<EventNode> {
+  horizontalPadding(): number {
+    return this.blockStyle().horizontalPadding;
+  }
+
+  verticalPadding(): number {
+    return this.blockStyle().verticalPadding;
+  }
+
+  size(bodySize?: Size): Size {
+    bodySize = this.sizeWithoutPadding(bodySize);
+    bodySize[0] += 2 * this.horizontalPadding() + 2 * this.borderThickness();
+    bodySize[1] += 2 * this.verticalPadding() + 2 * this.borderThickness();
+    // console.log("Calculated node size of (" + bodySize[0] + ", " +
+    // bodySize[1] + ")");
+    return bodySize;
+  }
+
+  getSeparation(axis: Axis, dir: Direction) {
+    switch (axis) {
+      case Axis.VERTICAL:
+        return this.type().verticalSeparation(this, dir);
+      case Axis.HORIZONTAL:
+        return this.type().horizontalSeparation(this, dir);
+      case Axis.Z:
+        switch (this.nodeAlignmentMode(Direction.INWARD)) {
+          case Alignment.INWARD_VERTICAL:
+            return this.verticalPadding() - this.borderThickness();
+          default:
+            return this.horizontalPadding() - this.borderThickness();
+        }
+    }
+  }
+
+  borderThickness(): number {
+    return this.blockStyle().borderThickness;
+  }
+
+  blockStyle(): any {
+    return this._style;
+  }
+
+  setBlockStyle(style: object): void {
+    if (this._style == style) {
+      // Ignore idempotent style changes.
+      return;
+    }
+    this._style = style;
+    this.layoutWasChanged(Direction.INWARD);
+  }
+
+  palette(): NodePalette<Node<T>> {
     return this.type().palette();
   }
 
-  newPainter(window: BasicWindow, paintContext: any): NodePainter {
+  newPainter(window: BasicWindow, paintContext: any): WindowNodePainter {
     return this.type().newPainter(window, this, paintContext);
   }
 
@@ -48,14 +167,6 @@ export default class Node<T extends NodeType<T>> extends EventNode {
     node.setLayoutPreference(PreferredAxis.PERPENDICULAR);
     node.setNodeFit(this.nodeFit());
     return node;
-  }
-
-  verticalSeparation(direction: Direction): number {
-    return this.type().verticalSeparation(this, direction);
-  }
-
-  horizontalSeparation(direction: Direction): number {
-    return this.type().horizontalSeparation(this, direction);
   }
 
   type(): T {
@@ -143,5 +254,75 @@ export default class Node<T extends NodeType<T>> extends EventNode {
 
   acceptsSelection(): boolean {
     return this.type().acceptsSelection(this);
+  }
+
+  events(): CustomEvents {
+    if (!this._events) {
+      this._events = new CustomEvents();
+    }
+    return this._events;
+  }
+
+  isSelectedAt(direction: Direction): boolean {
+    if (!this.hasNode(direction)) {
+      return false;
+    }
+    return this.nodeAt(direction).isSelected();
+  }
+
+  isSelected(): boolean {
+    return this._selected;
+  }
+
+  setSelected(selected: boolean): void {
+    // console.log(new Error("setSelected(" + selected + ")"));
+    this._selected = selected;
+  }
+
+  hasChangeListener(): boolean {
+    return this._extended && this._extended.changeListener != null;
+  }
+
+  setChangeListener(listener: Function, thisArg?: object): void {
+    if (!listener) {
+      if (this._extended) {
+        this._extended.changeListener = null;
+        this._extended.changeListenerThisArg = null;
+      }
+      return;
+    }
+    if (!thisArg) {
+      thisArg = this;
+    }
+    this.ensureExtended();
+    this._extended.changeListener = listener;
+    this._extended.changeListenerThisArg = thisArg;
+    // console.log("Set change listener for node " + this._id);
+  }
+
+  valueChanged(...args: any): any {
+    // Invoke the listener.
+    if (!this.hasChangeListener()) {
+      return;
+    }
+    return this._extended.changeListener.apply(
+      this._extended.changeListenerThisArg,
+      ...args
+    );
+  }
+
+  value(): any {
+    return this._value;
+  }
+
+  setValue(newValue: any, report?: boolean): void {
+    // console.log("Setting value to ", newValue);
+    if (this._value === newValue) {
+      return;
+    }
+    this._value = newValue;
+    if (arguments.length === 1 || report) {
+      this.valueChanged();
+    }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-node",
-  "version": "2.3.4-dev",
+  "version": "2.3.5-dev",
   "description": "node",
   "main": "dist/parsegraph-node.js",
   "types": "dist/parsegraph-node.d.ts",
@@ -78,7 +78,7 @@
     "parsegraph-camera": "^1.4.5",
     "parsegraph-color": "^1.4.4",
     "parsegraph-compileprogram": "^2.0.16",
-    "parsegraph-layout": "^1.5.10",
+    "parsegraph-layout": "^1.5.14",
     "parsegraph-lerp": "^1.5.5",
     "parsegraph-matrix": "^1.4.7",
     "parsegraph-pagingbuffer": "^1.5.1",

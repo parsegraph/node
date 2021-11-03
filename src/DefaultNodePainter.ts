@@ -28,7 +28,7 @@ import { BasicWindow, Component } from "parsegraph-window";
 import Color from "parsegraph-color";
 import Font from "./Font";
 import TexturePainter from "./TexturePainter";
-import NodePainter from "./NodePainter";
+import WindowNodePainter from "./WindowNodePainter";
 import Camera from "parsegraph-camera";
 import WindowNode from "./WindowNode";
 
@@ -67,7 +67,7 @@ class PaintedElement {
   }
 }
 
-export default class DefaultNodePainter implements NodePainter {
+export default class DefaultNodePainter implements WindowNodePainter {
   _window: BasicWindow;
   _paintContext: Component;
   _node: Node<DefaultNodeType>;

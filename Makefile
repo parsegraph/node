@@ -3,7 +3,8 @@ DIST_NAME = node
 SCRIPT_FOLDERS = \
 	src \
 	test \
-	demo
+	demo \
+	demo/ebnf
 
 SCRIPT_EXTENSIONS = \
 	.js \
@@ -30,8 +31,6 @@ SCRIPT_FILES = \
 	src/DefaultNodeType.ts \
 	src/EnvironmentWidget.ts \
 	src/event.js \
-	src/EventCaret.ts \
-	src/EventNode.ts \
 	src/Exception.ts \
 	src/FanPainter.ts \
 	src/Font.ts \
@@ -46,15 +45,19 @@ SCRIPT_FILES = \
 	src/log.ts \
 	src/math.ts \
 	src/Node.ts \
-	src/NodePainter.ts \
+	src/WindowNodePainter.ts \
 	src/NodeType.ts \
 	src/parsegraph_Graph_Tests.js \
 	src/settings.ts \
 	src/showGraph.ts \
 	src/TexturePainter.ts \
+	src/treenode/AbstractTreeList.ts \
+	src/treenode/BasicTreeList.ts \
+	src/treenode/InlineTreeList.ts \
+	src/treenode/WrappingTreeList.ts \
 	src/treenode/TreeNode.ts \
-	src/treenode/TreeListNode.ts \
-	src/treenode/ConstantTreeNode.ts \
+	src/treenode/TreeList.ts \
+	src/treenode/DefaultTreeNode.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
 	src/WindowCaret.ts \
@@ -134,6 +137,8 @@ parsegraph-$(DIST_NAME)-dev.tgz: dist/parsegraph-$(DIST_NAME).js
 
 dist/parsegraph-$(DIST_NAME).js: package.json package-lock.json $(SCRIPT_FILES) $(GLSL_SCRIPTS)
 	npm run build
+	test ! -e dist-types/src/demo/ebnf || (mkdir -p dist/demo/ebnf && mv -v dist-types/src/demo/ebnf/* dist/demo/ebnf)
+	rm -rf dist-types/src/demo/ebnf
 	test ! -e dist-types/src/demo/anthonylisp || (mkdir -p dist/demo/anthonylisp && mv -v dist-types/src/demo/anthonylisp/* dist/demo/anthonylisp)
 	rm -rf dist-types/src/demo/anthonylisp
 	test ! -e dist-types/src/demo || (mkdir -p dist/demo && mv -v dist-types/src/demo/* dist/demo)

@@ -4,19 +4,14 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from "../treenode/TreeListNode";
-import TreeListStyle from "../treenode/TreeListStyle";
-import BasicTreeListStyle from "../treenode/BasicTreeListStyle";
-import WrappingTreeListStyle from "../treenode/WrappingTreeListStyle";
+import TreeList from "../treenode/TreeList";
+import BasicTreeList from "../treenode/BasicTreeList";
+import WrappingTreeList from "../treenode/WrappingTreeList";
 import parse, { LispCell, LispType } from "./anthonylisp";
 
-function graphWithNewlines(
-  root: TreeListNode<Node<DefaultNodeType>>,
-  list: LispCell[],
-  style?: TreeListStyle<Node<DefaultNodeType>>
-) {
+function graphWithNewlines(root: TreeList, list: LispCell[], style?: TreeList) {
   if (!style) {
-    style = new WrappingTreeListStyle();
+    style = new WrappingTreeList();
   }
   list.forEach((child) => {
     let newNode = style.createList();
@@ -53,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("b");
     caret.disconnect("d");
     caret.disconnect("u");
-    const rootStyle = new BasicTreeListStyle();
-    const root = new TreeListNode<Node<DefaultNodeType>>(rootStyle);
+    const rootStyle = new BasicTreeList();
+    const root = new TreeList<Node<DefaultNodeType>>(rootStyle);
     rootStyle.setType(root, "u");
     graphWithNewlines(root, children.list);
     caret.connect("f", root.root());

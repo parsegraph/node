@@ -1,12 +1,5 @@
 import { elapsed } from "parsegraph-timing";
 
-// The largest scale at which nodes are shown in camera.
-// export const NATURAL_VIEWPORT_SCALE = 0.5;
-export const NATURAL_VIEWPORT_SCALE = 1.0;
-
-// The maximum scale where nodes will be rendered from a cache.
-export const CACHE_ACTIVATION_SCALE = 0.01;
-
 import { BasicWindow, Component, INTERVAL } from "parsegraph-window";
 
 import {
@@ -18,14 +11,20 @@ import {
 } from "parsegraph-matrix";
 
 import Rect from "parsegraph-rect";
-import NodePainter from "./NodePainter";
+import WindowNodePainter from "./WindowNodePainter";
 import Camera from "parsegraph-camera";
 import Freezer from "./Freezer";
 
 import { Direction } from "parsegraph-direction";
 import { LayoutNode } from "parsegraph-layout";
 import Viewport from "./Viewport";
-import { EventNode } from ".";
+
+// The largest scale at which nodes are shown in camera.
+// export const NATURAL_VIEWPORT_SCALE = 0.5;
+export const NATURAL_VIEWPORT_SCALE = 1.0;
+
+// The maximum scale where nodes will be rendered from a cache.
+export const CACHE_ACTIVATION_SCALE = 0.01;
 
 class NodeRenderData {
   bounds: Rect;
@@ -40,27 +39,92 @@ class NodeRenderData {
     this.worldMat = matrixIdentity3x3();
   }
 }
-
 const renderTimes: number[] = [];
 const renderData: NodeRenderData = new NodeRenderData();
 let CACHED_RENDERS: number = 0;
 let IMMEDIATE_RENDERS: number = 0;
+
+export function chainTab(
+  a: WindowNode,
+  b: WindowNode,
+  swappedOut?: WindowNode[]
+): void {
+  a.ensureExtended();
+  b.ensureExtended();
+  if (swappedOut) {
+    swappedOut[0] = a ? a._extended.nextTabNode : null;
+    swappedOut[1] = b ? b._extended.prevTabNode : null;
+  }
+  // console.log(a, b);
+  if (a) {
+    a._extended.nextTabNode = b;
+  }
+  if (b) {
+    b._extended.prevTabNode = a;
+  }
+}
+
+export function chainAllTabs(...args: WindowNode[]): void {
+  if (args.length < 2) {
+    return;
+  }
+  const firstNode: WindowNode = args[0];
+  const lastNode: WindowNode = args[args.length - 1];
+
+  for (let i = 0; i <= args.length - 2; ++i) {
+    chainTab(args[i], args[i + 1]);
+  }
+  chainTab(lastNode, firstNode);
+}
+
+// ////////////////////////////////////////////////////////////////////////////
+//
+// Extended node
+//
+// ////////////////////////////////////////////////////////////////////////////
+
+export class ExtendedNode {
+  ignoresMouse: boolean;
+  keyListener: Function;
+  keyListenerThisArg: object;
+  clickListener: Function;
+  clickListenerThisArg: object;
+  changeListener: Function;
+  changeListenerThisArg: object;
+  prevTabNode: WindowNode;
+  nextTabNode: WindowNode;
+
+  constructor() {
+    this.ignoresMouse = false;
+    this.keyListener = null;
+    this.keyListenerThisArg = null;
+    this.clickListener = null;
+    this.clickListenerThisArg = null;
+    this.changeListener = null;
+    this.changeListenerThisArg = null;
+    this.prevTabNode = null;
+    this.nextTabNode = null;
+  }
+}
+
 export default abstract class WindowNode extends LayoutNode {
-  _windowPainter: { [key: string]: NodePainter };
+  _windowPainter: Map<BasicWindow, WindowNodePainter>;
   _windowPaintGroup: { [key: string]: WindowNode };
   _commitLayoutFunc: Function;
   _cache: any;
   _element: any;
   _windowElement: Map<Component, HTMLElement>;
+  _extended: ExtendedNode;
 
   constructor(fromNode?: WindowNode, parentDirection?: Direction) {
     super(fromNode, parentDirection);
-    this._windowPainter = {};
+    this._windowPainter = new Map();
     this._windowPaintGroup = {};
     this._windowElement = new Map();
     this._commitLayoutFunc = null;
     this._cache = null;
     this._element = null;
+    this._extended = null;
   }
 
   element(): any {
@@ -70,6 +134,100 @@ export default abstract class WindowNode extends LayoutNode {
   setElement(element: any): void {
     this._element = element;
     this.layoutWasChanged(Direction.INWARD);
+  }
+
+  setClickListener(listener: Function, thisArg?: object): void {
+    if (!listener) {
+      if (this._extended) {
+        this._extended.clickListener = null;
+        this._extended.clickListenerThisArg = null;
+      }
+      return;
+    }
+    if (!thisArg) {
+      thisArg = this;
+    }
+    this.ensureExtended();
+    this._extended.clickListener = listener;
+    this._extended.clickListenerThisArg = thisArg;
+    // console.log("Set click listener for node " + this._id);
+  }
+
+  ensureExtended(): ExtendedNode {
+    if (!this._extended) {
+      // console.log(new Error("Extending"));
+      this._extended = new ExtendedNode();
+    }
+    return this._extended;
+  }
+
+  isClickable(): boolean {
+    return this.hasClickListener() || !this.ignoresMouse();
+  }
+
+  setIgnoreMouse(value: boolean): void {
+    if (!value && !this._extended) {
+      return;
+    }
+    this.ensureExtended();
+    this._extended.ignoresMouse = value;
+  }
+
+  ignoresMouse(): boolean {
+    if (!this._extended) {
+      return false;
+    }
+    return this._extended.ignoresMouse;
+  }
+
+  hasClickListener(): boolean {
+    return this._extended && this._extended.clickListener != null;
+  }
+
+  click(viewport: Viewport): any {
+    // Invoke the click listener.
+    if (!this.hasClickListener()) {
+      return;
+    }
+    return this._extended.clickListener.call(
+      this._extended.clickListenerThisArg,
+      viewport,
+      this
+    );
+  }
+
+  setKeyListener(listener: Function, thisArg?: object): void {
+    if (!listener) {
+      if (this._extended) {
+        this._extended.keyListener = null;
+        this._extended.keyListenerThisArg = null;
+      }
+      return;
+    }
+    if (!thisArg) {
+      thisArg = this;
+    }
+    if (!this._extended) {
+      this._extended = new ExtendedNode();
+    }
+    this._extended.keyListener = listener;
+    this._extended.keyListenerThisArg = thisArg;
+  }
+
+  hasKeyListener(): boolean {
+    return this._extended && this._extended.keyListener != null;
+  }
+
+  key(keyName: string, viewport?: Viewport): any {
+    // Invoke the key listener.
+    if (!this.hasKeyListener()) {
+      return;
+    }
+    return this._extended.keyListener.call(
+      this._extended.keyListenerThisArg,
+      keyName,
+      viewport
+    );
   }
 
   toString(): string {
@@ -89,15 +247,24 @@ export default abstract class WindowNode extends LayoutNode {
   abstract newPainter(
     window: BasicWindow,
     paintContext: Component
-  ): NodePainter;
+  ): WindowNodePainter;
 
-  painter(window: BasicWindow): NodePainter {
+  painter(window: BasicWindow): WindowNodePainter {
     if (!window) {
       throw new Error(
-        "A window must be provided for a NodePainter to be selected"
+        "A window must be provided for a WindowNodePainter to be selected"
       );
     }
-    return this._windowPainter[window.id()];
+    return this._windowPainter.get(window);
+  }
+
+  setPainter(window: BasicWindow, painter: WindowNodePainter) {
+    if (!window) {
+      throw new Error(
+        "A window must be provided for a WindowNodePainter to be set"
+      );
+    }
+    this._windowPainter.set(window, painter);
   }
 
   freeze(freezer: Freezer): void {
@@ -225,15 +392,7 @@ export default abstract class WindowNode extends LayoutNode {
     }
     this.forEachPaintGroup((node: WindowNode) => {
       node.markDirty();
-      for (const wid in node._windowPainter) {
-        if (!Object.prototype.hasOwnProperty.call(node._windowPainter, wid)) {
-          continue;
-        }
-        const painter: NodePainter = node._windowPainter[wid];
-        if (window.id() == wid) {
-          painter.contextChanged(isLost);
-        }
-      }
+      node.painter(window).contextChanged(isLost);
     });
   }
 
@@ -291,8 +450,8 @@ export default abstract class WindowNode extends LayoutNode {
 
             sizer.addEventListener("click", () => {
               const viewport = paintContext as Viewport;
-              viewport.showInCamera(node as EventNode);
-              (node as EventNode).click(viewport);
+              viewport.showInCamera(node as WindowNode);
+              (node as WindowNode).click(viewport);
             });
             sizer.addEventListener("hover", () => {
               (paintContext as Viewport).setCursor("pointer");
@@ -375,13 +534,13 @@ export default abstract class WindowNode extends LayoutNode {
       }
 
       const paintGroup: WindowNode = savedPaintGroup;
-      let painter: NodePainter = paintGroup._windowPainter[wid];
+      let painter: WindowNodePainter = paintGroup.painter(window);
       if (paintGroup.isDirty() || !painter) {
         // Paint and render nodes marked for the current group.
         // console.log("Painting " + paintGroup);
         if (!painter) {
           painter = paintGroup.newPainter(window, paintContext);
-          paintGroup._windowPainter[wid] = painter;
+          paintGroup.setPainter(window, painter);
         }
 
         painter.paint(paintContext);
@@ -417,7 +576,7 @@ export default abstract class WindowNode extends LayoutNode {
 
     this.forEachPaintGroup((paintGroup: WindowNode) => {
       // console.log("Rendering node " + paintGroup);
-      const painter: NodePainter = paintGroup.painter(window);
+      const painter: WindowNodePainter = paintGroup.painter(window);
       if (!paintGroup.render(window, camera, renderData, paintContext)) {
         ++dirtyRenders;
       } else if (painter.consecutiveRenders() > 1) {
@@ -473,7 +632,7 @@ export default abstract class WindowNode extends LayoutNode {
     let heaviest: number = 0;
     let heaviestNode: WindowNode = this;
     this.forEachPaintGroup((node: WindowNode) => {
-      const painter: NodePainter = node._windowPainter[window.id()];
+      const painter: WindowNodePainter = node.painter(window);
       if (!painter) {
         return;
       }
@@ -496,7 +655,7 @@ export default abstract class WindowNode extends LayoutNode {
     if (!this.localPaintGroup()) {
       throw new Error("Cannot render a node that is not a paint group");
     }
-    const painter: NodePainter = this._windowPainter[window.id()];
+    const painter: WindowNodePainter = this.painter(window);
     if (!painter) {
       return false;
     }
@@ -513,7 +672,7 @@ export default abstract class WindowNode extends LayoutNode {
     if (!this.localPaintGroup()) {
       throw new Error("Cannot render a node that is not a paint group");
     }
-    const painter: NodePainter = this._windowPainter[window.id()];
+    const painter: WindowNodePainter = this.painter(window);
     if (!painter) {
       console.log("Node has no painter for " + window.id());
       return false;

@@ -2,15 +2,16 @@ import { defaultFont } from "./settings";
 import CarouselAction from "./CarouselAction";
 import { NodePalette } from "parsegraph-direction";
 import WindowNode from "./WindowNode";
-import EventNode from "./EventNode";
 import Viewport from "./Viewport";
+import Node from "./Node";
+import DefaultNodeType from "./DefaultNodeType";
 
 export default class ActionCarousel {
-  _palette: NodePalette<EventNode>;
+  _palette: NodePalette<WindowNode>;
   _actions: CarouselAction[];
   _uninstaller: Function;
 
-  constructor(palette: NodePalette<EventNode>) {
+  constructor(palette: NodePalette<Node<DefaultNodeType>>) {
     if (!palette) {
       throw new Error("Palette must be defined");
     }
@@ -32,7 +33,7 @@ export default class ActionCarousel {
   }
 
   addAction(
-    action: string | EventNode,
+    action: string | WindowNode,
     listener: Function,
     listenerThisArg?: any,
     hotkey?: string
@@ -61,7 +62,7 @@ export default class ActionCarousel {
     this._actions.push(obj);
   }
 
-  install(node: EventNode, nodeData?: any) {
+  install(node: Node<DefaultNodeType>, nodeData?: any) {
     node.setClickListener((viewport: Viewport) => {
       return this.onClick(viewport, node, nodeData);
     }, this);
@@ -119,7 +120,7 @@ export default class ActionCarousel {
     }
   }
 
-  loadCarousel(viewport: Viewport, node: EventNode, nodeData?: any) {
+  loadCarousel(viewport: Viewport, node: WindowNode, nodeData?: any) {
     console.log("Loading carousel");
     const carousel = viewport.carousel();
     if (carousel.isCarouselShown()) {
@@ -141,7 +142,7 @@ export default class ActionCarousel {
     carousel.scheduleCarouselRepaint();
   }
 
-  onClick(viewport: Viewport, node: EventNode, nodeData?: any) {
+  onClick(viewport: Viewport, node: WindowNode, nodeData?: any) {
     const carousel = viewport.carousel();
     this.loadCarousel(viewport, node, nodeData);
     carousel.showCarousel();

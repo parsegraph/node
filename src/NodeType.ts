@@ -1,7 +1,7 @@
 import { Direction, NodePalette } from "parsegraph-direction";
 import Node from "./Node";
 import Size from "parsegraph-size";
-import NodePainter from "./NodePainter";
+import WindowNodePainter from "./WindowNodePainter";
 import { BasicWindow, Component } from "parsegraph-window";
 
 export default interface NodeType<T extends NodeType<T>> {
@@ -19,6 +19,6 @@ export default interface NodeType<T extends NodeType<T>> {
     window: BasicWindow,
     node: Node<T>,
     paintContext: Component
-  ): NodePainter;
+  ): WindowNodePainter;
   promiscuousClicks(node: Node<T>): boolean;
 }

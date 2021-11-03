@@ -4,10 +4,9 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from "../treenode/TreeListNode";
-import TreeListStyle from "../treenode/TreeListStyle";
-import BasicTreeListStyle from "../treenode/BasicTreeListStyle";
-import InlineTreeListStyle from "../treenode/InlineTreeListStyle";
+import TreeList from "../treenode/TreeList";
+import BasicTreeList from "../treenode/BasicTreeList";
+import InlineTreeList from "../treenode/InlineTreeList";
 
 function ParsegraphTree(
   root: TreeListNode<Node<DefaultNodeType>>,

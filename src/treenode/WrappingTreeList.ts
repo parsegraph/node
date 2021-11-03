@@ -1,38 +1,46 @@
-import Caret from "../Caret";
-import { DefaultNodePalette } from "..";
-import Node from "../Node";
-import DefaultNodeType from "../DefaultNodeType";
 import AbstractTreeList from "./AbstractTreeList";
+import TreeNode from "./TreeNode";
+import WindowNode from "../WindowNode";
+import Direction, { NodePalette } from "parsegraph-direction";
+import { SHRINK_SCALE } from "parsegraph-layout";
 
-export default class WrappingTreeList extends AbstractTreeList<
-  Node<DefaultNodeType>
-> {
-  _palette: DefaultNodePalette;
+export class NewlineTreeNode implements TreeNode {
+  root(): WindowNode {
+    return null;
+  }
+}
 
-  constructor(palette?: DefaultNodePalette) {
-    super();
-    this._palette = palette || new DefaultNodePalette(false);
+export const NEWLINE = new NewlineTreeNode();
+
+export default class WrappingTreeList extends AbstractTreeList {
+  _palette: NodePalette<WindowNode>;
+  _putInside: boolean;
+  _lastRow: WindowNode;
+  _shrinkNext: boolean;
+
+  constructor(
+    title: TreeNode,
+    children: TreeNode[],
+    palette: NodePalette<WindowNode>
+  ) {
+    super(title, children);
+    if (!palette) {
+      throw new Error("Palette must be given");
+    }
+    this._palette = palette;
   }
 
-  setType(node: TreeListNode<Node<DefaultNodeType>>, type: any) {
-    node._value.type = type;
+  getNewline(): TreeNode {
+    return NEWLINE;
   }
 
-  setLabel(node: TreeListNode<Node<DefaultNodeType>>, label: string) {
-    node._value.label = label;
-  }
-
-  createValue(): any {
-    return { type: "string", label: "" };
-  }
-
-  palette(): DefaultNodePalette {
+  palette(): NodePalette<WindowNode> {
     return this._palette;
   }
 
-  createNode(value?: any): Node<DefaultNodeType> {
+  /*  createNode(value?: any): WindowNode {
     if (!value) {
-      return this._palette.defaultType();
+      return this._palette.spawn();
     }
     switch (value.type) {
       case "literal": {
@@ -52,40 +60,35 @@ export default class WrappingTreeList extends AbstractTreeList<
         return null;
     }
   }
+  */
 
-  connectSpecial(value: any, rootValue: any): Node<DefaultNodeType> {
-    if (value.type !== "newline") {
-      throw new Error("Unexpected special: " + value.type);
+  connectSpecial(child: TreeNode): WindowNode {
+    if (child !== NEWLINE) {
+      return super.connectSpecial(child);
     }
-    const car = new Caret(rootValue.lastRow);
-    car.spawnMove("d", "u");
-    rootValue.lastRow = car.node();
-    rootValue.shrinkNext = true;
-    return car.node();
+    const bud = this._palette.spawn("u");
+    this._lastRow.connectNode(Direction.DOWNWARD, bud);
+    this._lastRow = bud;
+    this._shrinkNext = true;
+    return bud;
   }
 
-  connectInitialChild(
-    root: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>,
-    rootValue: any
-  ): Node<DefaultNodeType> {
-    rootValue.lastRow = child;
-    rootValue.putInside = true;
-    this.appendChild(root, child, rootValue);
+  connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
+    this._lastRow = child;
+    this._putInside = true;
+    this.connectChild(root, child);
     return child;
   }
 
-  connectChild(
-    lastChild: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>,
-    rootValue: any
-  ): Node<DefaultNodeType> {
-    const car = new Caret(lastChild);
-    car.connect(rootValue.putInside ? "i" : "f", child);
-    rootValue.putInside = false;
-    if (rootValue.shrinkNext) {
-      new Caret(rootValue.lastRow).shrink("f");
-      rootValue.shrinkNext = false;
+  connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
+    lastChild.connectNode(
+      this._putInside ? Direction.INWARD : Direction.FORWARD,
+      child
+    );
+    this._putInside = false;
+    if (this._shrinkNext) {
+      this._lastRow.nodeAt(Direction.FORWARD).setScale(SHRINK_SCALE);
+      this._shrinkNext = false;
     }
     return child;
   }

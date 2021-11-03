@@ -2,10 +2,10 @@ import { Direction, readDirection } from "parsegraph-direction";
 import TestSuite from "parsegraph-testsuite";
 import DefaultNodePalette from "./DefaultNodePalette";
 import DefaultNodeType, { Type } from "./DefaultNodeType";
-import EventCaret from "./EventCaret";
+import WindowCaret from "./WindowCaret";
 import Node from "./Node";
 
-export default class Caret extends EventCaret<Node<DefaultNodeType>> {
+export default class Caret extends WindowCaret<Node<DefaultNodeType>> {
   constructor(
     given?: Node<DefaultNodeType> | string | Type,
     mathMode?: boolean
@@ -13,18 +13,8 @@ export default class Caret extends EventCaret<Node<DefaultNodeType>> {
     super(new DefaultNodePalette(mathMode), given);
   }
 
-  element(elem?: any): any {
-    if (elem === undefined) {
-      return this.node().element();
-    }
-    this.node().setElement(elem);
-    return this;
-  }
-
-  clone(): Caret {
-    const car = new Caret(this.node());
-    car.setFont(this.font());
-    return car;
+  onChange(changeListener: Function, thisArg?: object): void {
+    this.node().setChangeListener(changeListener, thisArg);
   }
 
   label(...args: any[]) {
@@ -85,6 +75,12 @@ export default class Caret extends EventCaret<Node<DefaultNodeType>> {
       node = node.nodeAt(readDirection(inDirection));
     }
     node.setSelected(false);
+  }
+
+  clone(): Caret {
+    const car = new Caret(this.node());
+    car.setFont(this.font());
+    return car;
   }
 }
 

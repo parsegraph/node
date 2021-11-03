@@ -4,10 +4,9 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeListNode from "../treenode/TreeListNode";
-import TreeListStyle from "../treenode/TreeListStyle";
-import BasicTreeListStyle from "../treenode/BasicTreeListStyle";
-import WrappingTreeListStyle from "../treenode/WrappingTreeListStyle";
+import TreeList from "../treenode/TreeList";
+import BasicTreeList from "../treenode/BasicTreeList";
+import WrappingTreeList from "../treenode/WrappingTreeList";
 
 class JSONASTNode {
   type: string;
@@ -71,12 +70,12 @@ function parseWithNewlines(text: string) {
 }
 
 function graphWithNewlines(
-  root: TreeListNode<Node<DefaultNodeType>>,
+  root: TreeList,
   list: JSONASTNode[],
-  style?: TreeListStyle<Node<DefaultNodeType>>
+  style?: TreeList
 ) {
   if (!style) {
-    style = new WrappingTreeListStyle();
+    style = new WrappingTreeList();
   }
   list.forEach((child) => {
     let newNode = style.createList();
@@ -110,9 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("b");
     caret.disconnect("d");
     caret.disconnect("u");
-    const root = new TreeListNode<Node<DefaultNodeType>>(
-      new BasicTreeListStyle()
-    );
+    const root = new BasicTreeList();
     graphWithNewlines(root, [children]);
     caret.connect("f", root.root());
     world.scheduleRepaint();

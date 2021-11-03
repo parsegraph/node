@@ -5,7 +5,7 @@ import Caret from "./Caret";
 import Viewport from "./Viewport";
 import DefaultNodePalette from "./DefaultNodePalette";
 import DefaultNodeType from "./DefaultNodeType";
-import EventNode from "./EventNode";
+import WindowNode from "./WindowNode";
 import Node from "./Node";
 import Widget from "./Widget";
 import World from "./World";
@@ -45,7 +45,7 @@ export default class EnvironmentWidget implements Widget {
     this._ac = ac;
   }
 
-  blockSpawner(viewport: Viewport, node: EventNode) {
+  blockSpawner(viewport: Viewport, node: WindowNode) {
     const caret = new Caret(node as Node<DefaultNodeType>);
     ["b", "f"].forEach((dir) => {
       if (caret.has(dir)) {
@@ -66,7 +66,7 @@ export default class EnvironmentWidget implements Widget {
     this.scheduleUpdate();
   }
 
-  root(): EventNode {
+  root(): WindowNode {
     if (this._root) {
       return this._root;
     }

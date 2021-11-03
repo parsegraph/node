@@ -3,7 +3,10 @@ import { BasicWindow, Component } from "parsegraph-window";
 import { Matrix3x3 } from "parsegraph-matrix";
 import Camera from "parsegraph-camera";
 
-export default interface NodePainter {
+/**
+ * Represents the state of painting for a WindowNode.
+ */
+export default interface WindowNodePainter {
   contextChanged(isLost: boolean): void;
   bounds(): Rect;
 

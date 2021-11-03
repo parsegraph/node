@@ -4,7 +4,7 @@ import Input from "./Input";
 import BurgerMenu from "./BurgerMenu";
 import CameraFilter from "./CameraFilter";
 import World from "./World";
-import EventNode from "./EventNode";
+import WindowNode from "./WindowNode";
 import { BasicWindow, Component, WindowInput } from "parsegraph-window";
 
 export const FOCUS_SCALE = 1;
@@ -192,7 +192,7 @@ export default class Viewport extends Component {
   _renderedMouse: number;
   _needsRender: boolean;
   _focusScale: number;
-  _nodeShown: EventNode;
+  _nodeShown: WindowNode;
   _needsRepaint: boolean;
   _displayMode: ViewportDisplayMode;
   _window: BasicWindow;
@@ -416,7 +416,7 @@ export default class Viewport extends Component {
     );
   }
 
-  plot(node: EventNode) {
+  plot(node: WindowNode) {
     return this.world().plot(node);
   }
 
@@ -454,7 +454,7 @@ export default class Viewport extends Component {
     return this._renderedMouse;
   }
 
-  showInCamera(node: EventNode) {
+  showInCamera(node: WindowNode) {
     const noPrior = !this._nodeShown;
     this._nodeShown = node;
     this._input.setFocusedNode(node);

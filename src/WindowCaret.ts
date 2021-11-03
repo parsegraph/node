@@ -9,19 +9,33 @@ export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
   _font: Font;
   _world: World;
 
-  /**
-   * Accepts either no arguments, a Node, or a type or a reference to a type.
-   */
-  constructor(nodePalette: NodePalette<T>, type?: any) {
-    super(nodePalette, type);
+  constructor(palette: NodePalette<T>, given?: any) {
+    super(palette, given);
     this._font = defaultFont();
     this._world = null;
+  }
+
+  element(elem?: any): any {
+    if (elem === undefined) {
+      return this.node().element();
+    }
+    this.node().setElement(elem);
+    return this;
   }
 
   clone(): WindowCaret<T> {
     const car = new WindowCaret<T>(this.palette(), this.node());
     car.setFont(this.font());
+    car.setWorld(this._world);
     return car;
+  }
+
+  onClick(clickListener: Function, thisArg?: object): void {
+    this.node().setClickListener(clickListener, thisArg);
+  }
+
+  onKey(keyListener: Function, thisArg?: object): void {
+    this.node().setKeyListener(keyListener, thisArg);
   }
 
   // ////////////////////////////////////////////////////////////////////////////

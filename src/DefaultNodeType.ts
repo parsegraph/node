@@ -8,7 +8,7 @@ import style, {
   BUD_LEAF_SEPARATION,
   BUD_TO_BUD_VERTICAL_SEPARATION,
 } from "./DefaultNodeStyle";
-import NodePainter from "./NodePainter";
+import WindowNodePainter from "./WindowNodePainter";
 import { BasicWindow, Component } from "parsegraph-window";
 import DefaultNodePainter from "./DefaultNodePainter";
 
@@ -80,7 +80,7 @@ export default class DefaultNodeType implements NodeType<DefaultNodeType> {
     window: BasicWindow,
     node: Node<DefaultNodeType>,
     paintContext: Component
-  ): NodePainter {
+  ): WindowNodePainter {
     return new DefaultNodePainter(window, node, paintContext);
   }
 

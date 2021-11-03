@@ -2,7 +2,6 @@ import TestSuite from "parsegraph-testsuite";
 import Freezer from "./Freezer";
 import CameraBox from "./CameraBox";
 import { Direction } from "parsegraph-direction";
-import EventNode from "./EventNode";
 import WindowNode from "./WindowNode";
 import Caret from "./Caret";
 import Rect from "parsegraph-rect";
@@ -11,8 +10,8 @@ import Camera from "parsegraph-camera";
 
 export default class World {
   _worldPaintingDirty: Map<BasicWindow, boolean>;
-  _worldRoots: EventNode[];
-  _nodeUnderCursor: EventNode;
+  _worldRoots: WindowNode[];
+  _nodeUnderCursor: WindowNode;
   _previousWorldPaintState: Map<BasicWindow, number>;
   _freezer: Freezer;
   _cameraBox: CameraBox;
@@ -41,13 +40,13 @@ export default class World {
     this._worldPaintingDirty.set(window, true);
     this._previousWorldPaintState.delete(window);
     for (let i = 0; i < this._worldRoots.length; ++i) {
-      const root: EventNode = this._worldRoots[i];
+      const root: WindowNode = this._worldRoots[i];
       root.contextChanged(isLost, window);
     }
     this._cameraBox.contextChanged(isLost, window);
   }
 
-  plot(node: EventNode): void {
+  plot(node: WindowNode): void {
     if (!node) {
       throw new Error("Node must not be null");
     }
@@ -57,7 +56,7 @@ export default class World {
     this._worldRoots.push(node);
   }
 
-  removePlot(plot: EventNode) {
+  removePlot(plot: WindowNode) {
     this._worldRoots = this._worldRoots.filter((root) => {
       return plot !== root;
     });
@@ -74,7 +73,7 @@ export default class World {
       return 1;
     }
 
-    const selectedNode: EventNode = this.nodeUnderCoords(x, y);
+    const selectedNode: WindowNode = this.nodeUnderCoords(x, y);
     if (this._nodeUnderCursor === selectedNode) {
       // The node under cursor is already the node under cursor, so don't
       // do anything.
@@ -195,13 +194,13 @@ export default class World {
     };
   }
 
-  nodeUnderCursor(): EventNode {
+  nodeUnderCursor(): WindowNode {
     return this._nodeUnderCursor;
   }
   readyForInput(): boolean {
     // Test if there is a node under the given coordinates.
     for (let i: number = this._worldRoots.length - 1; i >= 0; --i) {
-      const root: EventNode = this._worldRoots[i];
+      const root: WindowNode = this._worldRoots[i];
       if (root.needsCommit() || root.isDirty()) {
         return false;
       }
@@ -221,10 +220,13 @@ export default class World {
   /*
    * Tests whether the given position, in world space, is within a node.
    */
-  nodeUnderCoords(x: number, y: number): EventNode {
+  nodeUnderCoords(x: number, y: number): WindowNode {
     // Test if there is a node under the given coordinates.
     for (let i: number = this._worldRoots.length - 1; i >= 0; --i) {
-      const selectedNode: EventNode = this._worldRoots[i].nodeUnderCoords(x, y);
+      const selectedNode: WindowNode = this._worldRoots[i].nodeUnderCoords(
+        x,
+        y
+      );
       if (selectedNode) {
         // Node located; no further search.
         return selectedNode;

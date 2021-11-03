@@ -1,54 +1,41 @@
-import Caret from "../Caret";
-import { DefaultNodePalette, TreeNode } from "..";
-import Node from "../Node";
-import DefaultNodeType from "../DefaultNodeType";
+import WindowNode from "../WindowNode";
+import TreeNode from "./TreeNode";
 import AbstractTreeList from "./AbstractTreeList";
+import { SHRINK_SCALE } from "parsegraph-layout";
+import Direction, { NodePalette } from "parsegraph-direction";
 
-export default class BasicTreeList<V> extends AbstractTreeList<
-  Node<DefaultNodeType>,
-  V
-> {
-  _palette: DefaultNodePalette;
+export default class BasicTreeList extends AbstractTreeList {
+  _lastRow: WindowNode;
+  _palette: NodePalette<WindowNode>;
 
-  constructor(value: V, children: TreeNode[], palette: DefaultNodePalette) {
-    super(value, children);
+  constructor(
+    title: TreeNode,
+    children: TreeNode[],
+    palette: NodePalette<WindowNode>
+  ) {
+    super(title, children);
+    if (!palette) {
+      throw new Error("Palette must be given");
+    }
     this._palette = palette;
   }
 
-  createNode(value?: V): Node<DefaultNodeType> {
-    const node = this._palette.spawn(value.type);
-    if (typeof value.label === "string") {
-      node.setLabel(value.label);
-    }
-    return node;
+  connectSpecial(): WindowNode {
+    return this._lastRow;
   }
 
-  connectSpecial(_: any, rootValue: any): Node<DefaultNodeType> {
-    return rootValue.lastRow;
+  connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
+    root.connectNode(Direction.FORWARD, child);
+    child.setScale(SHRINK_SCALE);
+    this._lastRow = root;
+    return root;
   }
 
-  connectInitialChild(
-    root: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>,
-    rootValue: any
-  ): Node<DefaultNodeType> {
-    const car = new Caret(root);
-    car.connect("f", child);
-    car.shrink("f");
-    rootValue.lastRow = root;
-    return car.root();
-  }
-
-  connectChild(
-    lastChild: Node<DefaultNodeType>,
-    child: Node<DefaultNodeType>,
-    rootValue: any
-  ): Node<DefaultNodeType> {
-    const car = new Caret(lastChild);
-    car.spawnMove("d", "u");
-    rootValue.lastRow = car.node();
-    car.connect("f", child);
-    car.shrink("f");
-    return car.node();
+  connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
+    const bud = this._palette.spawn();
+    lastChild.connectNode(Direction.DOWNWARD, bud);
+    bud.connectNode(Direction.FORWARD, child);
+    this._lastRow = bud;
+    return bud;
   }
 }

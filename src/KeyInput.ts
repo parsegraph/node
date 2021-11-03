@@ -13,7 +13,7 @@ import BlockPainter from "parsegraph-blockpainter";
 import AnimatedSpotlight from "./AnimatedSpotlight";
 import { Type } from "./DefaultNodeType";
 import Viewport from "./Viewport";
-import EventNode from "./EventNode";
+import WindowNode from "./WindowNode";
 import Method from "parsegraph-method";
 import getproperkeyname from "./getproperkeyname";
 
@@ -96,21 +96,21 @@ export default class KeyInput {
   _caretPainter: BlockPainter;
   _caretPos: number[];
   _caretColor: Color;
-  _focusedNode: EventNode;
+  _focusedNode: WindowNode;
   _focusedLabel: boolean;
   _clicksDetected: number;
   _spotlight: AnimatedSpotlight;
   _mouseVersion: number;
   keydowns: { [id: string]: Date };
   _zoomTouchDistance: number;
-  _selectedSlider: EventNode;
+  _selectedSlider: WindowNode;
   listener: Method;
   _attachedMouseListener: Function;
   _horizontalJerk: number;
   _verticalJerk: number;
   _horizontalImpulse: number;
   _verticalImpulse: number;
-  _clickedNode: EventNode;
+  _clickedNode: WindowNode;
 
   constructor(viewport: Viewport) {
     this._viewport = viewport;
@@ -1142,7 +1142,7 @@ export default class KeyInput {
     return this._focusedNode;
   }
 
-  setFocusedNode(focusedNode: EventNode) {
+  setFocusedNode(focusedNode: WindowNode) {
     if (focusedNode === this._focusedNode) {
       return;
     }
