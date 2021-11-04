@@ -87,8 +87,8 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
   constructor(newType: T, fromNode?: Node<T>, parentDirection?: Direction) {
     super(fromNode, parentDirection);
     this._type = newType;
-    this._type.applyStyle(this);
     this._style = {};
+    this._type.applyStyle(this);
 
     this._scene = null;
     this._label = null;
