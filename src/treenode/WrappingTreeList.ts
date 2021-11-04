@@ -21,13 +21,15 @@ export default class WrappingTreeList extends AbstractTreeList {
   constructor(
     title: TreeNode,
     children: TreeNode[],
-    palette: NodePalette<WindowNode>
+    palette: NodePalette<WindowNode>,
+    putInside: boolean = true
   ) {
     super(title, children);
     if (!palette) {
       throw new Error("Palette must be given");
     }
     this._palette = palette;
+    this._putInside = putInside;
   }
 
   getNewline(): TreeNode {
@@ -75,21 +77,18 @@ export default class WrappingTreeList extends AbstractTreeList {
 
   connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
     this._lastRow = child;
-    this._putInside = true;
     this.connectChild(root, child);
     return child;
   }
 
   connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
-    lastChild.connectNode(
-      this._putInside ? Direction.INWARD : Direction.FORWARD,
-      child
-    );
-    this._putInside = false;
+    const dir = this._putInside ? Direction.INWARD : Direction.FORWARD;
+    lastChild.connectNode(dir, child);
     if (this._shrinkNext) {
-      this._lastRow.nodeAt(Direction.FORWARD).setScale(SHRINK_SCALE);
+      this._lastRow.nodeAt(dir).setScale(SHRINK_SCALE);
       this._shrinkNext = false;
     }
+    this._putInside = false;
     return child;
   }
 }
