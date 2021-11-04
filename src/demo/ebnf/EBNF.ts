@@ -84,7 +84,7 @@ export default class EBNF implements TreeNode {
       case "Choice":
         return this.graphWithNewlines(new ChoiceNode(), child.children);
       case "SequenceOrDifference":
-        return this.graphWithNewlines(root, child.children);
+        return this.graphWithNewlines(new ListNode(), child.children);
       case "Production":
       case "CharClass":
       case "CharRange":
