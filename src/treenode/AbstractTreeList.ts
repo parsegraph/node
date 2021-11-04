@@ -36,7 +36,17 @@ export default abstract class AbstractTreeList implements TreeList {
     this._valid = false;
   }
 
+  checkChild(child:TreeNode) {
+    if(child === this) {
+      throw new Error("Refusing to add list to itself");
+    }
+    if (this.indexOf(child) >= 0) {
+      throw new Error("Child already contained in this list");
+    }
+  }
+
   appendChild(child: TreeNode) {
+    this.checkChild(child);
     this._children.push(child);
     this.invalidate();
   }
@@ -51,6 +61,7 @@ export default abstract class AbstractTreeList implements TreeList {
   }
 
   insertBefore(child: TreeNode, ref: TreeNode) {
+    this.checkChild(child);
     const idx = this.indexOf(ref);
     if (idx >= 0) {
       this._children.splice(idx, 0, child);
