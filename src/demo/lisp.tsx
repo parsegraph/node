@@ -4,55 +4,23 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeList from "../treenode/TreeList";
-import BasicTreeList from "../treenode/BasicTreeList";
-import WrappingTreeList from "../treenode/WrappingTreeList";
-import parse, { LispCell, LispType } from "./anthonylisp";
-
-function graphWithNewlines(root: TreeList, list: LispCell[], style?: TreeList) {
-  if (!style) {
-    style = new WrappingTreeList();
-  }
-  list.forEach((child) => {
-    let newNode = style.createList();
-    if (child.newLined) {
-      let nl = style.createList();
-      style.setType(nl, "newline");
-      root.appendChild(nl);
-    }
-    root.appendChild(newNode);
-    if (child.type === LispType.List) {
-      style.setType(newNode, "list");
-      graphWithNewlines(newNode, child.list, style);
-    } else {
-      style.setType(newNode, "string");
-      style.setLabel(newNode, child.val);
-    }
-  });
-}
+import parse from "./anthonylisp";
+import Lisp from "./ebnf/Lisp";
 
 document.addEventListener("DOMContentLoaded", () => {
   const belt = new TimingBelt();
   const world = new World();
   const caret = new Caret();
+  const lisp = new Lisp();
 
   const refresh = () => {
     console.log("Refreshing");
     const text = (document.getElementById("children") as HTMLInputElement)
       .value;
-    console.log("children", text);
-    const children = parse(text);
-    console.log(children);
     caret.moveToRoot();
     caret.disconnect("f");
-    caret.disconnect("b");
-    caret.disconnect("d");
-    caret.disconnect("u");
-    const rootStyle = new BasicTreeList();
-    const root = new TreeList<Node<DefaultNodeType>>(rootStyle);
-    rootStyle.setType(root, "u");
-    graphWithNewlines(root, children.list);
-    caret.connect("f", root.root());
+    lisp.setText(text);
+    caret.connect("f", lisp.root() as Node<DefaultNodeType>);
     world.scheduleRepaint();
     belt.scheduleUpdate();
   };

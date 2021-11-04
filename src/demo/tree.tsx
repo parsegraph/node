@@ -4,41 +4,39 @@ import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import Node from "../Node";
 import DefaultNodeType from "../DefaultNodeType";
-import TreeList from "../treenode/TreeList";
 import BasicTreeList from "../treenode/BasicTreeList";
+import TreeList from "../treenode/TreeList";
+import BlockTreeNode from "../treenode/BlockTreeNode";
 import InlineTreeList from "../treenode/InlineTreeList";
+import DefaultNodePalette from "../DefaultNodePalette";
 
-function ParsegraphTree(
-  root: TreeListNode<Node<DefaultNodeType>>,
-  list: any[],
-  style: TreeListStyle<Node<DefaultNodeType>>
-) {
+function ParsegraphTree(root: TreeList, list: any[]) {
   const buildNode = (child: any) => {
     if (typeof child === "object" && !Array.isArray(child)) {
-      const type = "type" in child ? child.type : "b";
-      const newNode = style.createList();
-      style.setType(newNode, type);
+      const newNode = new BlockTreeNode("type" in child ? child.type : "b");
       root.appendChild(newNode);
       if ("value" in child) {
-        style.setLabel(newNode, child.value);
+        newNode.setLabel(child.value);
       }
       if (!("children" in child)) {
         return;
       }
-      child = child.children;
-      ParsegraphTree(newNode, child, style);
+      const list = new BasicTreeList(newNode, [], new DefaultNodePalette());
+      ParsegraphTree(list, child.children);
       return;
     }
     if (!Array.isArray(child)) {
-      const newNode = style.createList();
+      const newNode = new BlockTreeNode("b", child);
       root.appendChild(newNode);
-      style.setLabel(newNode, child);
       return;
     }
-    const newNode = style.createList();
-    style.setType(newNode, "u");
-    ParsegraphTree(newNode, child, style);
-    root.appendChild(newNode);
+    const list = new BasicTreeList(
+      new BlockTreeNode("u"),
+      [],
+      new DefaultNodePalette()
+    );
+    ParsegraphTree(list, child);
+    root.appendChild(list);
   };
   const buildChildren = (children: any[]) => {
     children.forEach((child: any) => {
@@ -68,12 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("b");
     caret.disconnect("d");
     caret.disconnect("u");
-    const childStyle = new InlineTreeListStyle();
-    const style = new BasicTreeListStyle(null, childStyle);
-    const root = style.createList();
+    const root = new InlineTreeList(new BlockTreeNode("u"), []);
     //style.setType(root, 'u');
-    ParsegraphTree(root, children, style);
-    caret.connect("f", root.root());
+    ParsegraphTree(root, children);
+    caret.connect("f", root.root() as Node<DefaultNodeType>);
     world.scheduleRepaint();
     belt.scheduleUpdate();
   };

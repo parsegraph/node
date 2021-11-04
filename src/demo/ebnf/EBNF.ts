@@ -46,7 +46,11 @@ class ListNode extends InlineTreeList {
 class TitledListNode implements TreeNode {
   _list: TreeList;
   constructor(title: TreeNode, children?: TreeNode[]) {
-    this._list = new WrappingTreeList(title, children, new DefaultNodePalette());
+    this._list = new WrappingTreeList(
+      title,
+      children,
+      new DefaultNodePalette()
+    );
   }
 
   tree(): TreeList {
@@ -96,14 +100,18 @@ export default class EBNF implements TreeNode {
       case "NCName":
         return new LiteralNode(child.text);
       default:
-        const listNode = new TitledListNode(new LiteralNode(child.type + " " + child.text));
+        const listNode = new TitledListNode(
+          new LiteralNode(child.type + " " + child.text)
+        );
         this.graphWithNewlines(listNode.tree(), child.children);
         return listNode;
     }
   }
 
-  graphWithNewlines(root: TreeList, list: IToken[]):TreeList {
-    list.map(child=>this.buildNode(root, child)).forEach((node) => node && root.appendChild(node));
+  graphWithNewlines(root: TreeList, list: IToken[]): TreeList {
+    list
+      .map((child) => this.buildNode(root, child))
+      .forEach((node) => node && root.appendChild(node));
     return root;
   }
 
