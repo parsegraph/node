@@ -3,14 +3,13 @@ import TreeNode from "../../treenode/TreeNode";
 import WindowNode from "../../WindowNode";
 import BasicTreeList from "../../treenode/BasicTreeList";
 import TreeList from "../../treenode/TreeList";
-import {Grammars, IToken} from "ebnf";
+import { Grammars, IToken } from "ebnf";
 import BlockTreeNode from "../../treenode/BlockTreeNode";
 import InlineTreeList from "../../treenode/InlineTreeList";
 import WrappingTreeList from "../../treenode/WrappingTreeList";
 
-
 class LiteralNode implements TreeNode {
-  _title:BlockTreeNode;
+  _title: BlockTreeNode;
 
   constructor(value?: string) {
     this._title = new BlockTreeNode("u");
@@ -19,7 +18,7 @@ class LiteralNode implements TreeNode {
     }
   }
 
-  value():string {
+  value(): string {
     return this._title.getLabel();
   }
 
@@ -75,7 +74,7 @@ export default class EBNF implements TreeNode {
     this._tree = new BasicTreeList(this._title, [], this._palette);
   }
 
-  buildNode(root:TreeList, child: IToken): TreeNode {
+  buildNode(root: TreeList, child: IToken): TreeNode {
     console.log("Creating node", child);
     switch (child.type) {
       case "Choice":
@@ -108,7 +107,7 @@ export default class EBNF implements TreeNode {
     return root;
   }
 
-  setText(text:string) {
+  setText(text: string) {
     this._text = text;
     this.invalidate();
   }

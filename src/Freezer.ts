@@ -769,7 +769,7 @@ export function calculatePaintGroupBounds(nodeRoot: WindowNode) {
       right: parentSize.width() / 2,
       bottom: parentSize.height() / 2,
     };
-    groupBounds[node._id] = parentBounds;
+    groupBounds[node._id as number] = parentBounds;
     const order = node.layoutOrder();
     for (let i = 0; i < order.length; ++i) {
       const dir = order[i];
@@ -782,7 +782,7 @@ export function calculatePaintGroupBounds(nodeRoot: WindowNode) {
       const child = node.nodeAt(dir);
       if (child.findPaintGroup() === nodeRoot) {
         // Node is part of the same paint group.
-        const childBounds = groupBounds[child._id];
+        const childBounds = groupBounds[child._id as number];
         if (!childBounds) {
           throw new Error(
             "Child paint group bounds must have" +
@@ -906,5 +906,5 @@ export function calculatePaintGroupBounds(nodeRoot: WindowNode) {
   // console.log(
   //   nodeRoot,
   //   "Bounds in " + numNodes + " nodes", groupBounds[node._id]);
-  return groupBounds[node._id];
+  return groupBounds[node._id as number];
 }

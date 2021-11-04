@@ -68,7 +68,7 @@ export default abstract class AbstractTreeList implements TreeList {
     return idx >= 0;
   }
 
-  childAt(index:number) {
+  childAt(index: number) {
     return this._children[index];
   }
 
