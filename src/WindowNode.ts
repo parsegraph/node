@@ -18,6 +18,8 @@ import Freezer from "./Freezer";
 import { Direction } from "parsegraph-direction";
 import { LayoutNode } from "parsegraph-layout";
 import Viewport from "./Viewport";
+import DefaultNodeType from "./DefaultNodeType";
+import Node from "./Node";
 
 // The largest scale at which nodes are shown in camera.
 // export const NATURAL_VIEWPORT_SCALE = 0.5;
@@ -450,8 +452,8 @@ export default abstract class WindowNode extends LayoutNode {
 
             sizer.addEventListener("click", () => {
               const viewport = paintContext as Viewport;
-              viewport.showInCamera(node as WindowNode);
-              (node as WindowNode).click(viewport);
+              viewport.showInCamera(node as Node<DefaultNodeType>);
+              node.click(viewport);
             });
             sizer.addEventListener("hover", () => {
               (paintContext as Viewport).setCursor("pointer");

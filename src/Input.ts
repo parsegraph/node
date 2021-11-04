@@ -11,9 +11,9 @@ import { Alignment } from "parsegraph-layout";
 import Color from "parsegraph-color";
 import BlockPainter from "parsegraph-blockpainter";
 import AnimatedSpotlight from "./AnimatedSpotlight";
-import { Type } from "./DefaultNodeType";
+import DefaultNodeType, { Type } from "./DefaultNodeType";
 import Viewport from "./Viewport";
-import WindowNode from "./WindowNode";
+import Node from "./Node";
 import Method from "parsegraph-method";
 
 export const TOUCH_SENSITIVITY = 1;
@@ -95,21 +95,21 @@ export default class Input {
   _caretPainter: BlockPainter;
   _caretPos: number[];
   _caretColor: Color;
-  _focusedNode: WindowNode;
+  _focusedNode: Node<DefaultNodeType>;
   _focusedLabel: boolean;
   _clicksDetected: number;
   _spotlight: AnimatedSpotlight;
   _mouseVersion: number;
   keydowns: { [id: string]: Date };
   _zoomTouchDistance: number;
-  _selectedSlider: WindowNode;
+  _selectedSlider: Node<DefaultNodeType>;
   listener: Method;
   _attachedMouseListener: Function;
   _horizontalJerk: number;
   _verticalJerk: number;
   _horizontalImpulse: number;
   _verticalImpulse: number;
-  _clickedNode: WindowNode;
+  _clickedNode: Node<DefaultNodeType>;
 
   constructor(viewport: Viewport) {
     this._viewport = viewport;
@@ -232,7 +232,7 @@ export default class Input {
           ? this._focusedNode._extended.prevTabNode
           : this._focusedNode._extended.nextTabNode;
         if (toNode) {
-          this.setFocusedNode(toNode);
+          this.setFocusedNode(toNode as Node<DefaultNodeType>);
           return true;
         }
         break;
@@ -300,7 +300,7 @@ export default class Input {
     } else if (
       this._focusedNode._label &&
       this._focusedNode._label.editable() &&
-      this._focusedNode._label.key(keyName, this.viewport())
+      this._focusedNode._label.key(keyName)
     ) {
       console.log("LABEL ACCEPTS KEY; LAYOUT CHANGED");
       this._focusedNode.layoutWasChanged();
@@ -805,7 +805,9 @@ export default class Input {
     if (!this.world().commitLayout(INPUT_LAYOUT_TIME)) {
       return null;
     }
-    const selectedNode = this.world().nodeUnderCoords(x, y);
+    const selectedNode = this.world().nodeUnderCoords(x, y) as Node<
+      DefaultNodeType
+    >;
     if (!selectedNode) {
       console.log("No node found under coords:", x, y);
       this.setFocusedNode(null);
@@ -816,8 +818,7 @@ export default class Input {
     console.log("Node found for coords:", selectedNode, x, y);
 
     // Check if the selected node was a slider.
-    // TODO This is broken; must at least be type().type() but this forces Input to expect DefaultNodeType
-    if (selectedNode.type() == Type.SLIDER) {
+    if (selectedNode.type().type() == Type.SLIDER) {
       if (!onlySlider && selectedNode === this._selectedSlider) {
         // console.log(new Error("Removing slider listener"));
         this._selectedSlider = null;
@@ -1142,7 +1143,7 @@ export default class Input {
     return this._focusedNode;
   }
 
-  setFocusedNode(focusedNode: WindowNode) {
+  setFocusedNode(focusedNode: Node<DefaultNodeType>) {
     if (focusedNode === this._focusedNode) {
       return;
     }

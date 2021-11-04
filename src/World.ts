@@ -7,6 +7,8 @@ import Caret from "./Caret";
 import Rect from "parsegraph-rect";
 import { BasicWindow, Component } from "parsegraph-window";
 import Camera from "parsegraph-camera";
+import DefaultNodeType from "./DefaultNodeType";
+import Node from "./Node";
 
 export default class World {
   _worldPaintingDirty: Map<BasicWindow, boolean>;
@@ -83,8 +85,11 @@ export default class World {
 
     if (this._nodeUnderCursor && this._nodeUnderCursor !== selectedNode) {
       // console.log("Node is changing, so repainting.");
-      this._nodeUnderCursor.setSelected(false);
-      this.scheduleRepaint();
+      if ((this._nodeUnderCursor as any).setSelected) {
+        const n = this._nodeUnderCursor as Node<DefaultNodeType>;
+        n.setSelected(false);
+        this.scheduleRepaint();
+      }
     }
 
     this._nodeUnderCursor = selectedNode;
@@ -94,9 +99,12 @@ export default class World {
       return 0;
     }
 
-    if (selectedNode.acceptsSelection()) {
+    if (
+      (selectedNode as any).acceptsSelection &&
+      (selectedNode as Node<DefaultNodeType>).acceptsSelection()
+    ) {
       // console.log("Selecting node and repainting");
-      selectedNode.setSelected(true);
+      (selectedNode as Node<DefaultNodeType>).setSelected(true);
       this.scheduleRepaint();
     } else {
       return 0;

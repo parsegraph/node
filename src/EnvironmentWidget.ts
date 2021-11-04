@@ -25,7 +25,7 @@ export default class EnvironmentWidget implements Widget {
     this._world = world;
     this._nodeCount = 0;
 
-    const ac = new ActionCarousel(new DefaultNodePalette());
+    const ac = new ActionCarousel();
     ac.addAction(
       "JSON",
       (...args: any) => {

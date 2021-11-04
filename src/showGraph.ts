@@ -1,12 +1,13 @@
 import Window, { TimingBelt } from "parsegraph-window";
 import World from "./World";
 import Viewport from "./Viewport";
-import WindowNode from "./WindowNode";
+import Node from "./Node";
+import DefaultNodeType from "./DefaultNodeType";
 
 /**
  * Show a basic graph given a node.
  */
-export default function showGraph(rootNode: WindowNode) {
+export default function showGraph(rootNode: Node<DefaultNodeType>) {
   const window = new Window();
   const world = new World();
 

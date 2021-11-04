@@ -6,6 +6,8 @@ import CameraFilter from "./CameraFilter";
 import World from "./World";
 import WindowNode from "./WindowNode";
 import { BasicWindow, Component, WindowInput } from "parsegraph-window";
+import DefaultNodeType from "./DefaultNodeType";
+import Node from "./Node";
 
 export const FOCUS_SCALE = 1;
 
@@ -454,7 +456,7 @@ export default class Viewport extends Component {
     return this._renderedMouse;
   }
 
-  showInCamera(node: WindowNode) {
+  showInCamera(node: Node<DefaultNodeType>) {
     const noPrior = !this._nodeShown;
     this._nodeShown = node;
     this._input.setFocusedNode(node);

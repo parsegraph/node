@@ -1,21 +1,18 @@
 import { defaultFont } from "./settings";
 import CarouselAction from "./CarouselAction";
-import { NodePalette } from "parsegraph-direction";
 import WindowNode from "./WindowNode";
 import Viewport from "./Viewport";
 import Node from "./Node";
 import DefaultNodeType from "./DefaultNodeType";
+import DefaultNodePalette from "./DefaultNodePalette";
 
 export default class ActionCarousel {
-  _palette: NodePalette<WindowNode>;
+  _palette: DefaultNodePalette;
   _actions: CarouselAction[];
   _uninstaller: Function;
 
-  constructor(palette: NodePalette<Node<DefaultNodeType>>) {
-    if (!palette) {
-      throw new Error("Palette must be defined");
-    }
-    this._palette = palette;
+  constructor() {
+    this._palette = new DefaultNodePalette();
     this._actions = [];
   }
 
@@ -33,7 +30,7 @@ export default class ActionCarousel {
   }
 
   addAction(
-    action: string | WindowNode,
+    action: string | Node<DefaultNodeType>,
     listener: Function,
     listenerThisArg?: any,
     hotkey?: string
