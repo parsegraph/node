@@ -121,9 +121,9 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
       case Axis.Z:
         switch (this.nodeAlignmentMode(Direction.INWARD)) {
           case Alignment.INWARD_VERTICAL:
-            return this.verticalPadding() - this.borderThickness();
+            return this.verticalPadding() + this.borderThickness();
           default:
-            return this.horizontalPadding() - this.borderThickness();
+            return this.horizontalPadding() + this.borderThickness();
         }
     }
   }
