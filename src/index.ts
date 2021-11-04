@@ -108,6 +108,7 @@ import InlineTreeList from "./treenode/InlineTreeList";
 import TreeList from "./treenode/TreeList";
 import TreeNode from "./treenode/TreeNode";
 import WrappingTreeList from "./treenode/WrappingTreeList";
+import BlockTreeNode from "./treenode/BlockTreeNode";
 
 export {
   render,
@@ -191,6 +192,7 @@ export {
   turnNegative,
   readDirection,
   AbstractTreeList,
+  BlockTreeNode,
   BasicTreeList,
   DefaultTreeNode,
   InlineTreeList,

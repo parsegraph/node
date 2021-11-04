@@ -3,7 +3,6 @@ import GraphicsWindow from "parsegraph-window";
 import ActionCarousel from "./ActionCarousel";
 import Caret from "./Caret";
 import Viewport from "./Viewport";
-import DefaultNodePalette from "./DefaultNodePalette";
 import DefaultNodeType from "./DefaultNodeType";
 import WindowNode from "./WindowNode";
 import Node from "./Node";
