@@ -36,8 +36,8 @@ export default abstract class AbstractTreeList implements TreeList {
     this._valid = false;
   }
 
-  checkChild(child:TreeNode) {
-    if(child === this) {
+  checkChild(child: TreeNode) {
+    if (child === this) {
       throw new Error("Refusing to add list to itself");
     }
     if (this.indexOf(child) >= 0) {
