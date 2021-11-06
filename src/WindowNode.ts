@@ -537,6 +537,9 @@ export default abstract class WindowNode extends LayoutNode {
 
       const paintGroup: WindowNode = savedPaintGroup;
       let painter: WindowNodePainter = paintGroup.painter(window);
+      if (paintGroup.needsCommit()) {
+        throw new Error("Need commit even though we should be done");
+      }
       if (paintGroup.isDirty() || !painter) {
         // Paint and render nodes marked for the current group.
         // console.log("Painting " + paintGroup);
