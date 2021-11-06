@@ -3,8 +3,7 @@ DIST_NAME = node
 SCRIPT_FOLDERS = \
 	src \
 	test \
-	demo \
-	demo/ebnf
+	demo
 
 SCRIPT_EXTENSIONS = \
 	.js \
