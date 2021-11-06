@@ -642,10 +642,11 @@ export default class DefaultNodePainter implements WindowNodePainter {
       const length =
         directionSign(direction) *
         parentScale *
-        (directionData.lineLength + LINE_THICKNESS / 2);
+        (directionData.lineLength -
+         directionSign(direction) * node.size().height() / 2 );
       painter.drawBlock(
         node.groupX(),
-        node.groupY() + length / 2,
+        node.groupY() + length / 2 + parentScale * directionSign(direction) * node.size().height() / 2,
         thickness,
         Math.abs(length),
         0,
@@ -657,9 +658,10 @@ export default class DefaultNodePainter implements WindowNodePainter {
       const length =
         directionSign(direction) *
         parentScale *
-        (directionData.lineLength + LINE_THICKNESS / 2);
+        (directionData.lineLength -
+         directionSign(direction) * node.size().width() / 2 );
       painter.drawBlock(
-        node.groupX() + length / 2,
+        node.groupX() + length / 2 + parentScale * directionSign(direction) * node.size().width() / 2,
         node.groupY(),
         Math.abs(length),
         thickness,
