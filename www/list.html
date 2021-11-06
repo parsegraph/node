@@ -17,7 +17,7 @@
             <div style="display: flex; flex-direction: column;">
                 <div>
                     <label for="spawnDir">spawnDir:</label>
-                    <select name="spawnDir" id="spawnDir" onchange="refresh()">
+                    <select name="spawnDir" id="spawnDir">
                         <option value="f">Forward</option>
                         <option value="d">Downward</option>
                         <option value="b">Backward</option>
@@ -25,13 +25,11 @@
                     </select>
                 </div>
                 <div>
-                    <input name="align" id="align" type="checkbox" onchange="refresh()">
+                    <input name="align" id="align" type="checkbox">
                     <label for="align">Align</label>
                 </div>
                 <textarea
-                    style="flex-grow: 1; min-width: 500px"
-                    oninput="refresh()"
-                    id="children">
+                    style="flex-grow: 1; min-width: 500px" id="children">
 {
     "value":"No time",
     "children":[

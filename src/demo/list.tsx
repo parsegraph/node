@@ -87,6 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
     world.scheduleRepaint();
     belt.scheduleUpdate();
   };
+
+  document.getElementById("children").addEventListener("change", refresh);
+  document.getElementById("align").addEventListener("change", refresh);
+  document.getElementById("spawnDir").addEventListener("change", refresh);
+
   world.plot(caret.root());
   render(belt, world, document.getElementById("list-of-one"));
   refresh();
