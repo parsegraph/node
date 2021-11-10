@@ -9,11 +9,13 @@ export default class BlockTreeNode implements TreeNode {
   _type: any;
   _palette: DefaultNodePalette;
   _root: Node<DefaultNodeType>;
+  _style: any;
 
-  constructor(type?: any, label?: string) {
+  constructor(type?: any, label?: string, style?: any) {
     this._palette = new DefaultNodePalette();
     this._type = type;
     this._label = label;
+    this._style = style;
     this.invalidate();
   }
   getType(): any {
@@ -38,6 +40,9 @@ export default class BlockTreeNode implements TreeNode {
     this._root = this._palette.spawn(this._type);
     if (this._label != null) {
       this._root.setLabel(this._label);
+    }
+    if (this._style) {
+      this._root.setBlockStyle(this._style);
     }
   }
 
