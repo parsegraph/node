@@ -2,7 +2,13 @@ import WindowNode from "../WindowNode";
 import TreeNode from "./TreeNode";
 import AbstractTreeList from "./AbstractTreeList";
 import { Alignment, SHRINK_SCALE } from "parsegraph-layout";
-import Direction, { NodePalette, turnRight } from "parsegraph-direction";
+import Direction, {
+  PreferredAxis,
+  NodePalette,
+  turnPositive,
+  getDirectionAxis,
+  Axis,
+} from "parsegraph-direction";
 
 export default class BasicTreeList extends AbstractTreeList {
   _lastRow: WindowNode;
@@ -42,6 +48,11 @@ export default class BasicTreeList extends AbstractTreeList {
   connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
     root.connectNode(this._direction, child);
     root.setNodeAlignmentMode(this._direction, this._align);
+    root.setLayoutPreference(
+      getDirectionAxis(this._direction) === Axis.VERTICAL
+        ? PreferredAxis.VERTICAL
+        : PreferredAxis.HORIZONTAL
+    );
     child.setScale(SHRINK_SCALE);
     this._lastRow = root;
     return root;
@@ -49,8 +60,13 @@ export default class BasicTreeList extends AbstractTreeList {
 
   connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
     const bud = this._palette.spawn();
-    lastChild.connectNode(turnRight(this._direction), bud);
+    lastChild.connectNode(turnPositive(this._direction), bud);
     bud.connectNode(this._direction, child);
+    bud.setLayoutPreference(
+      getDirectionAxis(this._direction) === Axis.VERTICAL
+        ? PreferredAxis.VERTICAL
+        : PreferredAxis.HORIZONTAL
+    );
     this._lastRow = bud;
     return bud;
   }
