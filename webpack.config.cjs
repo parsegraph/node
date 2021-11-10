@@ -14,6 +14,7 @@ module.exports = {
     list: path.resolve(__dirname, "src/demo/list.tsx"),
     tree: path.resolve(__dirname, "src/demo/tree.tsx"),
     parsetree: path.resolve(__dirname, "src/demo/parsetree.tsx"),
+    multislot: path.resolve(__dirname, "src/demo/multislot.tsx"),
     lisp: path.resolve(__dirname, "src/demo/lisp.tsx"),
     ebnf: path.resolve(__dirname, "src/demo/ebnf.tsx")
   },
