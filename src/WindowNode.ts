@@ -403,6 +403,9 @@ export default abstract class WindowNode extends LayoutNode {
   }
 
   prepare(window: BasicWindow, paintContext: Component): void {
+    if (!window.containerFor(paintContext)) {
+      return;
+    }
     if (
       (window.containerFor(paintContext) as HTMLElement).children.length == 0
     ) {
