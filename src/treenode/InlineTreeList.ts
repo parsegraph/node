@@ -10,6 +10,7 @@ export default class InlineTreeList extends AbstractTreeList {
   }
 
   connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
+    child.setPaintGroup(true);
     root.connectNode(Direction.INWARD, child);
     child.setScale(SHRINK_SCALE);
     return child;
@@ -17,6 +18,7 @@ export default class InlineTreeList extends AbstractTreeList {
 
   connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
     lastChild.connectNode(Direction.FORWARD, child);
+    child.setPaintGroup(true);
     return child;
   }
 }

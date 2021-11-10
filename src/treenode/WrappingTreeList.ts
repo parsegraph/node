@@ -84,6 +84,9 @@ export default class WrappingTreeList extends AbstractTreeList {
   connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
     const dir = this._putInside ? Direction.INWARD : Direction.FORWARD;
     lastChild.connectNode(dir, child);
+    if (this._putInside) {
+      child.setPaintGroup(true);
+    }
     if (this._shrinkNext) {
       this._lastRow.nodeAt(dir).setScale(SHRINK_SCALE);
       this._shrinkNext = false;
