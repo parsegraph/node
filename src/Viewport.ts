@@ -212,6 +212,7 @@ export default class Viewport extends Component {
     this._cameraFilter = new CameraFilter(this);
     this._input = new Input(this);
     this._carousel = new Carousel(this);
+    this._carousel.setOnScheduleRepaint(this.scheduleRepaint, this);
 
     this._menu = new BurgerMenu(this);
 
