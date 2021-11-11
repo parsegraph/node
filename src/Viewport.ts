@@ -36,6 +36,8 @@ export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode 
   render(viewport: Viewport) {
     const cam = viewport.camera();
     let needsUpdate = false;
+    viewport._window.container().style.width = "100%";
+    viewport._window.container().style.height = "100%";
     if (viewport._nodeShown) {
       if (
         viewport._cameraFilter.getRequiredScale() != viewport.getRequiredScale()
@@ -139,6 +141,8 @@ export class FitInWindowViewportDisplayMode extends SplittingViewportDisplayMode
     const root = viewport._world._worldRoots[0];
     root.prepare(viewport._window, viewport);
     const size = root.extentSize();
+    viewport._window.container().style.width = "100%";
+    viewport._window.container().style.height = "100%";
     let needsUpdate = false;
     if (size.width() > 0 && size.height() > 0) {
       root.showInCamera(cam, false);
