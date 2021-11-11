@@ -21,9 +21,4 @@ void main() {
     highp float centerDist = distance(texCoord.xy, vec2(0.5, 0.5));
     highp float centerAlpha = 0.5*max(0.0, 1.0 - centerDist/centerSpotlight) - 0.5*max(0.0, 1.0 - centerDist/interiorDeadspot);
     gl_FragColor = vec4(contentColor.rgb, centerAlpha + angleAlpha);
-    /* if(selectionAngle - fragAngle > (3.14159 / 2.0) || fragAngle - selectionAngle > (3.14159 / 2.0)) {
-        gl_FragColor = vec4(contentColor.rgb, contentColor.a * d);
-    }
-    else {*/
-    gl_FragColor = vec4(contentColor.rgb, contentColor.a * d * (1.0 - abs(abs(fragAngle) - abs(selectionAngle)) / 3.14159));
 }
