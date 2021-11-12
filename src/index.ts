@@ -7,6 +7,8 @@ import Label, { Line } from "./Label";
 
 import { copyStyle, BUD_RADIUS } from "./DefaultNodeStyle";
 
+import ImageBuilder from './ImageBuilder';
+
 import DirectionNode, {
   PreferredAxis,
   LayoutState,
@@ -199,4 +201,5 @@ export {
   TreeList,
   TreeNode,
   WrappingTreeList,
+  ImageBuilder
 };
