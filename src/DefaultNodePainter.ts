@@ -235,8 +235,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
         size.width(),
         size.height(),
         0,
-        0,
-        node.groupScale()
+        0
       );
     };
 
@@ -298,9 +297,8 @@ export default class DefaultNodePainter implements WindowNodePainter {
       node.groupY(),
       groupSize.height() / 1.5,
       groupSize.height() / 1.5,
-      style.borderRoundness / 1.5,
-      style.borderThickness / 1.5,
-      node.groupScale()
+      node.groupScale() * style.borderRoundness / 1.5,
+      node.groupScale() * style.borderThickness / 1.5,
     );
     // }
 
@@ -691,9 +689,8 @@ export default class DefaultNodePainter implements WindowNodePainter {
       rect.y() + rect.height() / 2,
       rect.width(),
       rect.height(),
-      EXTENT_BORDER_ROUNDEDNESS,
-      EXTENT_BORDER_THICKNESS,
-      node.groupScale()
+      node.groupScale() * EXTENT_BORDER_ROUNDEDNESS,
+      node.groupScale() * EXTENT_BORDER_THICKNESS,
     );
   }
 
@@ -826,9 +823,8 @@ export default class DefaultNodePainter implements WindowNodePainter {
       node.groupY(),
       size.width(),
       size.height(),
-      style.borderRoundness,
-      style.borderThickness,
-      node.groupScale()
+      node.groupScale() * style.borderRoundness,
+      node.groupScale() * style.borderThickness
     );
 
     // Draw the label.

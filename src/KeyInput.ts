@@ -1133,8 +1133,7 @@ export default class KeyInput {
         label._scale * cr.width(),
         label._scale * cr.height(),
         0.01,
-        0.02,
-        1
+        0.02
       );
     }
   }

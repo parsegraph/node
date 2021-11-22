@@ -69,9 +69,8 @@ export default class CameraBoxPainter {
       rect.y(),
       rect.width(),
       rect.height(),
-      0.01,
-      0.1,
-      scale
+      scale * 0.01,
+      scale * 0.1
     );
     const font = this._glyphPainter.font();
     const label = new Label(font);
