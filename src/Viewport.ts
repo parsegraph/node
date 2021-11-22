@@ -299,7 +299,6 @@ export default class Viewport extends Component {
   _unmount: () => void;
 
   mount(window: BasicWindow) {
-    console.log("MOUNT", window);
     new WindowInput(window, this, (eventType: string, inputData?: any) => {
       this.handleEvent(eventType, inputData);
     });
