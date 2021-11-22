@@ -16,7 +16,8 @@ module.exports = {
     parsetree: path.resolve(__dirname, "src/demo/parsetree.tsx"),
     multislot: path.resolve(__dirname, "src/demo/multislot.tsx"),
     lisp: path.resolve(__dirname, "src/demo/lisp.tsx"),
-    ebnf: path.resolve(__dirname, "src/demo/ebnf.tsx")
+    ebnf: path.resolve(__dirname, "src/demo/ebnf.tsx"),
+    log: path.resolve(__dirname, "src/demo/log.tsx"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),

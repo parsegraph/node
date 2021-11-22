@@ -42,6 +42,9 @@ SCRIPT_FILES = \
 	src/KeyInput.ts \
 	src/Label.ts \
 	src/log.ts \
+	src/TreeLog.ts \
+	src/WebsocketTreeLog.ts \
+	src/NoopTreeLog.ts \
 	src/math.ts \
 	src/Node.ts \
 	src/WindowNodePainter.ts \
