@@ -74,21 +74,21 @@
     "nyc": "^15.1.0",
     "openssl": "^1.1.0",
     "parsegraph-animator": "^1.5.5",
-    "parsegraph-blockpainter": "^1.4.11",
+    "parsegraph-blockpainter": "^1.5.3-dev",
     "parsegraph-camera": "^1.4.5",
     "parsegraph-color": "^1.4.4",
-    "parsegraph-compileprogram": "^2.0.16",
-    "parsegraph-layout": "^1.6.3-dev",
+    "parsegraph-compileprogram": "^2.1.0",
+    "parsegraph-layout": "^1.6.4-dev",
     "parsegraph-lerp": "^1.5.5",
     "parsegraph-matrix": "^1.4.7",
     "parsegraph-pagingbuffer": "^1.5.1",
     "parsegraph-sdf": "^1.5.5",
     "parsegraph-smoothstep": "^1.4.2",
-    "parsegraph-spotlightpainter": "^2.3.1",
-    "parsegraph-testsuite": "^1.4.1",
+    "parsegraph-spotlightpainter": "^2.3.2",
+    "parsegraph-testsuite": "^1.5.0",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.6.20-dev",
+    "parsegraph-window": "^1.7.0-dev",
     "prettier": "2.1.2",
     "raw-loader": "^4.0.1",
     "source-map-loader": "^1.0.2",
@@ -103,6 +103,6 @@
     "webpack-cli": "^4.7.2"
   },
   "peerDependencies": {
-    "parsegraph-checkglerror": "^1.4.8"
+    "parsegraph-checkglerror": "^1.5.0"
   }
 }

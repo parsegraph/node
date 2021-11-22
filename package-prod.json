@@ -16,22 +16,22 @@
   "homepage": "https://github.com/parsegraph/node#readme",
   "dependencies": {
     "parsegraph-animator": "^1.5.5",
-    "parsegraph-blockpainter": "^1.4.11",
+    "parsegraph-blockpainter": "^1.5.3",
     "parsegraph-camera": "^1.4.5",
-    "parsegraph-compileprogram": "^2.0.16",
+    "parsegraph-compileprogram": "^2.1.1",
     "parsegraph-color": "^1.4.4",
-    "parsegraph-layout": "^1.6.3",
+    "parsegraph-layout": "^1.6.4",
     "parsegraph-lerp": "^1.5.5",
     "parsegraph-matrix": "^1.4.7",
     "parsegraph-pagingbuffer": "^1.5.1",
     "parsegraph-sdf": "^1.5.5",
+    "parsegraph-spotlightpainter": "^2.3.2",
     "parsegraph-smoothstep": "^1.4.2",
-    "parsegraph-testsuite": "^1.4.1",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.6.20"
+    "parsegraph-window": "^1.7.0"
   },
   "peerDependencies": {
-    "parsegraph-checkglerror": "^1.4.8"
+    "parsegraph-checkglerror": "^1.5.0"
   }
 }
