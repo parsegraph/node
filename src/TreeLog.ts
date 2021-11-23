@@ -1,8 +1,8 @@
 const format = (str: string, ...args: any[]) => {
-  const appending:any[] = [];
+  const appending: any[] = [];
 
-  args.forEach((arg:any, number)=>{
-    const re = new RegExp("{("+number+")}", "g");
+  args.forEach((arg: any, number) => {
+    const re = new RegExp("{(" + number + ")}", "g");
     if (!str.match(re)) {
       appending.push(arg);
     } else {
@@ -10,7 +10,7 @@ const format = (str: string, ...args: any[]) => {
     }
   });
 
-  appending.forEach(val=>{
+  appending.forEach((val) => {
     str += " " + val;
   });
   return str;
@@ -23,7 +23,7 @@ export default class TreeLog {
     this._buffer = [];
   }
 
-  flush():void {
+  flush(): void {
     const buf = this._buffer;
     if (!buf) {
       return;
@@ -64,6 +64,3 @@ export default class TreeLog {
     this.writeLog(`(${cat}) ${format(msg, ...args)}`);
   }
 }
-
-
-

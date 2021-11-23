@@ -1,10 +1,10 @@
-import TreeLog from './TreeLog';
+import TreeLog from "./TreeLog";
 
 export default class WebsocketTreeLog extends TreeLog {
   _ws: WebSocket;
-  _connected:boolean;
+  _connected: boolean;
 
-  constructor(url:string) {
+  constructor(url: string) {
     super();
     this._connected = false;
     this._ws = new WebSocket(url);
