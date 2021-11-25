@@ -688,7 +688,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
       rect.width(),
       rect.height(),
       node.groupScale() * EXTENT_BORDER_ROUNDEDNESS,
-      node.groupScale() * EXTENT_BORDER_THICKNESS,
+      node.groupScale() * EXTENT_BORDER_THICKNESS
     );
   }
 
