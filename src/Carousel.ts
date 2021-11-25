@@ -98,6 +98,7 @@ export default class Carousel {
   }
 
   showCarousel() {
+    // console.log(new Error("Showing carousel"));
     this._showCarousel = true;
     this._updateRepeatedly = true;
     this._showTime = new Date();
@@ -117,7 +118,7 @@ export default class Carousel {
   }
 
   addToCarousel(action: CarouselAction) {
-    console.log("Adding to carousel", action);
+    // console.log("Adding to carousel", action);
     this._carouselCallbacks.push(action);
     const node = action.action();
     if (!node) {
@@ -134,7 +135,7 @@ export default class Carousel {
   }
 
   clearCarousel() {
-    console.log("carousel cleared");
+    // console.log("carousel cleared");
     this._carouselPlots.splice(0, this._carouselPlots.length);
     this._carouselCallbacks.splice(0, this._carouselCallbacks.length);
     this._carouselHotkeys = {};
@@ -301,18 +302,20 @@ export default class Carousel {
         Math.abs(mouseAngle - Math.PI) < Math.PI / 2
       ) {
         const i = Math.floor(mouseAngle / angleSpan);
-        // console.log(
-        //   toDegrees(mouseAngle-Math.PI) +
-        //   " degrees = caret " +
-        //   i +
-        //   " angleSpan = " +
-        //   angleSpan);
+        /* console.log(
+          toDegrees(mouseAngle - Math.PI) +
+            " degrees = caret " +
+            i +
+            " angleSpan = " +
+            toDegrees(angleSpan)
+        );*/
         const selectionAngle = angleSpan / 2 + i * angleSpan - Math.PI;
         if (i != this._selectedCarouselPlotIndex) {
           this._selectedCarouselPlotIndex = i;
           this._selectedCarouselPlot = this._carouselPlots[i];
         }
         if (this._fanPainter) {
+          // console.log("Setting selection angle", selectionAngle, angleSpan);
           this._fanPainter.setSelectionAngle(selectionAngle);
           this._fanPainter.setSelectionSize(angleSpan);
         }
@@ -437,6 +440,7 @@ export default class Carousel {
   }
 
   paint(paintContext?: any) {
+    // console.log("Painting carousel");
     if (
       !this._updateRepeatedly &&
       (!this._carouselPaintingDirty || !this._showCarousel)
@@ -471,6 +475,7 @@ export default class Carousel {
   }
 
   render(world: Matrix3x3) {
+    // console.log("Rendering carousel", this._showCarousel);
     if (!this._showCarousel) {
       return;
     }
@@ -511,6 +516,7 @@ export default class Carousel {
     this._fanPainter.render(world);
 
     // Render the carousel if requested.
+    // console.log("Rendering ", this._carouselPlots.length, " carousel plots");
     this._carouselPlots.forEach((carouselData) => {
       const root = carouselData.node;
       window.overlay().save();

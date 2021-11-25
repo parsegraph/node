@@ -31,6 +31,7 @@ import TexturePainter from "./TexturePainter";
 import WindowNodePainter from "./WindowNodePainter";
 import Camera from "parsegraph-camera";
 import WindowNode from "./WindowNode";
+import log, { logEnterc, logLeave } from "./log";
 
 class PaintedElement {
   _window: BasicWindow;
@@ -558,18 +559,24 @@ export default class DefaultNodePainter implements WindowNodePainter {
 
   paint(paintContext: Component): void {
     const paintGroup = this._node;
+    logEnterc(
+      "DefaultNodePainter paints",
+      "Painting paint group {0}",
+      paintGroup
+    );
     const counts: { [key: string]: number } = {};
     paintGroup.forEachNode((node: Node<DefaultNodeType>) => {
-      // console.log("Counting node " + node);
+      log("Counting node {0}", node);
       this.countNode(node, counts);
     });
-    // console.log("Glyphs: " + counts.numGlyphs);
+    log("Glyphs: {0}", counts.numGlyphs);
     this.initBlockBuffer(counts);
     paintGroup.forEachNode((node: Node<DefaultNodeType>) => {
       this.drawNode(node);
     });
 
     this._elements.forEach((elem) => elem.paint(paintContext));
+    logLeave();
   }
 
   drawNode(node: Node<DefaultNodeType>) {
@@ -581,6 +588,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
       this.paintExtent(node);
     }
     checkGLError(gl, "Before Node drawNode");
+    log("Drawing node {0}", node);
 
     switch (node.type().type()) {
       case Type.SLIDER:
