@@ -100,5 +100,6 @@ caretTests.addTest("Caret.onKey", function () {
   const car = new Caret();
   car.onKey(function () {
     console.log("Key pressed");
+    return true;
   });
 });
