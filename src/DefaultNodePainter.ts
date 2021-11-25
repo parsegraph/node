@@ -650,8 +650,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
         thickness,
         Math.abs(length),
         0,
-        0,
-        scale
+        0
       );
     } else {
       // Horizontal line.
@@ -668,8 +667,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
         Math.abs(length),
         thickness,
         0,
-        0,
-        scale
+        0
       );
     }
   }
