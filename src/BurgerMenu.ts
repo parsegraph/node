@@ -96,9 +96,6 @@ export default class BurgerMenu {
   }
 
   mount() {
-    if (!this.window().isOffscreen()) {
-      this._viewport.window().container().appendChild(this._textInput);
-    }
   }
 
   scheduleRepaint() {
@@ -242,8 +239,12 @@ export default class BurgerMenu {
     return false;
   }
 
-  dispose() {
+  unmount() {
     this._textInput.parentNode.removeChild(this._textInput);
+  }
+
+  dispose() {
+    this.unmount();
     this._textInput = null;
   }
 
@@ -346,8 +347,13 @@ export default class BurgerMenu {
       this._textInput.style.position = "absolute";
       this._textInput.style.width = MENU_ICON_SIZE * 6 + "px";
       this._textInput.style.transform = "translateX(-50%)";
+      if (!this.window().isOffscreen()) {
+        this._viewport.window().container().appendChild(this._textInput);
+      }
     } else {
-      this._textInput.style.display = "none";
+      if (!this.window().isOffscreen()) {
+        this._textInput.remove();
+      }
     }
     this._needsRepaint = false;
   }
