@@ -5,6 +5,7 @@ import Viewport from "./Viewport";
 import Node from "./Node";
 import DefaultNodeType from "./DefaultNodeType";
 import DefaultNodePalette from "./DefaultNodePalette";
+import { Keystroke } from "parsegraph-window";
 
 export default class ActionCarousel {
   _palette: DefaultNodePalette;
@@ -63,9 +64,9 @@ export default class ActionCarousel {
     node.setClickListener((viewport: Viewport) => {
       return this.onClick(viewport, node, nodeData);
     }, this);
-    node.setKeyListener((keyName: string, viewport?: Viewport) => {
+    node.setKeyListener((event: Keystroke, viewport?: Viewport) => {
       return (
-        viewport.carousel().isCarouselShown() && this.onKey(keyName, viewport)
+        viewport.carousel().isCarouselShown() && this.onKey(event, viewport)
       );
     }, this);
 
@@ -107,7 +108,7 @@ export default class ActionCarousel {
     this._uninstaller = null;
   }
 
-  onKey(_: string, viewport: Viewport) {
+  onKey(_: Keystroke, viewport: Viewport): boolean {
     const carousel = viewport.carousel();
     if (carousel.isCarouselShown()) {
       carousel.hideCarousel();
