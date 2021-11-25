@@ -2,7 +2,7 @@ import Direction, { readDirection, NodePalette } from "parsegraph-direction";
 import { defaultFont } from "./settings";
 import Font from "./Font";
 import World from "./World";
-import WindowNode from "./WindowNode";
+import WindowNode, { KeyListener } from "./WindowNode";
 import { LayoutCaret } from "parsegraph-layout";
 
 export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
@@ -34,7 +34,7 @@ export default class WindowCaret<T extends WindowNode> extends LayoutCaret<T> {
     this.node().setClickListener(clickListener, thisArg);
   }
 
-  onKey(keyListener: Function, thisArg?: object): void {
+  onKey(keyListener: KeyListener, thisArg?: object): void {
     this.node().setKeyListener(keyListener, thisArg);
   }
 
