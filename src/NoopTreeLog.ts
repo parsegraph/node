@@ -1,4 +1,4 @@
-import TreeLog from './TreeLog';
+import TreeLog from "./TreeLog";
 
 export default class NoopTreeLog extends TreeLog {
   writeLog() {
