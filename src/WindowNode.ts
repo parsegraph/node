@@ -21,6 +21,8 @@ import Viewport from "./Viewport";
 import DefaultNodeType from "./DefaultNodeType";
 import Node from "./Node";
 
+import log, { logc, logEnterc, logLeave } from "./log";
+
 // The largest scale at which nodes are shown in camera.
 // export const NATURAL_VIEWPORT_SCALE = 0.5;
 export const NATURAL_VIEWPORT_SCALE = 1.0;
@@ -238,6 +240,7 @@ export default abstract class WindowNode extends LayoutNode {
 
   markDirty(): void {
     super.markDirty();
+    logc("Dirty nodes", "Marking {0} as dirty", this);
     this._commitLayoutFunc = null;
     for (const wid in this._windowPaintGroup) {
       if (Object.prototype.hasOwnProperty.call(this._windowPaintGroup, wid)) {
@@ -254,7 +257,7 @@ export default abstract class WindowNode extends LayoutNode {
   painter(window: BasicWindow): WindowNodePainter {
     if (!window) {
       throw new Error(
-        "A window must be provided for a WindowNodePainter to be selected"
+        "No window key was provided to get its painter"
       );
     }
     return this._windowPainter.get(window);
@@ -483,47 +486,53 @@ export default abstract class WindowNode extends LayoutNode {
     // Load saved state.
     const wid: string = window.id();
     let savedPaintGroup: WindowNode = this._windowPaintGroup[wid];
-    if (!this.isDirty() && savedPaintGroup) {
-      // window.log(this + " is not dirty");
+    if (!this.isDirty()) {
       return false;
-    } else {
-      // window.log(this + " is dirty");
     }
+
     if (window.gl().isContextLost()) {
+      logLeave("Lost GL context");
       return false;
     }
     if (timeout <= 0) {
-      window.log("Paint timeout=" + timeout);
+      logLeave("Paint timeout=" + timeout);
       return true;
     }
+
+    logEnterc("Node paints", "Painting node for window={0}", wid);
+    log("{0} has paint group {1}", this, savedPaintGroup);
+    log("{0} is dirty={1}", this, this.isDirty());
 
     const t: number = new Date().getTime();
     const pastTime: Function = function (): boolean {
       const isPast: boolean =
         timeout !== undefined && new Date().getTime() - t > timeout;
       if (isPast) {
-        // console.log("Past time: timeout=" +
-        //   timeout + ", elapsed="+(new Date().getTime() - t));
+        log(
+          "Past time: timeout={0}, elapsed={1}",
+          timeout,
+          new Date().getTime() - t
+        );
       }
       return isPast;
     };
 
     let cont: Function;
     if (this._commitLayoutFunc) {
-      // console.log("Continuing commit layout in progress");
+      log("Continuing commit layout in progress");
       cont = this._commitLayoutFunc(timeout);
     } else if (!savedPaintGroup) {
       this.prepare(window, paintContext);
-      // console.log("Starting new commit layout");
+      log("Starting new commit layout");
       cont = this.commitLayoutIteratively(timeout);
     }
 
     if (cont) {
-      // window.log(this + " Timed out during commitLayout");
       this._commitLayoutFunc = cont;
+      logLeave("Timed out during commitLayout");
       return true;
     } else {
-      // window.log(this + " Committed all layout");
+      log(this + " Committed all layout");
       this._commitLayoutFunc = null;
       this._windowPaintGroup[wid] = this;
       savedPaintGroup = this;
@@ -533,8 +542,7 @@ export default abstract class WindowNode extends LayoutNode {
     while (true) {
       if (pastTime()) {
         this._dirty = true;
-        // window.log("Ran out of time during painting
-        //   (timeout=" + timeout + "). is " + savedPaintGroup);
+        logLeave("Ran out of time during painting (timeout={0})", timeout);
         return true;
       }
 
@@ -545,7 +553,7 @@ export default abstract class WindowNode extends LayoutNode {
       }
       if (paintGroup.isDirty() || !painter) {
         // Paint and render nodes marked for the current group.
-        // console.log("Painting " + paintGroup);
+        log("Painting " + paintGroup);
         if (!painter) {
           painter = paintGroup.newPainter(window, paintContext);
           paintGroup.setPainter(window, painter);
@@ -566,7 +574,7 @@ export default abstract class WindowNode extends LayoutNode {
     }
 
     this._windowPaintGroup[wid] = null;
-    // window.log("Completed node painting");
+    logLeave("Completed node painting");
     return false;
   }
 
@@ -583,9 +591,10 @@ export default abstract class WindowNode extends LayoutNode {
     let mostRenders: number = 0;
 
     this.forEachPaintGroup((paintGroup: WindowNode) => {
-      // console.log("Rendering node " + paintGroup);
+      logEnterc("Node renders", "Rendering node {0}", paintGroup);
       const painter: WindowNodePainter = paintGroup.painter(window);
       if (!paintGroup.render(window, camera, renderData, paintContext)) {
+        log("Node rendered dirty.");
         ++dirtyRenders;
       } else if (painter.consecutiveRenders() > 1) {
         mostRenders = Math.max(painter.consecutiveRenders(), mostRenders);
@@ -598,6 +607,7 @@ export default abstract class WindowNode extends LayoutNode {
         }
       }
       // ++nodesRendered;
+      logLeave();
     });
     // console.log(nodesRendered +
     //   " paint groups rendered " +
@@ -699,7 +709,7 @@ export default abstract class WindowNode extends LayoutNode {
     s.scale(this.scale());
     s.translate(this._absoluteXPos, this._absoluteYPos);
     if (camera && !camera.containsAny(s)) {
-      console.log("Out of bounds: " + this);
+      // console.log("Out of bounds: " + this);
       return !this._absoluteDirty;
     }
 
