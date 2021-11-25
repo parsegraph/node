@@ -254,6 +254,7 @@ export default class Viewport extends Component {
   }
 
   handleEvent(eventType: string, eventData: any) {
+    //console.log(eventType, eventData);
     if (eventType === "blur") {
       this._menu.closeMenu();
       return true;
