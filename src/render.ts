@@ -14,8 +14,8 @@ export default function render(
   world: World,
   container: Element,
   viewportDisplayMode?: ViewportDisplayMode
-) {
-  const window = new GraphicsWindow(new Color(0, 0, 0, 0));
+): [GraphicsWindow, Viewport] {
+  const window = new GraphicsWindow(new Color(0.1, 0, 0.3, 1));
   container.appendChild(window.container());
   belt.addWindow(window);
   const viewport = new Viewport(world);
@@ -25,7 +25,7 @@ export default function render(
     viewport.setSingleScreen(true);
   }
   window.addComponent(viewport);
-  return belt;
+  return [window, viewport];
 }
 
 export function renderFullscreen(
