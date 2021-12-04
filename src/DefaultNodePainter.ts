@@ -49,8 +49,8 @@ class PaintedElement {
     const elem = node.elementFor(paintContext).parentElement;
     this._node.size(this._size);
     const size = this._size;
-    elem.style.width = `${size.width()}px`;
-    elem.style.height = `${size.height()}px`;
+    elem.style.width = "fit-content";
+    elem.style.height = "fit-content";
     const x = node.groupX();
     const y = node.groupY();
     const absScale = node.groupScale();
