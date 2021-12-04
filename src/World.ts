@@ -63,6 +63,11 @@ export default class World {
     this._previousWorldPaintState.clear();
   }
 
+  clear() {
+    this._worldRoots = [];
+    this._previousWorldPaintState.clear();
+  }
+
   /*
    * Receives a mouseover event at the given coordinates, in world space.
    *
