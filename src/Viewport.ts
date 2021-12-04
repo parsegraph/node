@@ -520,7 +520,7 @@ export default class Viewport extends Component {
       this.scheduleRender();
     }
 
-    gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     const world = cam.project();
     if (this._input.render(world, cam.scale())) {
       this.scheduleRender();

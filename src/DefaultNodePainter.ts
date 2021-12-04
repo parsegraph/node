@@ -278,10 +278,10 @@ export default class DefaultNodePainter implements WindowNodePainter {
       );
     } else {
       painter.setBorderColor(
-        style.borderColor.premultiply(node.backdropColor())
+        style.borderColor // .premultiply(node.backdropColor())
       );
       painter.setBackgroundColor(
-        style.backgroundColor.premultiply(node.backdropColor())
+        style.backgroundColor // .premultiply(node.backdropColor())
       );
     }
 
@@ -808,10 +808,10 @@ export default class DefaultNodePainter implements WindowNodePainter {
             );
         } else */ {
       painter.setBorderColor(
-        style.borderColor.premultiply(node.backdropColor())
+        style.borderColor // .premultiply(node.backdropColor())
       );
       painter.setBackgroundColor(
-        style.backgroundColor.premultiply(node.backdropColor())
+        style.backgroundColor // .premultiply(node.backdropColor())
       );
     }
 
@@ -878,7 +878,7 @@ export default class DefaultNodePainter implements WindowNodePainter {
     ++this._consecutiveRenders;
     const gl = this.gl();
     gl.disable(gl.CULL_FACE);
-    gl.disable(gl.DEPTH_TEST);
+    // gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     if (this._renderBlocks) {
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
