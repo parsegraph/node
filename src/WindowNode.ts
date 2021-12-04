@@ -87,7 +87,8 @@ export function chainAllTabs(...args: WindowNode[]): void {
 //
 // ////////////////////////////////////////////////////////////////////////////
 
-export type KeyListener = (event: Keystroke, viewport: Component) => boolean;
+export type KeyListener = (event: Keystroke, comp: Component) => boolean;
+
 export class ExtendedNode {
   ignoresMouse: boolean;
   keyListener: KeyListener;
@@ -189,14 +190,14 @@ export default abstract class WindowNode extends LayoutNode {
     return this._extended && this._extended.clickListener != null;
   }
 
-  click(viewport: Viewport): any {
+  click(comp: Component): any {
     // Invoke the click listener.
     if (!this.hasClickListener()) {
       return;
     }
     return this._extended.clickListener.call(
       this._extended.clickListenerThisArg,
-      viewport,
+      comp,
       this
     );
   }
@@ -223,7 +224,7 @@ export default abstract class WindowNode extends LayoutNode {
     return this._extended && this._extended.keyListener != null;
   }
 
-  key(event: Keystroke, viewport?: Viewport): any {
+  key(event: Keystroke, comp?: Component): any {
     // Invoke the key listener.
     if (!this.hasKeyListener()) {
       return;
@@ -231,7 +232,7 @@ export default abstract class WindowNode extends LayoutNode {
     return this._extended.keyListener.call(
       this._extended.keyListenerThisArg,
       event,
-      viewport
+      comp
     );
   }
 
