@@ -17,11 +17,15 @@ async function getDemos() {
           const m = file.match(/www\/(\w+)\.html/);
           [1];
           return m ? m[1] : null;
-        })
+        }).filter(file=>file)
       );
     });
   });
 }
+
+app.get("/demos", async (req, res) => {
+  res.end((await getDemos()).join("\n"));
+});
 
 app.get("/", async (req, res) => {
   resp = "";
@@ -33,20 +37,13 @@ app.get("/", async (req, res) => {
   write(`<html>`);
   write(`<head>`);
   write(`<title>node</title>`);
+  write(`<script src="parsegraph-checkglerror.js"></script>`);
   write(`</head>`);
-  write(`<body>`);
-  write(
-    `<h1>node <a href='/coverage'>Coverage</a> <a href='/docs'>Docs</a></h1>`
-  );
-  write(
-    `<p>This library is available as JavaScript UMD module: <a href='/parsegraph-node.lib.js'>parsegraph-node.lib.js</a></p>`
-  );
-  write(`<h2>Samples &amp; Demos</h2>`);
-  write(`<ul>`);
-  (await getDemos()).forEach((demo) => {
-    demo && write(`<li><a href='/${demo}.html'>${demo}</li>`);
-  });
-  write(`</ul>`);
+  write(`<body style="margin: 0; padding: 0">`);
+  write(`<div style="width: 100vw; height: 100vh">`);
+  write(`<div style="width: 100%; height: 100%" id="parsegraph-tree"></div>`)
+  write(`</div>`);
+  write(`<script src="parsegraph-node.demolist.js"></script>`);
   write(`</body>`);
   write(`</html>`);
 
