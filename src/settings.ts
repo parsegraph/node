@@ -18,6 +18,9 @@ export const RIGHT_TO_LEFT = false;
 // How long the carousel takes, in milliseconds, to open.
 export const CAROUSEL_SHOW_DURATION = 200;
 
+// Minimum distance from center where a carousel option can be chosen.
+export const CAROUSEL_MIN_DISTANCE = 8;
+
 // ////////////////////////////////////////////////////////////////////////////
 //
 // Text settings
