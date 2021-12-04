@@ -19,6 +19,7 @@ module.exports = {
     multislot: path.resolve(__dirname, "src/demo/multislot.tsx"),
     lisp: path.resolve(__dirname, "src/demo/lisp.tsx"),
     ebnf: path.resolve(__dirname, "src/demo/ebnf.tsx"),
+    carousel: path.resolve(__dirname, "src/demo/carousel.tsx"),
     log: path.resolve(__dirname, "src/demo/log.tsx"),
     parsegraph: path.resolve(__dirname, "src/demo/parsegraph.tsx"),
   },
