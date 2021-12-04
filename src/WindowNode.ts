@@ -95,8 +95,6 @@ export class ExtendedNode {
   keyListenerThisArg: object;
   clickListener: Function;
   clickListenerThisArg: object;
-  changeListener: Function;
-  changeListenerThisArg: object;
   prevTabNode: WindowNode;
   nextTabNode: WindowNode;
 
@@ -106,8 +104,6 @@ export class ExtendedNode {
     this.keyListenerThisArg = null;
     this.clickListener = null;
     this.clickListenerThisArg = null;
-    this.changeListener = null;
-    this.changeListenerThisArg = null;
     this.prevTabNode = null;
     this.nextTabNode = null;
   }
