@@ -1,1 +1,11 @@
-[ ] shrinking demo has incorrect width on firefox (A width equal to the screen's width)
+Carousel:
+[ ] Node insertion does not set focus properly; focus is lost
+
+Lisp demo:
+[ ] Changing graph doesn't update text
+
+EBNF demo:
+[ ] PrimaryDecoration has only a choice as value. It should still be nested.
+[ ] A SequenceOrDifference value appears nested when it doesn't need to be.
+[ ] DecorationName is irrelevant
+[ ] Url and Link are irrelevant
