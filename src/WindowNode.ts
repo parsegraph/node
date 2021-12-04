@@ -404,71 +404,78 @@ export default abstract class WindowNode extends LayoutNode {
     return this._windowElement.get(context);
   }
 
+  getWorldElement(window: BasicWindow, paintContext: Component): Element {
+    if (!window.containerFor(paintContext)) {
+      return null;
+    }
+    let worldEle:HTMLElement = window.containerFor(paintContext).querySelector(".world");
+    if (worldEle) {
+      return worldEle;
+    }
+    worldEle = document.createElement("div");
+    worldEle.className = "world";
+    worldEle.style.width = "100vw";
+    worldEle.style.height = "100vh";
+    worldEle.style.transformOrigin = "top left";
+    worldEle.style.position = "relative";
+    worldEle.style.pointerEvents = "none";
+    window.containerFor(paintContext).appendChild(worldEle);
+    return worldEle;
+  }
+
   prepare(window: BasicWindow, paintContext: Component): void {
     if (!window.containerFor(paintContext)) {
       return;
     }
-    if (
-      (window.containerFor(paintContext) as HTMLElement).children.length == 0
-    ) {
-      const worldEle = document.createElement("div");
-      worldEle.className = "world";
-      worldEle.style.width = "100vw";
-      worldEle.style.height = "100vh";
-      worldEle.style.transformOrigin = "top left";
-      worldEle.style.position = "relative";
-      worldEle.style.pointerEvents = "none";
-      window.containerFor(paintContext).appendChild(worldEle);
-    }
     // Loop back to the first node, from the root.
     this.forEachPaintGroup((pg: WindowNode) => {
       pg.forEachNode((node: WindowNode) => {
-        if (node.element() && !node.elementFor(paintContext)) {
-          const elem = node.element()(window);
-          if (
-            elem.parentNode !==
-            window.containerFor(paintContext).querySelector(".world")
-          ) {
-            if (elem.parentNode) {
-              elem.parentNode.removeChild(elem);
-            }
-            const sizer = document.createElement("div");
-            sizer.style.width = "100%";
-            sizer.style.height = "100%";
-            sizer.style.display = "none";
-            sizer.style.position = "absolute";
-            new ResizeObserver(() => {
-              node.layoutWasChanged();
-              (paintContext as Viewport).world().scheduleRepaint();
-              (paintContext as Viewport).scheduleUpdate();
-              window.scheduleUpdate();
-            }).observe(elem);
-            window
-              .containerFor(paintContext)
-              .querySelector(".world")
-              .appendChild(sizer);
-            sizer.appendChild(elem);
-
-            sizer.style.display = "block";
-            sizer.style.transformOrigin = "center";
-            sizer.style.cursor = "pointer";
-            sizer.style.overflow = "hidden";
-            sizer.style.transformOrigin = "top left";
-
-            sizer.addEventListener("click", () => {
-              const viewport = paintContext as Viewport;
-              viewport.showInCamera(node as Node<DefaultNodeType>);
-              node.click(viewport);
-            });
-            sizer.addEventListener("hover", () => {
-              (paintContext as Viewport).setCursor("pointer");
-            });
-            sizer.addEventListener("blur", () => {
-              (paintContext as Viewport).setCursor(null);
-            });
-          }
-          node._windowElement.set(paintContext, elem);
+        if (!node.element()) {
+          return;
         }
+        if (node.elementFor(paintContext)) {
+          return;
+        }
+        const elem = node.element()(window);
+        if (
+          elem.parentNode !== this.getWorldElement(window, paintContext)
+        ) {
+          if (elem.parentNode) {
+            elem.parentNode.removeChild(elem);
+          }
+          const sizer = document.createElement("div");
+          // sizer.style.width = "100%";
+          // sizer.style.height = "100%";
+          sizer.style.display = "none";
+          sizer.style.position = "absolute";
+          new ResizeObserver(() => {
+            node.layoutWasChanged();
+            (paintContext as Viewport).world().scheduleRepaint();
+            (paintContext as Viewport).scheduleUpdate();
+            window.scheduleUpdate();
+          }).observe(elem);
+          this.getWorldElement(window, paintContext).appendChild(sizer);
+          sizer.appendChild(elem);
+
+          sizer.style.display = "block";
+          sizer.style.transformOrigin = "center";
+          sizer.style.cursor = "pointer";
+          sizer.style.overflow = "hidden";
+          sizer.style.transformOrigin = "top left";
+
+          sizer.addEventListener("click", () => {
+            const viewport = paintContext as Viewport;
+            viewport.showInCamera(node as Node<DefaultNodeType>);
+            node.click(viewport);
+          });
+          sizer.addEventListener("hover", () => {
+            (paintContext as Viewport).setCursor("pointer");
+          });
+          sizer.addEventListener("blur", () => {
+            (paintContext as Viewport).setCursor(null);
+          });
+        }
+        node._windowElement.set(paintContext, elem);
       });
     });
   }

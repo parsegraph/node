@@ -13,6 +13,7 @@ module.exports = {
     lib: path.resolve(__dirname, "src/index.ts"),
     list: path.resolve(__dirname, "src/demo/list.tsx"),
     tree: path.resolve(__dirname, "src/demo/tree.tsx"),
+    element: path.resolve(__dirname, "src/demo/element.tsx"),
     parsetree: path.resolve(__dirname, "src/demo/parsetree.tsx"),
     demolist: path.resolve(__dirname, "src/demo/demolist.tsx"),
     multislot: path.resolve(__dirname, "src/demo/multislot.tsx"),
