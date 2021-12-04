@@ -298,8 +298,8 @@ export default class DefaultNodePainter implements WindowNodePainter {
       node.groupY(),
       groupSize.height() / 1.5,
       groupSize.height() / 1.5,
-      node.groupScale() * style.borderRoundness / 1.5,
-      node.groupScale() * style.borderThickness / 1.5,
+      (node.groupScale() * style.borderRoundness) / 1.5,
+      (node.groupScale() * style.borderThickness) / 1.5
     );
     // }
 

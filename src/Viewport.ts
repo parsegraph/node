@@ -5,7 +5,11 @@ import BurgerMenu from "./BurgerMenu";
 import CameraFilter from "./CameraFilter";
 import World from "./World";
 import WindowNode from "./WindowNode";
-import { BasicWindow, Component, WindowInput } from "parsegraph-window";
+import GraphicsWindow, {
+  BasicWindow,
+  Component,
+  WindowInput,
+} from "parsegraph-window";
 import DefaultNodeType from "./DefaultNodeType";
 import Node from "./Node";
 
@@ -201,7 +205,6 @@ export default class Viewport extends Component {
   _nodeShown: WindowNode;
   _needsRepaint: boolean;
   _displayMode: ViewportDisplayMode;
-  _window: BasicWindow;
 
   constructor(world: World) {
     super(viewportType);
@@ -249,12 +252,8 @@ export default class Viewport extends Component {
     return this._displayMode;
   }
 
-  peer(): any {
-    return this;
-  }
-
-  handleEvent(eventType: string, eventData: any) {
-    //console.log(eventType, eventData);
+  handleEvent(eventType: string, eventData: any): boolean {
+    // console.log(eventType, eventData);
     if (eventType === "blur") {
       this._menu.closeMenu();
       return true;
@@ -291,6 +290,7 @@ export default class Viewport extends Component {
       return this._input.onKeyup(eventData);
     }
     console.log("Unhandled event type: " + eventType);
+    return false;
   }
 
   tick(startDate: number): boolean {
@@ -350,10 +350,6 @@ export default class Viewport extends Component {
 
   shaders() {
     return this.window()?.shaders();
-  }
-
-  window() {
-    return this._window;
   }
 
   gl() {

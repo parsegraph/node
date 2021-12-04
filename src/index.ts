@@ -9,7 +9,7 @@ import GlyphIterator from "./GlyphIterator";
 
 import { copyStyle, BUD_RADIUS } from "./DefaultNodeStyle";
 
-import ImageBuilder from './ImageBuilder';
+import ImageBuilder from "./ImageBuilder";
 
 import DirectionNode, {
   PreferredAxis,
@@ -204,5 +204,5 @@ export {
   TreeList,
   TreeNode,
   WrappingTreeList,
-  ImageBuilder
+  ImageBuilder,
 };

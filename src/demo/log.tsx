@@ -2,7 +2,7 @@ import render from "../render";
 import { TimingBelt } from "parsegraph-window";
 import World from "../World";
 import DefaultNodePalette from "../DefaultNodePalette";
-import log, {connectLog, logEnter, logLeave} from '../log';
+import log, { connectLog, logEnter, logLeave } from "../log";
 
 document.addEventListener("DOMContentLoaded", () => {
   connectLog("wss://fritocomp.aaronfaanes/log");

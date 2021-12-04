@@ -257,9 +257,7 @@ export default abstract class WindowNode extends LayoutNode {
 
   painter(window: BasicWindow): WindowNodePainter {
     if (!window) {
-      throw new Error(
-        "No window key was provided to get its painter"
-      );
+      throw new Error("No window key was provided to get its painter");
     }
     return this._windowPainter.get(window);
   }
