@@ -5,14 +5,14 @@ import {
   makeTranslation3x3,
   Matrix3x3,
 } from "parsegraph-matrix";
-import { CAROUSEL_SHOW_DURATION } from "./settings";
+import { CAROUSEL_SHOW_DURATION, CAROUSEL_MIN_DISTANCE } from "./settings";
 import Color from "parsegraph-color";
-import { BUD_RADIUS } from "./DefaultNodeStyle";
 import Viewport from "./Viewport";
 import WindowNode from "./WindowNode";
 import CarouselAction from "./CarouselAction";
 import Camera from "parsegraph-camera";
-// import {toDegrees} from 'parsegraph-toradians';
+import { toDegrees } from "parsegraph-toradians";
+import { Keystroke } from "parsegraph-window";
 
 class CarouselPlot {
   node: WindowNode;
@@ -64,7 +64,7 @@ export default class Carousel {
 
     // Location of the carousel, in world coordinates.
     this._carouselCoords = [0, 0];
-    this._carouselSize = 50;
+    this._carouselSize = 25;
 
     this._showCarousel = false;
     this._selectedCarouselPlot = null;
@@ -270,11 +270,11 @@ export default class Carousel {
     this.scheduleCarouselRepaint();
   }
 
-  carouselKey(key: string) {
-    if (!(key in this._carouselHotkeys)) {
+  carouselKey(event: Keystroke) {
+    if (!(event.name() in this._carouselHotkeys)) {
       return false;
     }
-    const i = this._carouselHotkeys[key];
+    const i = this._carouselHotkeys[event.name()];
     this.runAction(i);
     return true;
   }
@@ -294,8 +294,8 @@ export default class Carousel {
     );
 
     if (
-      dist < (this._carouselSize * 4) / this.camera().scale() &&
-      dist > (BUD_RADIUS * 4) / this.camera().scale()
+      dist < (this._carouselSize * 8) / this.camera().scale() &&
+      dist > CAROUSEL_MIN_DISTANCE / this.camera().scale()
     ) {
       if (
         this._carouselPlots.length > 1 ||
