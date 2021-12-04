@@ -26,7 +26,7 @@ const VERTICAL_SEPARATION_PADDING_MATH = 2;
 /**
  * The separation between leaf buds and their parents.
  */
-export const BUD_LEAF_SEPARATION = 4.2;
+export const BUD_LEAF_SEPARATION = 1;
 
 export const BUD_TO_BUD_VERTICAL_SEPARATION = VERTICAL_SEPARATION_PADDING / 2; // BUD_RADIUS * 4.5;
 
