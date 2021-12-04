@@ -7,6 +7,8 @@ import Color from "parsegraph-color";
 import Font from "./Font";
 import Size from "parsegraph-size";
 
+import { DirectionNode } from "parsegraph-direction";
+
 import NodeType from "./NodeType";
 
 import {
@@ -83,12 +85,16 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
   _events: CustomEvents;
   _value: any;
   _style: object;
+  _changeListener: Function;
+  _changeListenerThisArg: object;
 
   constructor(newType: T, fromNode?: Node<T>, parentDirection?: Direction) {
     super(fromNode, parentDirection);
     this._type = newType;
     this._style = {};
     this._type.applyStyle(this);
+    this._changeListener = null;
+    this._changeListenerThisArg = null;
 
     this._scene = null;
     this._label = null;
@@ -226,7 +232,7 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
     if (!l) {
       return null;
     }
-    return l.text();
+    return l.getText();
   }
 
   glyphCount(counts: any, pagesPerTexture: number): number {
@@ -280,23 +286,20 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
   }
 
   hasChangeListener(): boolean {
-    return this._extended && this._extended.changeListener != null;
+    return this._changeListener != null;
   }
 
   setChangeListener(listener: Function, thisArg?: object): void {
     if (!listener) {
-      if (this._extended) {
-        this._extended.changeListener = null;
-        this._extended.changeListenerThisArg = null;
-      }
+      this._changeListener = null;
+      this._changeListenerThisArg = null;
       return;
     }
     if (!thisArg) {
       thisArg = this;
     }
-    this.ensureExtended();
-    this._extended.changeListener = listener;
-    this._extended.changeListenerThisArg = thisArg;
+    this._changeListener = listener;
+    this._changeListenerThisArg = thisArg;
     // console.log("Set change listener for node " + this._id);
   }
 
@@ -305,10 +308,7 @@ export default class Node<T extends NodeType<T>> extends WindowNode {
     if (!this.hasChangeListener()) {
       return;
     }
-    return this._extended.changeListener.apply(
-      this._extended.changeListenerThisArg,
-      ...args
-    );
+    return this._changeListener.apply(this._changeListenerThisArg, ...args);
   }
 
   value(): any {
