@@ -301,7 +301,7 @@ export default class Viewport extends Component {
 
   mount(window: BasicWindow) {
     new WindowInput(window, this, (eventType: string, inputData?: any) => {
-      this.handleEvent(eventType, inputData);
+      return this.handleEvent(eventType, inputData);
     });
     this._menu.mount();
     this._window = window;
