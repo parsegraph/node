@@ -19,6 +19,7 @@ module.exports = {
     lisp: path.resolve(__dirname, "src/demo/lisp.tsx"),
     ebnf: path.resolve(__dirname, "src/demo/ebnf.tsx"),
     log: path.resolve(__dirname, "src/demo/log.tsx"),
+    parsegraph: path.resolve(__dirname, "src/demo/parsegraph.tsx"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),

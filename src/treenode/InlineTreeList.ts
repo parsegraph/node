@@ -4,9 +4,14 @@ import WindowNode from "../WindowNode";
 import Direction from "parsegraph-direction";
 import { SHRINK_SCALE } from "parsegraph-layout";
 
+export const INLINE_TREE_LIST_SYMBOL = Symbol("InlineTreeList");
 export default class InlineTreeList extends AbstractTreeList {
   constructor(title: TreeNode, children: TreeNode[]) {
     super(title, children);
+  }
+
+  type() {
+    return INLINE_TREE_LIST_SYMBOL;
   }
 
   connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {

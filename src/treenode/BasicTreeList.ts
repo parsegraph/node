@@ -10,6 +10,7 @@ import Direction, {
   Axis,
 } from "parsegraph-direction";
 
+export const BASIC_TREE_LIST_SYMBOL = Symbol("BasicTreeList");
 export default class BasicTreeList extends AbstractTreeList {
   _lastRow: WindowNode;
   _palette: NodePalette<WindowNode>;
@@ -17,6 +18,13 @@ export default class BasicTreeList extends AbstractTreeList {
   _direction: Direction;
   _align: Alignment;
 
+  /**
+   * Creates a new BasicTreeList in the forward direction with no alignment.
+   *
+   * @param {TreeNode} title The root node of this tree list.
+   * @param {TreeNode[]} children The initial children of this tree list.
+   * @param {NodePalette<WindowNode>} palette The palette to use to construct joining buds.
+   */
   constructor(
     title: TreeNode,
     children: TreeNode[],
@@ -29,6 +37,10 @@ export default class BasicTreeList extends AbstractTreeList {
     this._palette = palette;
     this._direction = Direction.FORWARD;
     this._align = Alignment.NONE;
+  }
+
+  type() {
+    return BASIC_TREE_LIST_SYMBOL;
   }
 
   setAlignment(align: Alignment) {

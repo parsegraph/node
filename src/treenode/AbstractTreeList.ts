@@ -2,23 +2,25 @@ import TreeNode from "./TreeNode";
 import TreeList from "./TreeList";
 import WindowNode from "../WindowNode";
 
-export default abstract class AbstractTreeList implements TreeList {
+export default abstract class AbstractTreeList
+  extends TreeNode
+  implements TreeList {
   _children: TreeNode[];
   _title: TreeNode;
-  _valid: boolean;
 
   abstract connectInitialChild(
     root: WindowNode,
     child: WindowNode,
-    rootValue: TreeNode
+    childValue: TreeNode
   ): WindowNode;
   abstract connectChild(
     lastChild: WindowNode,
     child: WindowNode,
-    rootValue: TreeNode
+    childValue: TreeNode
   ): WindowNode;
 
   constructor(title: TreeNode, children: TreeNode[]) {
+    super();
     if (children) {
       this._children = [...children];
     } else {
@@ -28,12 +30,10 @@ export default abstract class AbstractTreeList implements TreeList {
     this.invalidate();
   }
 
+  abstract type(): Symbol;
+
   length(): number {
     return this._children.length;
-  }
-
-  invalidate(): void {
-    this._valid = false;
   }
 
   checkChild(child: TreeNode) {
@@ -48,6 +48,7 @@ export default abstract class AbstractTreeList implements TreeList {
   appendChild(child: TreeNode) {
     this.checkChild(child);
     this._children.push(child);
+    child.setOnScheduleUpdate(() => this.invalidate());
     this.invalidate();
   }
 
@@ -60,20 +61,43 @@ export default abstract class AbstractTreeList implements TreeList {
     return -1;
   }
 
-  insertBefore(child: TreeNode, ref: TreeNode) {
+  insertBefore(child: TreeNode, ref: TreeNode): boolean {
+    if (ref == null) {
+      if (this.length() > 0) {
+        return this.insertBefore(child, this.childAt(0));
+      }
+      this.appendChild(child);
+      return true;
+    }
     this.checkChild(child);
     const idx = this.indexOf(ref);
     if (idx >= 0) {
       this._children.splice(idx, 0, child);
+      child.setOnScheduleUpdate(() => this.invalidate());
       this.invalidate();
     }
     return idx >= 0;
+  }
+
+  insertAfter(child: TreeNode, ref: TreeNode): boolean {
+    if (ref == null) {
+      this.appendChild(child);
+      return true;
+    }
+    this.checkChild(child);
+    const idx = this.indexOf(ref);
+    if (idx === this.length() - 1) {
+      this.appendChild(child);
+      return true;
+    }
+    return this.insertBefore(child, this.childAt(idx + 1));
   }
 
   removeChild(child: TreeNode) {
     const idx = this.indexOf(child);
     if (idx >= 0) {
       this._children.splice(idx, 1);
+      child.setOnScheduleUpdate(null);
       this.invalidate();
     }
     return idx >= 0;
@@ -84,7 +108,9 @@ export default abstract class AbstractTreeList implements TreeList {
   }
 
   clear(): void {
-    this._children = [];
+    while (this.length() > 0) {
+      this.removeChild(this.childAt(0));
+    }
   }
 
   connectSpecial(childValue: TreeNode): WindowNode {
@@ -102,18 +128,12 @@ export default abstract class AbstractTreeList implements TreeList {
         lastChild = this.connectInitialChild(
           this._title.root(),
           childRoot,
-          this
+          child
         );
       } else {
-        lastChild = this.connectChild(lastChild, childRoot, this);
+        lastChild = this.connectChild(lastChild, childRoot, child);
       }
     });
-  }
-
-  root(): WindowNode {
-    if (!this._valid) {
-      this.render();
-    }
     return this._title.root();
   }
 }

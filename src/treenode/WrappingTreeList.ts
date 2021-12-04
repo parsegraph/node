@@ -4,17 +4,23 @@ import WindowNode from "../WindowNode";
 import Direction, { NodePalette } from "parsegraph-direction";
 import { SHRINK_SCALE } from "parsegraph-layout";
 
-export class NewlineTreeNode implements TreeNode {
-  root(): WindowNode {
+const NEWLINE_SYMBOL = Symbol("NewlineTreeNode");
+export class NewlineTreeNode extends TreeNode {
+  type() {
+    return NEWLINE_SYMBOL;
+  }
+  render(): WindowNode {
     return null;
   }
 }
 
 export const NEWLINE = new NewlineTreeNode();
 
+export const WRAPPING_TREE_LIST_SYMBOL = Symbol("WrappingTreeList");
 export default class WrappingTreeList extends AbstractTreeList {
   _palette: NodePalette<WindowNode>;
   _putInside: boolean;
+  _putFirstInside: boolean;
   _lastRow: WindowNode;
   _shrinkNext: boolean;
 
@@ -29,61 +35,69 @@ export default class WrappingTreeList extends AbstractTreeList {
       throw new Error("Palette must be given");
     }
     this._palette = palette;
-    this._putInside = putInside;
+    this._putFirstInside = this._putInside = putInside;
+  }
+
+  type() {
+    return WRAPPING_TREE_LIST_SYMBOL;
   }
 
   getNewline(): TreeNode {
-    return NEWLINE;
+    return new NewlineTreeNode();
+  }
+
+  isNewline(node: TreeNode) {
+    return node && node.type() === NEWLINE_SYMBOL;
   }
 
   palette(): NodePalette<WindowNode> {
     return this._palette;
   }
 
-  /*  createNode(value?: any): WindowNode {
-    if (!value) {
-      return this._palette.spawn();
+  checkChild(child: TreeNode) {
+    if (this.isNewline(child)) {
+      return;
     }
-    switch (value.type) {
-      case "literal": {
-        const n = this._palette.spawn("u");
-        n.setLabel(value.label);
-        return n;
-      }
-      case "string": {
-        const n = this._palette.spawn("b");
-        n.setLabel(value.label);
-        return n;
-      }
-      case "list": {
-        return this._palette.spawn("s");
-      }
-      case "newline":
-        return null;
-    }
+    super.checkChild(child);
   }
-  */
 
   connectSpecial(child: TreeNode): WindowNode {
-    if (child !== NEWLINE) {
+    if (!this.isNewline(child)) {
       return super.connectSpecial(child);
     }
     const bud = this._palette.spawn("u");
     this._lastRow.connectNode(Direction.DOWNWARD, bud);
+    this.nodeConnected(child, bud);
     this._lastRow = bud;
     this._shrinkNext = true;
     return bud;
   }
 
-  connectInitialChild(root: WindowNode, child: WindowNode): WindowNode {
+  nodeConnected(child: TreeNode, childRoot: WindowNode): void {
+    console.log("node connected", child, childRoot);
+  }
+
+  connectInitialChild(
+    root: WindowNode,
+    child: WindowNode,
+    childValue: TreeNode
+  ): WindowNode {
     this._lastRow = child;
-    this.connectChild(root, child);
+    this._putInside = this._putFirstInside;
+    this._shrinkNext = false;
+    this.connectChild(root, child, childValue);
+    this.nodeConnected(childValue, child);
     return child;
   }
 
-  connectChild(lastChild: WindowNode, child: WindowNode): WindowNode {
+  connectChild(
+    lastChild: WindowNode,
+    child: WindowNode,
+    childValue: TreeNode
+  ): WindowNode {
     const dir = this._putInside ? Direction.INWARD : Direction.FORWARD;
     lastChild.connectNode(dir, child);
+    this.nodeConnected(childValue, child);
     if (this._putInside) {
       child.setPaintGroup(true);
     }
@@ -92,6 +106,7 @@ export default class WrappingTreeList extends AbstractTreeList {
       this._shrinkNext = false;
     }
     this._putInside = false;
+    child.disconnectNode(Direction.FORWARD);
     return child;
   }
 }

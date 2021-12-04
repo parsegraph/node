@@ -11,8 +11,9 @@ import TreeNode from "../treenode/TreeNode";
 import { copyStyle } from "../DefaultNodeStyle";
 import ActionCarousel from "../ActionCarousel";
 import DefaultNodeType from "../DefaultNodeType";
-import Node from '../Node';
+import Node from "../Node";
 
+const MULTISLOT_SYMBOL = Symbol("Multislot");
 class Multislot extends AbstractTreeList {
   _lastRow: WindowNode;
   _palette: NodePalette<WindowNode>;
@@ -29,11 +30,15 @@ class Multislot extends AbstractTreeList {
     this._palette = palette;
   }
 
+  type() {
+    return MULTISLOT_SYMBOL;
+  }
+
   connectSpecial(): WindowNode {
     return this._lastRow;
   }
 
-  makeBud():WindowNode {
+  makeBud(): WindowNode {
     const bud = this._palette.spawn() as Node<DefaultNodeType>;
     bud.setLayoutPreference(PreferredAxis.VERTICAL);
     const carousel = new ActionCarousel();

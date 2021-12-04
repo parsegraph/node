@@ -1,28 +1,30 @@
-import WindowNode from "../WindowNode";
 import TreeNode from "./TreeNode";
 import DefaultNodePalette from "../DefaultNodePalette";
-import Node from "../Node";
-import DefaultNodeType from "../DefaultNodeType";
 
-export default class BlockTreeNode implements TreeNode {
+export const BLOCK_TREE_NODE = Symbol("BlockTreeNode");
+export default class BlockTreeNode extends TreeNode {
   _label: string;
-  _type: any;
+  _nodeType: any;
   _palette: DefaultNodePalette;
-  _root: Node<DefaultNodeType>;
   _style: any;
 
-  constructor(type?: any, label?: string, style?: any) {
+  constructor(nodeType?: any, label?: string, style?: any) {
+    super();
     this._palette = new DefaultNodePalette();
-    this._type = type;
+    this._nodeType = nodeType;
     this._label = label;
     this._style = style;
     this.invalidate();
   }
-  getType(): any {
-    return this._type;
+  type() {
+    return BLOCK_TREE_NODE;
   }
-  setType(type: any) {
-    this._type = type;
+
+  getType(): any {
+    return this._nodeType;
+  }
+  setType(nodeType: any) {
+    this._nodeType = nodeType;
     this.invalidate();
   }
   getLabel(): any {
@@ -32,24 +34,15 @@ export default class BlockTreeNode implements TreeNode {
     this._label = label;
     this.invalidate();
   }
-  invalidate() {
-    this._root = null;
-  }
 
   render() {
-    this._root = this._palette.spawn(this._type);
+    const root = this._palette.spawn(this.getType());
     if (this._label != null) {
-      this._root.setLabel(this._label);
+      root.setLabel(this._label);
     }
     if (this._style) {
-      this._root.setBlockStyle(this._style);
+      root.setBlockStyle(this._style);
     }
-  }
-
-  root(): WindowNode {
-    if (!this._root) {
-      this.render();
-    }
-    return this._root;
+    return root;
   }
 }

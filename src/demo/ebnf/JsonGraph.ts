@@ -1,4 +1,3 @@
-import WindowNode from "../../WindowNode";
 import TreeNode from "../../treenode/TreeNode";
 import DefaultNodePalette from "../../DefaultNodePalette";
 import BlockTreeNode from "../../treenode/BlockTreeNode";
@@ -17,28 +16,31 @@ class JSONASTNode {
   }
 }
 
-export default class JsonGraph implements TreeNode {
+export const JSON_GRAPH_SYMBOL = Symbol("JSON_GRAPH");
+export default class JsonGraph extends TreeNode {
   _palette: DefaultNodePalette;
   _text: string;
   _title: BlockTreeNode;
   _tree: BasicTreeList;
-  _root: WindowNode;
 
   constructor() {
+    super();
     this._palette = new DefaultNodePalette();
     this._title = new BlockTreeNode();
     this._title.setLabel("JSON");
+    this._title.setOnScheduleUpdate(this.invalidate);
 
     this._tree = new BasicTreeList(this._title, [], this._palette);
+    this._tree.setOnScheduleUpdate(this.invalidate);
+  }
+
+  type() {
+    return JSON_GRAPH_SYMBOL;
   }
 
   setText(text: string) {
     this._text = text;
     this.invalidate();
-  }
-
-  invalidate() {
-    this._root = null;
   }
 
   parseWithNewlines(text: string) {
@@ -110,16 +112,9 @@ export default class JsonGraph implements TreeNode {
     });
   }
 
-  render(): void {
+  render() {
     const children = this.parseWithNewlines(this._text);
     this.graphWithNewlines(this._tree, [children]);
-    this._root = this._tree.root();
-  }
-
-  root(): WindowNode {
-    if (!this._root) {
-      this.render();
-    }
-    return this._root;
+    return this._tree.root();
   }
 }

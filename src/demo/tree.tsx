@@ -30,11 +30,7 @@ function ParsegraphTree(root: TreeList, list: any[]) {
       root.appendChild(newNode);
       return;
     }
-    const list = new BasicTreeList(
-      new BlockTreeNode("u"),
-      [],
-      new DefaultNodePalette()
-    );
+    const list = new InlineTreeList(new BlockTreeNode("s"), []);
     ParsegraphTree(list, child);
     root.appendChild(list);
   };
@@ -66,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("b");
     caret.disconnect("d");
     caret.disconnect("u");
-    const root = new InlineTreeList(new BlockTreeNode("u"), []);
+    const root = new InlineTreeList(new BlockTreeNode("s"), []);
     //style.setType(root, 'u');
     ParsegraphTree(root, children);
     caret.connect("f", root.root() as Node<DefaultNodeType>);
