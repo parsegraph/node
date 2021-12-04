@@ -3,7 +3,9 @@ import Rect from "parsegraph-rect";
 import { Direction, Axis } from "parsegraph-direction";
 import DefaultNodeType, { Type } from "./DefaultNodeType";
 import Node from "./Node";
-import Label, { Line } from "./Label";
+import Label from "./Label";
+import Line from "./Line";
+import GlyphIterator from "./GlyphIterator";
 
 import { copyStyle, BUD_RADIUS } from "./DefaultNodeStyle";
 
@@ -188,6 +190,7 @@ export {
   Widget,
   Label,
   Line,
+  GlyphIterator,
   turnRight,
   turnLeft,
   turnPositive,
