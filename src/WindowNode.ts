@@ -113,12 +113,14 @@ export class ExtendedNode {
   }
 }
 
+export type ElementFunc = (window:BasicWindow)=>HTMLElement;
+
 export default abstract class WindowNode extends LayoutNode {
   _windowPainter: Map<BasicWindow, WindowNodePainter>;
   _windowPaintGroup: { [key: string]: WindowNode };
   _commitLayoutFunc: Function;
   _cache: any;
-  _element: any;
+  _element: ElementFunc;
   _windowElement: Map<Component, HTMLElement>;
   _extended: ExtendedNode;
 
@@ -133,12 +135,19 @@ export default abstract class WindowNode extends LayoutNode {
     this._extended = null;
   }
 
-  element(): any {
+  element(): ElementFunc {
     return this._element;
   }
 
-  setElement(element: any): void {
+  setElement(element: ElementFunc): void {
+    if (this._element === element) {
+      return;
+    }
     this._element = element;
+    this._windowElement.forEach(elem=>{
+      elem.remove();
+    });
+    this._windowElement.clear();
     this.layoutWasChanged(Direction.INWARD);
   }
 
