@@ -1063,7 +1063,9 @@ export default class Input {
     if (this._focusedNode) {
       if (this._spotlight.animating() || this.showingCaret()) {
         const animationPct = (t.getTime() % 1000) / 1000;
-        this._caretColor.setA((1 + Math.cos(Math.PI + 2 * Math.PI * animationPct))/2);
+        this._caretColor.setA(
+          (1 + Math.cos(Math.PI + 2 * Math.PI * animationPct)) / 2
+        );
         console.log(this._caretColor);
         this._updateRepeatedly = true;
         needsUpdate = true;

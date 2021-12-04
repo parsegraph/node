@@ -77,9 +77,9 @@ export default class Spawner extends AbstractTreeList {
     carousel.install(root as Node<DefaultNodeType>);
   }
 
-  _builder:()=>TreeNode;
+  _builder: () => TreeNode;
 
-  setBuilder(builder:()=>TreeNode) {
+  setBuilder(builder: () => TreeNode) {
     this._builder = builder;
   }
 
@@ -157,7 +157,7 @@ export default class Spawner extends AbstractTreeList {
     if (this.length() > 0) {
       return super.render();
     }
-    this._title.root().setClickListener(()=>{
+    this._title.root().setClickListener(() => {
       this.appendChild(this.createNew());
     });
     return super.render();

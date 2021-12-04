@@ -95,8 +95,7 @@ export default class BurgerMenu {
     return this._showSplit;
   }
 
-  mount() {
-  }
+  mount() {}
 
   scheduleRepaint() {
     // console.log("BurgerMenu is scheduling repaint");

@@ -16,32 +16,30 @@ import Node from "../Node";
 import Multislot from "../treenode/Multislot";
 import Spawner from "../treenode/Spawner";
 
-interface GrammarVisitor {
-
-}
+interface GrammarVisitor {}
 
 interface Grammar {
-  name():string;
-  parse(content: any, visitor: GrammarVisitor):void;
+  name(): string;
+  parse(content: any, visitor: GrammarVisitor): void;
 }
 
 class Parsegraph extends TreeNode {
-  static TYPE:Symbol = Symbol("Parsegraph");
-  _head:Node<DefaultNodeType>;
-  _grammar:Grammar;
-  _content:any;
+  static TYPE: Symbol = Symbol("Parsegraph");
+  _head: Node<DefaultNodeType>;
+  _grammar: Grammar;
+  _content: any;
 
   constructor() {
     super();
     this._head = new DefaultNodePalette().spawn("b");
   }
 
-  setContent(content:any) {
+  setContent(content: any) {
     this._content = content;
     this.invalidate();
   }
 
-  setGrammar(grammar:Grammar) {
+  setGrammar(grammar: Grammar) {
     this._grammar = grammar;
     this.invalidate();
   }
@@ -60,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const belt = new TimingBelt();
   const world = new World();
   const spawner = new Spawner([]);
-  spawner.setBuilder(()=>{
+  spawner.setBuilder(() => {
     return new Parsegraph();
   });
 

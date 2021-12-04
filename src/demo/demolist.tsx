@@ -1,13 +1,13 @@
 import { renderFullscreen } from "../render";
 import { TimingBelt } from "parsegraph-window";
-import { PreferredAxis } from 'parsegraph-direction';
+import { PreferredAxis } from "parsegraph-direction";
 import World from "../World";
 import DefaultNodePalette from "../DefaultNodePalette";
-import Direction from 'parsegraph-direction';
+import Direction from "parsegraph-direction";
 import Caret from "../Caret";
 import ActionCarousel from "../ActionCarousel";
 
-function createFrame(url:string, w:number = 300, h:number = 500) {
+function createFrame(url: string, w: number = 300, h: number = 500) {
   const frame = document.createElement("iframe");
   frame.src = url;
   frame.style.backgroundColor = "grey";
@@ -22,37 +22,37 @@ document.addEventListener("DOMContentLoaded", () => {
   const world = new World();
 
   const car = new Caret();
-  car.replace('b');
+  car.replace("b");
   car.label("parsegraph-node");
 
-  const demoFrame = car.spawnMove('d', 'e');
+  const demoFrame = car.spawnMove("d", "e");
 
-  car.spawnMove('d', 'u', 'c');
+  car.spawnMove("d", "u", "c");
 
   car.push();
-  car.pull('d');
-  car.spawnMove('d', 'b');
+  car.pull("d");
+  car.spawnMove("d", "b");
   car.label("Coverage");
-  car.onClick(()=>{
+  car.onClick(() => {
     window.location.href = "/coverage";
   });
-  car.spawnMove('d', 'e');
-  car.element(()=>{
+  car.spawnMove("d", "e");
+  car.element(() => {
     return createFrame("/coverage");
   });
 
   car.pop();
 
-  car.spawnMove('f', 'u');
+  car.spawnMove("f", "u");
   car.push();
-  car.pull('d');
-  car.spawnMove('d', 'b');
+  car.pull("d");
+  car.spawnMove("d", "b");
   car.label("Docs");
-  car.onClick(()=>{
+  car.onClick(() => {
     window.location.href = "/docs";
   });
-  car.spawnMove('d', 'e');
-  car.element(()=>{
+  car.spawnMove("d", "e");
+  car.element(() => {
     return createFrame("/docs");
   });
   car.pop();
@@ -65,30 +65,32 @@ document.addEventListener("DOMContentLoaded", () => {
     world.scheduleRepaint();
   };
 
-  fetch('/demos').then((resp)=>{
-    return resp.text();
-  }).then(text=>{
-    text.split("\n").forEach(demo=>{
-      car.spawnMove('f', 'u');
-      car.push();
-      const n = car.spawnMove('d', 'b');
-      car.label(demo);
-      const ac = new ActionCarousel();
-      ac.addAction("Demo", ()=>{
-        demoFrame.setElement(()=>{
-          return createFrame("/" + demo + ".html", 800, 600);
+  fetch("/demos")
+    .then((resp) => {
+      return resp.text();
+    })
+    .then((text) => {
+      text.split("\n").forEach((demo) => {
+        car.spawnMove("f", "u");
+        car.push();
+        const n = car.spawnMove("d", "b");
+        car.label(demo);
+        const ac = new ActionCarousel();
+        ac.addAction("Demo", () => {
+          demoFrame.setElement(() => {
+            return createFrame("/" + demo + ".html", 800, 600);
+          });
+          demoFrame.layoutChanged();
+          refresh();
         });
-        demoFrame.layoutChanged();
-        refresh();
+        ac.addAction("Open", () => {
+          window.location.href = "/" + demo + ".html";
+        });
+        ac.install(n);
+        car.pop();
       });
-      ac.addAction("Open", ()=>{
-        window.location.href = "/" + demo + ".html";
-      });
-      ac.install(n);
-      car.pop();
+      refresh();
     });
-    refresh();
-  });
 
   refresh();
   renderFullscreen(belt, world, document.getElementById("parsegraph-tree"));

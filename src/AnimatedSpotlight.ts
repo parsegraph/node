@@ -3,7 +3,7 @@ import Color from "parsegraph-color";
 import Animator from "parsegraph-animator";
 import lerp from "parsegraph-lerp";
 import smoothstep from "parsegraph-smoothstep";
-import {Component} from "parsegraph-window";
+import { Component } from "parsegraph-window";
 import { LayoutNode } from "parsegraph-layout";
 import { Matrix3x3 } from "parsegraph-matrix";
 

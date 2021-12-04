@@ -13,11 +13,13 @@ async function getDemos() {
       }
       // files is an array of filenames.
       respond(
-        files.map((file) => {
-          const m = file.match(/www\/(\w+)\.html/);
-          [1];
-          return m ? m[1] : null;
-        }).filter(file=>file)
+        files
+          .map((file) => {
+            const m = file.match(/www\/(\w+)\.html/);
+            [1];
+            return m ? m[1] : null;
+          })
+          .filter((file) => file)
       );
     });
   });
@@ -41,7 +43,7 @@ app.get("/", async (req, res) => {
   write(`</head>`);
   write(`<body style="margin: 0; padding: 0">`);
   write(`<div style="width: 100vw; height: 100vh">`);
-  write(`<div style="width: 100%; height: 100%" id="parsegraph-tree"></div>`)
+  write(`<div style="width: 100%; height: 100%" id="parsegraph-tree"></div>`);
   write(`</div>`);
   write(`<script src="parsegraph-node.demolist.js"></script>`);
   write(`</body>`);

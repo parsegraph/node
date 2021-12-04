@@ -1,9 +1,9 @@
 import { renderFullscreen } from "../render";
 import { TimingBelt } from "parsegraph-window";
-import { PreferredAxis } from 'parsegraph-direction';
+import { PreferredAxis } from "parsegraph-direction";
 import World from "../World";
 import DefaultNodePalette from "../DefaultNodePalette";
-import Direction from 'parsegraph-direction';
+import Direction from "parsegraph-direction";
 
 document.addEventListener("DOMContentLoaded", () => {
   const belt = new TimingBelt();
@@ -21,11 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
   c.connectNode(Direction.DOWNWARD, f);
 
   const e = new DefaultNodePalette().spawn("e");
-  e.setElement(()=>{
+  e.setElement(() => {
     const div = document.createElement("div");
     div.innerHTML = "Hey it's your div";
     div.style.backgroundColor = "white";
-    setInterval(()=>{
+    setInterval(() => {
       div.style.fontSize = Math.round(36 * Math.random()) + "px";
       console.log(div.style.fontSize);
     }, 1000);

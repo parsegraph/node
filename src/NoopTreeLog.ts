@@ -5,4 +5,3 @@ export default class NoopTreeLog extends TreeLog {
     // Do nothing.
   }
 }
-

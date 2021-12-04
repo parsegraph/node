@@ -109,7 +109,7 @@ export class ExtendedNode {
   }
 }
 
-export type ElementFunc = (window:BasicWindow)=>HTMLElement;
+export type ElementFunc = (window: BasicWindow) => HTMLElement;
 
 export default abstract class WindowNode extends LayoutNode {
   _windowPainter: Map<BasicWindow, WindowNodePainter>;
@@ -140,7 +140,7 @@ export default abstract class WindowNode extends LayoutNode {
       return;
     }
     this._element = element;
-    this._windowElement.forEach(elem=>{
+    this._windowElement.forEach((elem) => {
       elem.remove();
     });
     this._windowElement.clear();
@@ -414,7 +414,9 @@ export default abstract class WindowNode extends LayoutNode {
     if (!window.containerFor(paintContext)) {
       return null;
     }
-    let worldEle:HTMLElement = window.containerFor(paintContext).querySelector(".world");
+    let worldEle: HTMLElement = window
+      .containerFor(paintContext)
+      .querySelector(".world");
     if (worldEle) {
       return worldEle;
     }
@@ -443,9 +445,7 @@ export default abstract class WindowNode extends LayoutNode {
           return;
         }
         const elem = node.element()(window);
-        if (
-          elem.parentNode !== this.getWorldElement(window, paintContext)
-        ) {
+        if (elem.parentNode !== this.getWorldElement(window, paintContext)) {
           if (elem.parentNode) {
             elem.parentNode.removeChild(elem);
           }

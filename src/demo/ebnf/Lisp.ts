@@ -10,7 +10,7 @@ import ActionCarousel from "../../ActionCarousel";
 import { logEnterc, logLeave } from "../../log";
 import Node from "../../Node";
 import DefaultNodeType from "../../DefaultNodeType";
-import {Keystroke} from "parsegraph-window";
+import { Keystroke } from "parsegraph-window";
 
 interface LispHandler extends TreeList {
   nest(node: TreeNode): void;
@@ -116,22 +116,22 @@ class LispCellNode extends TreeNode implements LispNode {
     n.setLabel(this._value);
 
     const ac = new ActionCarousel();
-    ac.addAction("Insert", ()=>{
+    ac.addAction("Insert", () => {
       this.insertLispCell();
     });
-    ac.addAction("Append", ()=>{
+    ac.addAction("Append", () => {
       this.appendLispCell();
     });
-    ac.addAction("Edit", ()=>{
+    ac.addAction("Edit", () => {
       ac.uninstall();
       n.realLabel().setEditable(true);
     });
-    ac.addAction("Delete", ()=>{
+    ac.addAction("Delete", () => {
       this.removeMe();
     });
     ac.install(n);
 
-    n.setKeyListener((event:Keystroke) => {
+    n.setKeyListener((event: Keystroke) => {
       const key = event.key();
       if (key === "(") {
         this._handler && this._handler.nest(this);
