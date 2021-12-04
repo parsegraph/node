@@ -3,7 +3,7 @@ import Color from "parsegraph-color";
 import Animator from "parsegraph-animator";
 import lerp from "parsegraph-lerp";
 import smoothstep from "parsegraph-smoothstep";
-import Viewport from "./Viewport";
+import {Component} from "parsegraph-window";
 import { LayoutNode } from "parsegraph-layout";
 import { Matrix3x3 } from "parsegraph-matrix";
 
@@ -11,13 +11,13 @@ const FOCUSED_SPOTLIGHT_COLOR = new Color(1, 1, 1, 0.5);
 const FOCUSED_SPOTLIGHT_SCALE = 6;
 
 export default class AnimatedSpotlight {
-  _viewport: Viewport;
+  _viewport: Component;
   _painter: SpotlightPainter;
   _animator: Animator;
   _fromNode: LayoutNode;
   _toNode: LayoutNode;
   _spotlightColor: Color;
-  constructor(viewport: Viewport) {
+  constructor(viewport: Component) {
     this._viewport = viewport;
     this._painter = null;
     this._animator = new Animator(480);
@@ -70,7 +70,7 @@ export default class AnimatedSpotlight {
     this.animator().restart();
     this._fromNode = this._toNode;
     this._toNode = toNode;
-    this._viewport.scheduleRepaint();
+    this._viewport.scheduleUpdate();
   }
 
   drawSpotlight(x: number, y: number, srad: number, color: Color) {
