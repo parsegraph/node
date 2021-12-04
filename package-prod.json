@@ -20,7 +20,7 @@
     "parsegraph-camera": "^1.4.5",
     "parsegraph-compileprogram": "^2.1.1",
     "parsegraph-color": "^1.4.4",
-    "parsegraph-layout": "^1.6.4",
+    "parsegraph-layout": "^1.7.0",
     "parsegraph-lerp": "^1.5.5",
     "parsegraph-matrix": "^1.4.7",
     "parsegraph-pagingbuffer": "^1.5.1",
