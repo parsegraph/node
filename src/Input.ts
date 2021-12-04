@@ -1,6 +1,6 @@
 import { TimeoutTimer } from "parsegraph-timing";
 import fuzzyEquals from "parsegraph-fuzzyequals";
-import { CLICK_DELAY_MILLIS, INTERVAL } from "parsegraph-window";
+import { Keystroke, CLICK_DELAY_MILLIS, INTERVAL } from "parsegraph-window";
 import {
   matrixTransform2D,
   makeInverse3x3,
@@ -15,6 +15,7 @@ import DefaultNodeType, { Type } from "./DefaultNodeType";
 import Viewport from "./Viewport";
 import Node from "./Node";
 import Method from "parsegraph-method";
+import log, { logc } from "./log";
 
 export const TOUCH_SENSITIVITY = 1;
 export const MOUSE_SENSITIVITY = 1;
@@ -165,9 +166,9 @@ export default class Input {
     this.scheduleRepaint();
   }
 
-  sliderKey(keyName: string) {
+  sliderKey(event: Keystroke) {
     const diff = SLIDER_NUDGE;
-    switch (keyName) {
+    switch (event.name()) {
       case MOVE_BACKWARD_KEY:
         this.adjustSelectedSlider(-diff, false);
         return;
@@ -188,8 +189,8 @@ export default class Input {
     }
   }
 
-  focusMovementNavKey(keyName: string): boolean {
-    switch (keyName) {
+  focusMovementNavKey(event: Keystroke): boolean {
+    switch (event.name()) {
       case MOVE_BACKWARD_KEY:
         this.clearImpulse();
         return this.moveOutwardly(Direction.BACKWARD);
@@ -221,14 +222,17 @@ export default class Input {
     }
   }
 
-  focusNavKey(keyName: string, event: any): boolean {
-    if (this.focusMovementNavKey(keyName)) {
+  focusNavKey(event: Keystroke): boolean {
+    if (this.focusMovementNavKey(event)) {
       return true;
     }
-    switch (keyName) {
+    switch (event.name()) {
       case "Tab":
+        if (!this._focusedNode._extended) {
+          return false;
+        }
         this.clearImpulse();
-        const toNode = event.shiftKey
+        const toNode = event.shiftKey()
           ? this._focusedNode._extended.prevTabNode
           : this._focusedNode._extended.nextTabNode;
         if (toNode) {
@@ -239,7 +243,7 @@ export default class Input {
       case "Enter":
         this.clearImpulse();
         if (this._focusedNode.hasKeyListener()) {
-          if (this._focusedNode.key("Enter", this.viewport())) {
+          if (this._focusedNode.key(event, this.viewport())) {
             // Node handled it.
             return true;
           }
@@ -281,9 +285,10 @@ export default class Input {
     }
   }
 
-  focusKey(keyName: string, event: any) {
-    if (this._focusedNode._label && event.ctrlKey) {
-      if (this._focusedNode._label.ctrlKey(keyName)) {
+  focusKey(event: Keystroke) {
+    console.log("focusKey", event);
+    if (this._focusedNode._label && event.ctrlKey()) {
+      if (this._focusedNode._label.ctrlKey(event)) {
         // console.log("LAYOUT CHANGED");
         this._focusedNode.layoutWasChanged();
         this.scheduleRepaint();
@@ -291,7 +296,7 @@ export default class Input {
       }
     } else if (
       this._focusedNode.hasKeyListener() &&
-      this._focusedNode.key(keyName, this.viewport()) !== false
+      this._focusedNode.key(event, this.viewport()) !== false
     ) {
       console.log("KEY PRESSED FOR LISTENER; LAYOUT CHANGED");
       this._focusedNode.layoutWasChanged();
@@ -300,7 +305,7 @@ export default class Input {
     } else if (
       this._focusedNode._label &&
       this._focusedNode._label.editable() &&
-      this._focusedNode._label.key(keyName)
+      this._focusedNode._label.key(event)
     ) {
       console.log("LABEL ACCEPTS KEY; LAYOUT CHANGED");
       this._focusedNode.layoutWasChanged();
@@ -309,11 +314,11 @@ export default class Input {
     }
     // Didn't move the caret, so interpret it as a key move
     // on the node itself.
-    else if (this.focusNavKey(keyName, event)) {
+    else if (this.focusNavKey(event)) {
       return true;
     } else {
       this._focusedNode.click(this._viewport);
-      this._focusedNode.key(keyName, this._viewport);
+      this._focusedNode.key(event, this._viewport);
       this._focusedNode.click(this._viewport);
     }
   }
@@ -322,14 +327,14 @@ export default class Input {
     return this.viewport().carousel();
   }
 
-  navKey(keyName: string, event: any) {
-    switch (keyName) {
+  navKey(event: Keystroke) {
+    switch (event.name()) {
       case CLICK_KEY:
         // console.log("Q key for click pressed!");
         const mouseInWorld = matrixTransform2D(
           makeInverse3x3(this.camera().worldMatrix()),
-          event.x,
-          event.y
+          event.x(),
+          event.y()
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], true)
@@ -357,53 +362,51 @@ export default class Input {
     return false;
   }
 
-  onKeydown(event: any) {
-    const keyName = getproperkeyname(event);
-    if (keyName.length === 0) {
-      return true;
+  onKeydown(event: Keystroke) {
+    console.log("Keydown", event);
+    if (!event.name().length) {
+      return false;
     }
     // this._viewport.showInCamera(null);
-    console.log("Keydown ", keyName, event);
 
-    if (this.carousel().carouselKey(keyName)) {
+    if (this.carousel().carouselKey(event)) {
       // console.log("Carousel key processed.");
       return true;
     }
 
-    if (this._selectedSlider && this.sliderKey(keyName)) {
+    if (this._selectedSlider && this.sliderKey(event)) {
       return true;
     }
 
     if (this._focusedNode) {
-      return this.focusKey(keyName, event);
+      return this.focusKey(event);
     }
 
-    if (this.keydowns[keyName]) {
+    if (this.keydowns[event.name()]) {
       // Already processed.
       // console.log("Key event, but already processed.");
       return true;
     }
-    this.keydowns[keyName] = new Date();
+    this.keydowns[event.name()] = new Date();
 
-    return this.navKey(keyName, event);
+    return this.navKey(event);
   }
 
-  onKeyup(event: any) {
-    const keyName = getproperkeyname(event);
-    // console.log(keyName);
+  onKeyup(event: Keystroke) {
+    console.log("Keyup", event);
 
-    if (!this.keydowns[keyName]) {
+    if (!this.keydowns[event.name()]) {
       // Already processed.
       return;
     }
-    delete this.keydowns[keyName];
+    delete this.keydowns[event.name()];
 
-    switch (keyName) {
+    switch (event.name()) {
       case CLICK_KEY:
         const mouseInWorld = matrixTransform2D(
           makeInverse3x3(this.camera().worldMatrix()),
-          event.x,
-          event.y
+          event.x(),
+          event.y()
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], false)
@@ -809,13 +812,19 @@ export default class Input {
       DefaultNodeType
     >;
     if (!selectedNode) {
-      console.log("No node found under coords:", x, y);
+      logc("Mouse clicks", "No node found under coords:", x, y);
       this.setFocusedNode(null);
       this.viewport().showInCamera(null);
       return null;
     }
 
-    console.log("Node found for coords:", selectedNode, x, y);
+    logc(
+      "Mouse clicks",
+      "Node {0} found for coords ({1}, {2})",
+      selectedNode,
+      x,
+      y
+    );
 
     // Check if the selected node was a slider.
     if (selectedNode.type().type() == Type.SLIDER) {
@@ -866,6 +875,7 @@ export default class Input {
         (x - selectedLabel._x) / selectedLabel._scale,
         (y - selectedLabel._y) / selectedLabel._scale
       );
+      this.scheduleRepaint();
       // console.log(selectedLabel.caretLine());
       // console.log(selectedLabel.caretPos());
       this.setFocusedNode(selectedNode);
@@ -1051,7 +1061,10 @@ export default class Input {
     }
 
     if (this._focusedNode) {
-      if (this._spotlight.animating()) {
+      if (this._spotlight.animating() || this.showingCaret()) {
+        const animationPct = (t.getTime() % 1000) / 1000;
+        this._caretColor.setA((1 + Math.cos(Math.PI + 2 * Math.PI * animationPct))/2);
+        console.log(this._caretColor);
         this._updateRepeatedly = true;
         needsUpdate = true;
       }
@@ -1105,15 +1118,20 @@ export default class Input {
     return this._viewport;
   }
 
+  showingCaret() {
+    if (!this._focusedNode || this._focusedNode.needsPosition()) {
+      return false;
+    }
+    const label = this._focusedNode._label;
+    return label && label._x != null && label._y != null;
+  }
+
   paint() {
     const window = this.window();
-    if (!this._caretPainter) {
-      this._caretPainter = new BlockPainter(window);
-    }
 
-    this._caretPainter.initBuffer(1);
-    this._caretPainter.setBorderColor(this._caretColor);
-    this._caretPainter.setBackgroundColor(this._caretColor);
+    if (this._caretPainter) {
+      this._caretPainter.clear();
+    }
 
     if (!this._focusedNode || this._focusedNode.needsPosition()) {
       return;
@@ -1126,15 +1144,20 @@ export default class Input {
     }
 
     const cr = label.getCaretRect();
-    if (label._x != null && label._y != null) {
+    if (this.showingCaret()) {
+      if (!this._caretPainter) {
+        this._caretPainter = new BlockPainter(window);
+      }
+      this._caretPainter.initBuffer(1);
+      this._caretPainter.setBorderColor(this._caretColor);
+      this._caretPainter.setBackgroundColor(this._caretColor);
       this._caretPainter.drawBlock(
         label._x + cr.x() * label._scale,
         label._y + cr.y() * label._scale,
         label._scale * cr.width(),
         label._scale * cr.height(),
         0.01,
-        0.02,
-        1
+        0.02
       );
     }
   }
@@ -1191,7 +1214,7 @@ export default class Input {
     if (this._caretPainter) {
       gl.disable(gl.CULL_FACE);
       gl.disable(gl.DEPTH_TEST);
-      gl.disable(gl.BLEND);
+      // gl.disable(gl.BLEND);
       this._caretPainter.render(world, scale);
     }
     if (this._spotlight) {
@@ -1200,42 +1223,4 @@ export default class Input {
     }
     return false;
   }
-}
-
-const properKeyCodes: { [id: number]: string } = {
-  13: "Enter",
-  27: "Escape",
-  37: "ArrowLeft",
-  38: "ArrowUp",
-  39: "ArrowRight",
-  40: "ArrowDown",
-};
-
-const directKeyNames: string[] = [
-  "Enter",
-  "Escape",
-  "ArrowLeft",
-  "ArrowUp",
-  "ArrowRight",
-  "ArrowDown",
-  "PageDown",
-  "PageUp",
-  "Home",
-  "End",
-];
-
-const mappedKeyNames: { [id: string]: string } = {
-  "-": "ZoomIn",
-  _: "ZoomIn",
-  "+": "ZoomOut",
-  "=": "ZoomOut",
-};
-
-export function getproperkeyname(event: KeyboardEvent) {
-  const keyName = event.key;
-  console.log(keyName + " " + event.keyCode);
-  if (directKeyNames.indexOf(keyName) >= 0) {
-    return keyName;
-  }
-  return mappedKeyNames[keyName] || properKeyCodes[event.keyCode] || keyName;
 }

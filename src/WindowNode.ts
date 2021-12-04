@@ -1,6 +1,6 @@
 import { elapsed } from "parsegraph-timing";
 
-import { BasicWindow, Component, INTERVAL } from "parsegraph-window";
+import { BasicWindow, Component, Keystroke, INTERVAL } from "parsegraph-window";
 
 import {
   matrixIdentity3x3,

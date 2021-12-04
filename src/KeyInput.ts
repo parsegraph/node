@@ -1,6 +1,6 @@
 import { TimeoutTimer } from "parsegraph-timing";
 import fuzzyEquals from "parsegraph-fuzzyequals";
-import { INTERVAL, CLICK_DELAY_MILLIS } from "parsegraph-window";
+import { INTERVAL, CLICK_DELAY_MILLIS, Keystroke } from "parsegraph-window";
 import {
   matrixTransform2D,
   makeInverse3x3,
@@ -15,7 +15,6 @@ import DefaultNodeType, { Type } from "./DefaultNodeType";
 import Node from "./Node";
 import Viewport from "./Viewport";
 import Method from "parsegraph-method";
-import getproperkeyname from "./getproperkeyname";
 
 export const TOUCH_SENSITIVITY = 1;
 export const MOUSE_SENSITIVITY = 1;
@@ -166,9 +165,9 @@ export default class KeyInput {
     this.scheduleRepaint();
   }
 
-  sliderKey(keyName: string) {
+  sliderKey(event: Keystroke) {
     const diff = SLIDER_NUDGE;
-    switch (keyName) {
+    switch (event.name()) {
       case MOVE_BACKWARD_KEY:
         this.adjustSelectedSlider(-diff, false);
         return;
@@ -189,8 +188,8 @@ export default class KeyInput {
     }
   }
 
-  focusMovementNavKey(keyName: string): boolean {
-    switch (keyName) {
+  focusMovementNavKey(event: Keystroke): boolean {
+    switch (event.name()) {
       case MOVE_BACKWARD_KEY:
         this.clearImpulse();
         return this.moveOutwardly(Direction.BACKWARD);
@@ -222,11 +221,11 @@ export default class KeyInput {
     }
   }
 
-  focusNavKey(keyName: string, event: any): boolean {
-    if (this.focusMovementNavKey(keyName)) {
+  focusNavKey(event: Keystroke): boolean {
+    if (this.focusMovementNavKey(event)) {
       return true;
     }
-    switch (keyName) {
+    switch (event.name()) {
       case "Tab":
         this.clearImpulse();
         const toNode = event.shiftKey
@@ -240,7 +239,7 @@ export default class KeyInput {
       case "Enter":
         this.clearImpulse();
         if (this._focusedNode.hasKeyListener()) {
-          if (this._focusedNode.key("Enter", this.viewport())) {
+          if (this._focusedNode.key(event, this.viewport())) {
             // Node handled it.
             return true;
           }
@@ -282,9 +281,9 @@ export default class KeyInput {
     }
   }
 
-  focusKey(keyName: string, event: any) {
-    if (this._focusedNode._label && event.ctrlKey) {
-      if (this._focusedNode._label.ctrlKey(keyName)) {
+  focusKey(event: Keystroke) {
+    if (this._focusedNode._label && event.ctrlKey()) {
+      if (this._focusedNode._label.ctrlKey(event)) {
         // console.log("LAYOUT CHANGED");
         this._focusedNode.layoutWasChanged();
         this.scheduleRepaint();
@@ -292,7 +291,7 @@ export default class KeyInput {
       }
     } else if (
       this._focusedNode.hasKeyListener() &&
-      this._focusedNode.key(keyName, this.viewport()) !== false
+      this._focusedNode.key(event, this.viewport()) !== false
     ) {
       console.log("KEY PRESSED FOR LISTENER; LAYOUT CHANGED");
       this._focusedNode.layoutWasChanged();
@@ -301,7 +300,7 @@ export default class KeyInput {
     } else if (
       this._focusedNode._label &&
       this._focusedNode._label.editable() &&
-      this._focusedNode._label.key(keyName)
+      this._focusedNode._label.key(event)
     ) {
       console.log("LABEL ACCEPTS KEY; LAYOUT CHANGED");
       this._focusedNode.layoutWasChanged();
@@ -310,11 +309,11 @@ export default class KeyInput {
     }
     // Didn't move the caret, so interpret it as a key move
     // on the node itself.
-    else if (this.focusNavKey(keyName, event)) {
+    else if (this.focusNavKey(event)) {
       return true;
     } else {
       this._focusedNode.click(this._viewport);
-      this._focusedNode.key(keyName, this._viewport);
+      this._focusedNode.key(event, this._viewport);
       this._focusedNode.click(this._viewport);
     }
   }
@@ -323,14 +322,14 @@ export default class KeyInput {
     return this.viewport().carousel();
   }
 
-  navKey(keyName: string, event: any) {
-    switch (keyName) {
+  navKey(event: Keystroke) {
+    switch (event.name()) {
       case CLICK_KEY:
         // console.log("Q key for click pressed!");
         const mouseInWorld = matrixTransform2D(
           makeInverse3x3(this.camera().worldMatrix()),
-          event.x,
-          event.y
+          event.x(),
+          event.y()
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], true)
@@ -358,53 +357,48 @@ export default class KeyInput {
     return false;
   }
 
-  onKeydown(event: any) {
-    const keyName = getproperkeyname(event);
-    if (keyName.length === 0) {
+  onKeydown(event: Keystroke) {
+    if (event.name().length === 0) {
       return true;
     }
     // this._viewport.showInCamera(null);
-    console.log("Keydown ", keyName, event);
 
-    if (this.carousel().carouselKey(keyName)) {
+    if (this.carousel().carouselKey(event)) {
       // console.log("Carousel key processed.");
       return true;
     }
 
-    if (this._selectedSlider && this.sliderKey(keyName)) {
+    if (this._selectedSlider && this.sliderKey(event)) {
       return true;
     }
 
     if (this._focusedNode) {
-      return this.focusKey(keyName, event);
+      return this.focusKey(event);
     }
 
-    if (this.keydowns[keyName]) {
+    if (this.keydowns[event.name()]) {
       // Already processed.
       // console.log("Key event, but already processed.");
       return true;
     }
-    this.keydowns[keyName] = new Date();
+    this.keydowns[event.name()] = new Date();
 
-    return this.navKey(keyName, event);
+    return this.navKey(event);
   }
 
-  onKeyup(event: any) {
-    const keyName = getproperkeyname(event);
-    // console.log(keyName);
-
-    if (!this.keydowns[keyName]) {
+  onKeyup(event: Keystroke) {
+    if (!this.keydowns[event.name()]) {
       // Already processed.
       return;
     }
-    delete this.keydowns[keyName];
+    delete this.keydowns[event.name()];
 
-    switch (keyName) {
+    switch (event.name()) {
       case CLICK_KEY:
         const mouseInWorld = matrixTransform2D(
           makeInverse3x3(this.camera().worldMatrix()),
-          event.x,
-          event.y
+          event.x(),
+          event.y()
         );
         if (
           this.carousel().clickCarousel(mouseInWorld[0], mouseInWorld[1], false)
