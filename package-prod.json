@@ -16,7 +16,7 @@
   "homepage": "https://github.com/parsegraph/node#readme",
   "dependencies": {
     "parsegraph-animator": "^1.5.5",
-    "parsegraph-blockpainter": "^1.5.3",
+    "parsegraph-blockpainter": "^1.5.4",
     "parsegraph-camera": "^1.4.5",
     "parsegraph-compileprogram": "^2.1.1",
     "parsegraph-color": "^1.4.4",
@@ -29,7 +29,7 @@
     "parsegraph-smoothstep": "^1.4.2",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.7.0"
+    "parsegraph-window": "^1.7.2"
   },
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.5.0"
