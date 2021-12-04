@@ -3,20 +3,25 @@ import WindowNode from "../WindowNode";
 import Caret from "../Caret";
 import DefaultNodePalette from "../DefaultNodePalette";
 
-export default class TreeLabel implements TreeNode {
+export const TREE_LABEL_SYMBOL = Symbol("TreeLabel");
+export default class TreeLabel extends TreeNode {
   _label: string;
   _type: any;
   _palette: DefaultNodePalette;
 
-  constructor(type: any, label: string) {
+  constructor(type?: any, label?: string) {
+    super();
     this._palette = new DefaultNodePalette();
-    this._type = type;
-    this._label = label;
+    this._type = type || "b";
+    this._label = label || "";
+  }
+  type() {
+    return TREE_LABEL_SYMBOL;
   }
   getValue(): any {
     return this._label;
   }
-  root(): WindowNode {
+  render(): WindowNode {
     const car = new Caret(this._type);
     car.label(this.getValue());
     return car.root();

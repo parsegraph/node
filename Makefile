@@ -59,7 +59,7 @@ SCRIPT_FILES = \
 	src/treenode/WrappingTreeList.ts \
 	src/treenode/TreeNode.ts \
 	src/treenode/TreeList.ts \
-	src/treenode/DefaultTreeNode.ts \
+	src/treenode/TreeLabel.ts \
 	src/Viewport.ts \
 	src/Widget.ts \
 	src/WindowCaret.ts \

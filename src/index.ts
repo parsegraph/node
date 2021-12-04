@@ -105,7 +105,7 @@ import render, {
 // Tree Node
 import AbstractTreeList from "./treenode/AbstractTreeList";
 import BasicTreeList from "./treenode/BasicTreeList";
-import DefaultTreeNode from "./treenode/DefaultTreeNode";
+import TreeLabel from "./treenode/TreeLabel";
 import InlineTreeList from "./treenode/InlineTreeList";
 import TreeList from "./treenode/TreeList";
 import TreeNode from "./treenode/TreeNode";
@@ -196,7 +196,7 @@ export {
   AbstractTreeList,
   BlockTreeNode,
   BasicTreeList,
-  DefaultTreeNode,
+  TreeLabel,
   InlineTreeList,
   TreeList,
   TreeNode,
