@@ -406,6 +406,7 @@ export default class Viewport extends Component {
       this._needsRepaint ||
       this._world.needsRepaint(this._window) ||
       (this._carousel.isCarouselShown() && this._carousel.needsRepaint()) ||
+      this._input.updateRepeatedly() ||
       this._menu.needsRepaint()
     );
   }
