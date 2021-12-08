@@ -1,4 +1,5 @@
-import Font from "./Font";
+import Font from "parsegraph-font";
+import {UPSCALED_FONT_SIZE} from "parsegraph-glyphpainter";
 
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -27,9 +28,6 @@ export const CAROUSEL_MIN_DISTANCE = 8;
 //
 // ////////////////////////////////////////////////////////////////////////////
 
-export const FONT_SIZE = 12;
-export const FONT_UPSCALE = Math.max(1, 72 / FONT_SIZE);
-export const UPSCALED_FONT_SIZE = FONT_UPSCALE * FONT_SIZE;
 export const LETTER_HEIGHT = 2.0;
 
 let DEFAULT_FONT: Font = null;

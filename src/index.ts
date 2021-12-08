@@ -22,10 +22,6 @@ import DirectionNode, {
   readDirection,
   turnPositive,
   turnNegative,
-} from "parsegraph-direction";
-
-import {
-  LayoutNode,
   AxisOverlap,
   Alignment,
   nameAlignment,
@@ -35,8 +31,13 @@ import {
   Fit,
   nameFit,
   readFit,
+} from "parsegraph-direction";
+
+import {
+  LayoutNode,
 } from "parsegraph-layout";
 import showGraph from "./showGraph";
+import {showInCamera, showNodeInCamera } from "./showInCamera";
 import { addEventMethod, addEventListener } from "./event";
 import Viewport, {
   FullscreenViewportDisplayMode,
@@ -205,4 +206,6 @@ export {
   TreeNode,
   WrappingTreeList,
   ImageBuilder,
+  showInCamera,
+  showNodeInCamera
 };

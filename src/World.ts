@@ -1,16 +1,15 @@
 import Freezer from "./Freezer";
-import CameraBox from "./CameraBox";
+import CameraBox from "./camerabox/CameraBox";
 import { Direction } from "parsegraph-direction";
-import WindowNode from "./WindowNode";
+import WindowNode from "./windownode/WindowNode";
 import Rect from "parsegraph-rect";
 import { BasicWindow, Component } from "parsegraph-window";
 import Camera from "parsegraph-camera";
-import DefaultNodeType from "./DefaultNodeType";
-import Node from "./Node";
+import GraphPainter from "./windownode/GraphPainter";
 
 export default class World {
   _worldPaintingDirty: Map<BasicWindow, boolean>;
-  _worldRoots: WindowNode[];
+  _worldPainters: GraphPainter[];
   _nodeUnderCursor: WindowNode;
   _previousWorldPaintState: Map<BasicWindow, number>;
   _freezer: Freezer;
@@ -20,7 +19,7 @@ export default class World {
   constructor() {
     // World-rendered graphs.
     this._worldPaintingDirty = new Map();
-    this._worldRoots = [];
+    this._worldPainters = [];
 
     // The node currently under the cursor.
     this._nodeUnderCursor = null;
@@ -36,13 +35,18 @@ export default class World {
     return this._freezer;
   }
 
+  forEach(cb:(node:WindowNode, painter:GraphPainter)=>void):void {
+    this._worldPainters.forEach(function (painter) {
+      cb(painter.root(), painter);
+    });
+  }
+
   contextChanged(isLost: boolean, window: BasicWindow): void {
     this._worldPaintingDirty.set(window, true);
     this._previousWorldPaintState.delete(window);
-    for (let i = 0; i < this._worldRoots.length; ++i) {
-      const root: WindowNode = this._worldRoots[i];
-      root.contextChanged(isLost, window);
-    }
+    this._worldPainters.forEach(painter=>{
+      painter.contextChanged(isLost, window)
+    });
     this._cameraBox.contextChanged(isLost, window);
   }
 
@@ -53,18 +57,18 @@ export default class World {
     if (!node.localPaintGroup()) {
       node.setPaintGroup(true);
     }
-    this._worldRoots.push(node);
+    this._worldPainters.push(new GraphPainter(node));
   }
 
   removePlot(plot: WindowNode) {
-    this._worldRoots = this._worldRoots.filter((root) => {
-      return plot !== root;
+    this._worldPainters = this._worldPainters.filter((painter) => {
+      return painter.root() !== plot;
     });
     this._previousWorldPaintState.clear();
   }
 
   clear() {
-    this._worldRoots = [];
+    this._worldPainters = [];
     this._previousWorldPaintState.clear();
   }
 
@@ -73,7 +77,7 @@ export default class World {
    *
    * Returns true if this event processing requires a graph repaint.
    */
-  mouseOver(x: number, y: number): number {
+  mouseOver(x: number, y: number, comp:Component): number {
     if (!this.readyForInput()) {
       return 1;
     }
@@ -88,11 +92,8 @@ export default class World {
 
     if (this._nodeUnderCursor && this._nodeUnderCursor !== selectedNode) {
       // console.log("Node is changing, so repainting.");
-      if ((this._nodeUnderCursor as any).setSelected) {
-        const n = this._nodeUnderCursor as Node<DefaultNodeType>;
-        n.setSelected(false);
-        this.scheduleRepaint();
-      }
+      this._nodeUnderCursor.value().interact().blur(comp);
+      this.scheduleRepaint();
     }
 
     this._nodeUnderCursor = selectedNode;
@@ -102,14 +103,8 @@ export default class World {
       return 0;
     }
 
-    if (
-      (selectedNode as any).acceptsSelection &&
-      (selectedNode as Node<DefaultNodeType>).acceptsSelection()
-    ) {
-      // console.log("Selecting node and repainting");
-      (selectedNode as Node<DefaultNodeType>).setSelected(true);
+    if (this._nodeUnderCursor.value().interact().focus(comp)) {
       this.scheduleRepaint();
-    } else {
       return 0;
     }
 
@@ -119,21 +114,23 @@ export default class World {
     if (!outRect) {
       outRect = new Rect(0, 0, 0, 0);
     }
-    this._worldRoots.forEach(function (plot) {
-      plot.commitLayoutIteratively();
+    this._worldPainters.forEach(painter=>{
+      const plot = painter.root();
+      const layout = plot.value().getLayout();
+      layout.commitLayoutIteratively();
 
       // Get plot extent data.
-      const nx: number = plot.absoluteX();
-      const ny: number = plot.absoluteY();
+      const nx: number = layout.absoluteX();
+      const ny: number = layout.absoluteY();
 
       const boundingValues: [number, number, number] = [0, 0, 0];
-      plot.extentsAt(Direction.FORWARD).boundingValues(boundingValues);
+      layout.extentsAt(Direction.FORWARD).boundingValues(boundingValues);
       let h: number = boundingValues[0];
-      plot.extentsAt(Direction.DOWNWARD).boundingValues(boundingValues);
+      layout.extentsAt(Direction.DOWNWARD).boundingValues(boundingValues);
       let w: number = boundingValues[0];
 
-      const be: number = nx - plot.extentOffsetAt(Direction.FORWARD);
-      const ue: number = ny - plot.extentOffsetAt(Direction.DOWNWARD);
+      const be: number = nx - layout.extentOffsetAt(Direction.FORWARD);
+      const ue: number = ny - layout.extentOffsetAt(Direction.DOWNWARD);
       const fe: number = be + w;
       const de: number = ue + h;
 
@@ -210,8 +207,8 @@ export default class World {
   }
   readyForInput(): boolean {
     // Test if there is a node under the given coordinates.
-    for (let i: number = this._worldRoots.length - 1; i >= 0; --i) {
-      const root: WindowNode = this._worldRoots[i];
+    for (let i: number = this._worldPainters.length - 1; i >= 0; --i) {
+      const root: WindowNode = this._worldPainters[i].root();
       if (root.needsCommit() || root.isDirty()) {
         return false;
       }
@@ -220,8 +217,8 @@ export default class World {
   }
   commitLayout(timeout?: number): boolean {
     let completed = true;
-    for (let i: number = this._worldRoots.length - 1; i >= 0; --i) {
-      if (this._worldRoots[i].commitLayoutIteratively(timeout)) {
+    for (let i: number = this._worldPainters.length - 1; i >= 0; --i) {
+      if (this._worldPainters[i].root().value().getLayout().commitLayoutIteratively(timeout)) {
         completed = false;
       }
     }
@@ -233,11 +230,11 @@ export default class World {
    */
   nodeUnderCoords(x: number, y: number): WindowNode {
     // Test if there is a node under the given coordinates.
-    for (let i: number = this._worldRoots.length - 1; i >= 0; --i) {
-      const selectedNode: WindowNode = this._worldRoots[i].nodeUnderCoords(
+    for (let i: number = this._worldPainters.length - 1; i >= 0; --i) {
+      const selectedNode: WindowNode = this._worldPainters[i].root().value().getLayout().nodeUnderCoords(
         x,
         y
-      );
+      ) as WindowNode;
       if (selectedNode) {
         // Node located; no further search.
         return selectedNode;
@@ -253,7 +250,8 @@ export default class World {
     );
   }
 
-  paint(window: BasicWindow, timeout?: number, paintContext?: any): boolean {
+  paint(paintContext: Component, timeout?: number): boolean {
+    const window = paintContext.window();
     const gl = window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -283,20 +281,16 @@ export default class World {
         i = savedState;
       }
 
-      while (i < this._worldRoots.length) {
+      while (i < this._worldPainters.length) {
         if (pastTime()) {
           this._previousWorldPaintState.set(window, i);
           return true;
         }
-        const plot: WindowNode = this._worldRoots[i];
-        if (!plot.localPaintGroup()) {
+        const painter = this._worldPainters[i];
+        if (!painter.root().localPaintGroup()) {
           throw new Error("World root must have a paint group");
         }
-        const needsUpdate: boolean = plot.paint(
-          window,
-          timeRemaining(),
-          paintContext
-        );
+        const needsUpdate: boolean = painter.paint(paintContext, timeRemaining());
         if (needsUpdate) {
           this._previousWorldPaintState.set(window, i);
           return true;
@@ -316,21 +310,20 @@ export default class World {
   }
 
   render(
-    window: BasicWindow,
-    camera: Camera,
-    paintContext: Component
+    paintContext: Component,
+    camera: Camera
   ): boolean {
-    const gl = window.gl();
+    const gl = paintContext.window().gl();
     if (gl.isContextLost()) {
       return false;
     }
     let needsUpdate: boolean = false;
-    for (let i = 0; i < this._worldRoots.length; ++i) {
+    this._worldPainters.forEach(painter=>{
       needsUpdate =
-        this._worldRoots[i].renderIteratively(window, camera, paintContext) ||
+        painter.renderIteratively(paintContext, camera) ||
         needsUpdate;
-    }
-    this._cameraBox.render(window, camera);
+    });
+    this._cameraBox.render(paintContext, camera);
     return needsUpdate;
   }
 }
