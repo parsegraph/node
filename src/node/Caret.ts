@@ -1,16 +1,38 @@
 import { Direction, readDirection } from "parsegraph-direction";
-import TestSuite from "parsegraph-testsuite";
 import DefaultNodePalette from "./DefaultNodePalette";
 import DefaultNodeType, { Type } from "./DefaultNodeType";
-import WindowCaret from "./WindowCaret";
+import WindowCaret from "../windownode/WindowCaret";
 import Node from "./Node";
+import { defaultFont } from "../settings";
+import Font from "parsegraph-font";
 
 export default class Caret extends WindowCaret<Node<DefaultNodeType>> {
+  _font: Font;
+
   constructor(
     given?: Node<DefaultNodeType> | string | Type,
     mathMode?: boolean
   ) {
     super(new DefaultNodePalette(mathMode), given);
+  }
+
+  element(elem?: any): any {
+    if (elem === undefined) {
+      return this.node().value().element();
+    }
+    this.node().value().setElement(elem);
+    return this;
+  }
+
+  setFont(font: Font): void {
+    this._font = font;
+  }
+
+  font(): Font {
+    if (!this._font) {
+      this._font = defaultFont();
+    }
+    return this._font;
   }
 
   label(...args: any[]) {
@@ -79,23 +101,3 @@ export default class Caret extends WindowCaret<Node<DefaultNodeType>> {
     return car;
   }
 }
-
-const caretTests = new TestSuite("Caret");
-caretTests.addTest("new Caret", function () {
-  const dnp = new DefaultNodePalette();
-  let car = new Caret("s");
-  const n = dnp.spawn("b");
-  car = new Caret(n);
-  car = new Caret();
-  if (car.node().type() !== dnp.spawn().type()) {
-    return car.node().type() + " is not the default.";
-  }
-});
-
-caretTests.addTest("Caret.onKey", function () {
-  const car = new Caret();
-  car.onKey(function () {
-    console.log("Key pressed");
-    return true;
-  });
-});

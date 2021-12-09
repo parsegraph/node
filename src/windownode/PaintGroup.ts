@@ -1,10 +1,9 @@
-import { BasicWindow, Component } from "parsegraph-window";
+import { Component } from "parsegraph-window";
 import WindowNode from "./WindowNode";
 import PaintSubgroup from "./PaintSubgroup";
 import Camera from "parsegraph-camera";
 
 import {
-  matrixIdentity3x3,
   makeScale3x3I,
   makeTranslation3x3I,
   matrixMultiply3x3I,
@@ -160,9 +159,9 @@ export default class PaintGroup {
     // console.log("Rendering paint group: " +
     //   this.absoluteX() + " " + this.absoluteY() +
     //   " " + this.absoluteScale());
-    if (this.root()._cache && renderScale < CACHE_ACTIVATION_SCALE) {
+    if (this.root().value().getCache().isFrozen() && renderScale < CACHE_ACTIVATION_SCALE) {
       window.log("Rendering " + this + " from cache.");
-      const cleanRender = this.root()._cache.render(
+      const cleanRender = this.root().value().getCache().frozenNode().render(
         window,
         renderWorld,
         renderData,

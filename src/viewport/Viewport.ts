@@ -1,16 +1,16 @@
 import Camera from "parsegraph-camera";
-import Carousel from "./Carousel";
+import Carousel from "../carousel/Carousel";
 import Input from "./Input";
 import BurgerMenu from "./BurgerMenu";
 import CameraFilter from "./CameraFilter";
-import World from "./World";
-import WindowNode from "./WindowNode";
+import World from "../World";
+import WindowNode from "../windownode/WindowNode";
 import GraphicsWindow, {
   BasicWindow,
   Component,
   WindowInput,
 } from "parsegraph-window";
-import {showInCamera} from "./showInCamera";
+import {showInCamera} from "parsegraph-showincamera";
 
 export const FOCUS_SCALE = 1;
 
@@ -59,8 +59,6 @@ export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode 
         needsUpdate = true;
       }
     } else {
-      const root = viewport._world._worldRoots[0];
-      root.prepare(viewport._window, viewport);
       const size = root.value().getLayout().extentSize();
       if (size.width() > 0 && size.height() > 0) {
         showInCamera(root, cam, false);
@@ -86,8 +84,6 @@ abstract class MenulessViewportDisplayMode implements ViewportDisplayMode {
 export class SingleScreenViewportDisplayMode extends MenulessViewportDisplayMode {
   render(viewport: Viewport) {
     const cam = viewport.camera();
-    const root = viewport._world._worldRoots[0];
-    root.prepare(viewport._window, viewport);
     const size = root.value().getLayout().extentSize();
     viewport._window.container().style.display = "inline-block";
     let needsUpdate = false;
@@ -117,8 +113,6 @@ export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode 
 
   render(viewport: Viewport) {
     const cam = viewport.camera();
-    const root = viewport._world._worldRoots[0];
-    root.prepare(viewport._window, viewport);
     const size = root.value().getLayout().extentSize();
     viewport._window.container().style.display = "inline-block";
     viewport._window.container().style.width = this._w + "px";
@@ -141,8 +135,6 @@ export class FixedWidthViewportDisplayMode extends SplittingViewportDisplayMode 
 export class FitInWindowViewportDisplayMode extends SplittingViewportDisplayMode {
   render(viewport: Viewport) {
     const cam = viewport.camera();
-    const root = viewport._world._worldRoots[0];
-    root.prepare(viewport._window, viewport);
     const size = root.value().getLayout().extentSize();
     viewport._window.container().style.width = "100%";
     viewport._window.container().style.height = "100%";
@@ -429,7 +421,6 @@ export default class Viewport extends Component {
    * Returns true if the graph completed painting.
    */
   paint(timeout?: number) {
-    const window = this._window;
     const gl = this._window.gl();
     if (gl.isContextLost()) {
       return false;
@@ -440,7 +431,7 @@ export default class Viewport extends Component {
     }
 
     let needsUpdate = this._carousel.paint(this);
-    needsUpdate = this._world.paint(window, timeout, this) || needsUpdate;
+    needsUpdate = this._world.paint(this, timeout) || needsUpdate;
 
     this._input.paint();
     // this._piano.paint();
@@ -513,7 +504,7 @@ export default class Viewport extends Component {
       elementContainer.style.transform = [cameraScale, posTranslate].join(" ");
     }
 
-    needsUpdate = this._world.render(this._window, cam, this) || needsUpdate;
+    needsUpdate = this._world.render(this, cam) || needsUpdate;
     if (needsUpdate) {
       this._window.log("World was rendered dirty.");
       this.scheduleRender();

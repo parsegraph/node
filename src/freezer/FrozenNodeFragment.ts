@@ -105,7 +105,7 @@ export default class FrozenNodeFragment {
         .node()
         .value()
         .getArtist()
-        .renderDirect(this.window(), world, scale, false, cam, null);
+        .render(this.window(), world, scale, false, cam, null);
       // console.log("Done");
 
       if (!this._vertexBuffer) {

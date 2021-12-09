@@ -1,5 +1,5 @@
 import Freezer from "./Freezer";
-import BasicWindow from "parsegraph-window";
+import {BasicWindow} from "parsegraph-window";
 import FreezerRow from "./FreezerRow";
 import FrozenNodeFragment from "./FrozenNodeFragment";
 import FreezerSlot from "./FreezerSlot";

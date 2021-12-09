@@ -1,7 +1,7 @@
 import Freezer from "./Freezer";
 import paintGroupBounds from "./paintGroupBounds";
 import WindowNode from "../windownode/WindowNode";
-import BasicWindow from "parsegraph-window";
+import {BasicWindow} from "parsegraph-window";
 import { Matrix3x3 } from "parsegraph-matrix";
 
 export default class FrozenNode {

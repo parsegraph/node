@@ -2,8 +2,10 @@ import PaintContext from "./PaintContext";
 import {Matrix3x3} from "parsegraph-matrix";
 import Camera from "parsegraph-camera";
 
+export type Counts = {[key:string]:number};
+
 export default interface Artist {
-  setup(ctx:PaintContext):void;
+  setup(ctx:PaintContext, counts:Counts):void;
 
   /**
    * Renders the painted content.

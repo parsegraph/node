@@ -1,5 +1,5 @@
 import Camera from "parsegraph-camera";
-import BasicWindow from "parsegraph-window";
+import {BasicWindow} from "parsegraph-window";
 
 // The maximum scale where nodes will be rendered from a cache.
 export const FREEZER_TEXTURE_SCALE = 0.01;
