@@ -15,23 +15,31 @@
   },
   "homepage": "https://github.com/parsegraph/node#readme",
   "dependencies": {
+    "parsegraph-animatedspotlight": "^1.6.1",
     "parsegraph-animator": "^1.5.5",
-    "parsegraph-blockpainter": "^1.5.4",
+    "parsegraph-blockpainter": "^1.6.0",
     "parsegraph-camera": "^1.4.5",
-    "parsegraph-compileprogram": "^2.1.1",
-    "parsegraph-color": "^1.4.4",
-    "parsegraph-layout": "^1.7.3",
+    "parsegraph-color": "^1.4.5",
+    "parsegraph-compileprogram": "^2.2.1",
+    "parsegraph-font": "^1.6.0",
+    "parsegraph-glyphpainter": "^1.6.0",
+    "parsegraph-graphpainter": "^1.7.0",
+    "parsegraph-interact": "^1.6.2",
+    "parsegraph-layout": "^1.7.6",
     "parsegraph-lerp": "^1.5.5",
-    "parsegraph-matrix": "^1.4.7",
+    "parsegraph-matrix": "^1.4.8",
     "parsegraph-pagingbuffer": "^1.5.1",
     "parsegraph-sdf": "^1.5.5",
-    "parsegraph-spotlightpainter": "^2.3.2",
+    "parsegraph-showincamera": "^1.6.0",
     "parsegraph-smoothstep": "^1.4.2",
+    "parsegraph-spotlightpainter": "^2.3.2",
+    "parsegraph-texturepainter": "^1.6.2",
     "parsegraph-toradians": "^1.4.5",
     "parsegraph-unicode": "^1.5.6",
-    "parsegraph-window": "^1.7.4"
+    "parsegraph-window": "^1.7.5"
   },
   "peerDependencies": {
-    "parsegraph-checkglerror": "^1.5.0"
+    "parsegraph-log": "^1.7.0",
+    "parsegraph-checkglerror": "^1.5.1"
   }
 }
