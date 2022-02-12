@@ -13,46 +13,21 @@ SCRIPT_EXTENSIONS = \
 	.cjs
 
 SCRIPT_FILES = \
-	src/index.ts \
-	src/ActionCarousel.ts \
-	src/AnimatedSpotlight.ts \
-	src/BurgerMenu.ts \
-	src/CameraBox.ts \
-	src/CameraBoxPainter.ts \
-	src/CameraFilter.ts \
-	src/Caret.ts \
-	src/Carousel.ts \
-	src/CarouselAction.ts \
-	src/date.js \
-	src/DefaultNodePainter.ts \
-	src/DefaultNodePalette.ts \
-	src/DefaultNodeStyle.ts \
-	src/DefaultNodeType.ts \
-	src/EnvironmentWidget.ts \
-	src/event.js \
-	src/Exception.ts \
-	src/FanPainter.ts \
-	src/Font.ts \
-	src/Freezer.ts \
-	src/getproperkeyname.ts \
-	src/glsl.d.ts \
-	src/GlyphPainter.ts \
-	src/ImageBuilder.ts \
-	src/Input.ts \
-	src/KeyInput.ts \
-	src/Label.ts \
-	src/log.ts \
-	src/TreeLog.ts \
-	src/WebsocketTreeLog.ts \
-	src/NoopTreeLog.ts \
-	src/math.ts \
-	src/Node.ts \
-	src/WindowNodePainter.ts \
-	src/NodeType.ts \
-	src/parsegraph_Graph_Tests.js \
-	src/settings.ts \
-	src/showGraph.ts \
-	src/TexturePainter.ts \
+	src/camerabox/CameraBox.ts \
+	src/camerabox/CameraBoxPainter.ts \
+	src/carousel/Carousel.ts \
+	src/carousel/ActionCarousel.ts \
+	src/carousel/CarouselAction.ts \
+	src/element/NestedDom.ts \
+	src/node/Caret.ts \
+	src/node/DefaultNodePainter.ts \
+	src/node/DefaultNodePalette.ts \
+	src/node/DefaultNodeStyle.ts \
+	src/node/DefaultNodeType.ts \
+	src/node/Node.ts \
+	src/node/NodeType.ts \
+	src/render/render.ts \
+	src/render/showGraph.ts \
 	src/treenode/AbstractTreeList.ts \
 	src/treenode/BasicTreeList.ts \
 	src/treenode/InlineTreeList.ts \
@@ -60,11 +35,36 @@ SCRIPT_FILES = \
 	src/treenode/TreeNode.ts \
 	src/treenode/TreeList.ts \
 	src/treenode/TreeLabel.ts \
-	src/Viewport.ts \
-	src/Widget.ts \
-	src/WindowCaret.ts \
-	src/WindowNode.ts \
-	src/World.ts
+	src/viewport/BurgerMenu.ts \
+	src/viewport/CameraFilter.ts \
+	src/viewport/ImageBuilder.ts \
+	src/viewport/Input.ts \
+	src/viewport/Viewport.ts \
+	src/widget/EnvironmentWidget.ts \
+	src/widget/Widget.ts \
+	src/index.ts \
+	src/settings.ts \
+	src/World.ts \
+	src/demo/anthonylisp/index.ts \
+	src/demo/anthonylisp/LispAtom.ts \
+	src/demo/anthonylisp/LispCell.ts \
+	src/demo/anthonylisp/LispEnvironment.ts \
+	src/demo/anthonylisp/LispRuntime.ts \
+	src/demo/anthonylisp/parse.ts \
+	src/demo/ebnf/EBNF.ts \
+	src/demo/ebnf/JsonGraph.ts \
+	src/demo/ebnf/Lisp.ts \
+	src/demo/carousel.tsx \
+	src/demo/demolist.tsx \
+	src/demo/ebnf.tsx \
+	src/demo/element.tsx \
+	src/demo/lisp.tsx \
+	src/demo/list.tsx \
+	src/demo/log.tsx \
+	src/demo/multislot.tsx \
+	src/demo/parsegraph.tsx \
+	src/demo/parsetree.tsx \
+	src/demo/tree.tsx
 
 GLSL_SCRIPTS = \
 	src/FanPainter_FragmentShader.glsl \
