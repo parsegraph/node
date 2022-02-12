@@ -6,7 +6,13 @@ module.exports = {
       commonjs:"parsegraph-checkglerror",
       commonjs2:"parsegraph-checkglerror",
       amd:"parsegraph-checkglerror",
-      root:"parsegraph"
+      root:"parsegraph_checkglerror"
+    },
+    "parsegraph-log":{
+      commonjs:"parsegraph-log",
+      commonjs2:"parsegraph-log",
+      amd:"parsegraph-log",
+      root:"parsegraph_log"
     }
   },
   entry: {
@@ -27,7 +33,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "parsegraph-node.[name].js",
     globalObject: "this",
-    library: "parsegraph",
+    library: "parsegraph_node",
     libraryTarget: "umd",
   },
   module: {
