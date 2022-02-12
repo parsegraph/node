@@ -10,7 +10,7 @@ import GraphicsWindow, {
   Component,
   WindowInput,
 } from "parsegraph-window";
-import {showInCamera} from "parsegraph-showincamera";
+import { showInCamera } from "parsegraph-showincamera";
 
 export const FOCUS_SCALE = 1;
 
@@ -47,7 +47,9 @@ export class FullscreenViewportDisplayMode extends SplittingViewportDisplayMode 
       ) {
         viewport._cameraFilter.restart();
       } else if (
-        !cam.containsAll(viewport._nodeShown.value().getLayout().absoluteSizeRect()) &&
+        !cam.containsAll(
+          viewport._nodeShown.value().getLayout().absoluteSizeRect()
+        ) &&
         !viewport._cameraFilter.animating()
       ) {
         viewport._cameraFilter.restart();
@@ -471,7 +473,9 @@ export default class Viewport extends Component {
   }
 
   getRequiredScale() {
-    return this.getFocusScale() / this._nodeShown.value().getLayout().absoluteScale();
+    return (
+      this.getFocusScale() / this._nodeShown.value().getLayout().absoluteScale()
+    );
   }
 
   cameraFilter() {

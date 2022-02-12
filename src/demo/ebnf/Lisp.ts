@@ -41,7 +41,7 @@ class LispList extends WrappingTreeList implements LispHandler, LispNode {
     if (idx < 0) {
       return;
     }
-    //alert("NESTING" + idx);
+    // alert("NESTING" + idx);
     const list = new LispList();
     list.setOnScheduleUpdate(() => this.invalidate());
     this.insertBefore(list, node);

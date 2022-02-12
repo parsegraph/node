@@ -53,7 +53,7 @@ function ParsegraphList(
     buildNode(list);
   }
 }
-var refresh;
+let refresh;
 refresh = () => {
   alert("Refreshing");
 };

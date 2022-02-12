@@ -1,5 +1,5 @@
 import Font from "parsegraph-font";
-import {UPSCALED_FONT_SIZE} from "parsegraph-glyphpainter";
+import { UPSCALED_FONT_SIZE } from "parsegraph-glyphpainter";
 
 // ////////////////////////////////////////////////////////////////////////////
 //

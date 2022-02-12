@@ -14,7 +14,7 @@ import {
   Axis,
   NodePalette,
   PreferredAxis,
-  Alignment
+  Alignment,
 } from "parsegraph-direction";
 import Method from "parsegraph-method";
 import WindowNode from "./WindowNode";

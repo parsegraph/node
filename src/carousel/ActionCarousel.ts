@@ -61,14 +61,20 @@ export default class ActionCarousel {
   }
 
   install(node: Node<DefaultNodeType>, nodeData?: any) {
-    node.value().interact().setClickListener((viewport: Viewport) => {
-      return this.onClick(viewport, node, nodeData);
-    }, this);
-    node.value().interact().setKeyListener((event: Keystroke, viewport?: Viewport) => {
-      return (
-        viewport.carousel().isCarouselShown() && this.onKey(event, viewport)
-      );
-    }, this);
+    node
+      .value()
+      .interact()
+      .setClickListener((viewport: Viewport) => {
+        return this.onClick(viewport, node, nodeData);
+      }, this);
+    node
+      .value()
+      .interact()
+      .setKeyListener((event: Keystroke, viewport?: Viewport) => {
+        return (
+          viewport.carousel().isCarouselShown() && this.onKey(event, viewport)
+        );
+      }, this);
 
     let uninstaller: Function = null;
 
@@ -129,7 +135,10 @@ export default class ActionCarousel {
     }
     // console.log("Creating carousel");
     carousel.clearCarousel();
-    carousel.moveCarousel(node.value().getLayout().absoluteX(), node.value().getLayout().absoluteY());
+    carousel.moveCarousel(
+      node.value().getLayout().absoluteX(),
+      node.value().getLayout().absoluteY()
+    );
 
     for (let i = 0; i < this._actions.length; ++i) {
       const action = this._actions[i];

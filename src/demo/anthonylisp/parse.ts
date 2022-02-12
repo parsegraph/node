@@ -6,11 +6,11 @@ import LispAtom from "./LispAtom";
  */
 export function tokenize(str: string): string[] {
   console.log("Got string: ", str);
-  var tokens = [];
+  const tokens = [];
   str = str.toString();
-  var i = 0;
+  let i = 0;
   while (i < str.length) {
-    var c = str.charAt(i);
+    let c = str.charAt(i);
     if (c === ";") {
       while (c !== "\n") {
         c = str.charAt(++i);
@@ -78,15 +78,15 @@ export function parseTokens(tokens: string[]): LispCell {
     token = tokens.shift();
   }
   if (token === "(") {
-    var c = new LispCell(LispType.List);
-    var newLined = false;
+    const c = new LispCell(LispType.List);
+    let newLined = false;
     while (tokens.length > 1 && tokens[0] !== ")") {
       if (tokens[0] === "\n") {
         tokens.shift();
         newLined = true;
         continue;
       }
-      var child = parseTokens(tokens);
+      const child = parseTokens(tokens);
       if (newLined) {
         child.newLined = true;
         newLined = false;

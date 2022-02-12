@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     caret.disconnect("d");
     caret.disconnect("u");
     const root = new InlineTreeList(new BlockTreeNode("s"), []);
-    //style.setType(root, 'u');
+    // style.setType(root, 'u');
     ParsegraphTree(root, children);
     caret.connect("f", root.root() as Node<DefaultNodeType>);
     world.scheduleRepaint();

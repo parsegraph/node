@@ -1,13 +1,11 @@
-import {DirectionNode} from "parsegraph-direction";
-import {Layout, Positioned} from "parsegraph-layout";
-import Size from 'parsegraph-size';
+import { DirectionNode } from "parsegraph-direction";
+import { Layout, Positioned } from "parsegraph-layout";
+import Size from "parsegraph-size";
 
 class SceneContext implements Artist {
-  static _context:SceneContext;
+  static _context: SceneContext;
 
-  install(ctx:PaintContext) {
-
-  }
+  install(ctx: PaintContext) {}
 
   static getNamespace() {
     if (!this._context) {
@@ -16,7 +14,7 @@ class SceneContext implements Artist {
     return this._context;
   }
 
-  static getPainter(ctx:PaintContext) {
+  static getPainter(ctx: PaintContext) {
     return ctx.get("Painter") as DefaultNodePainter;
   }
 }
@@ -25,7 +23,7 @@ class Scene implements Painted, Interactive, Positioned {
   _layout: Layout;
   _interact: Interaction;
 
-  constructor(node:DirectionNode<Scene>) {
+  constructor(node: DirectionNode<Scene>) {
     this._layout = new Layout(node);
     this._interact = new Interaction();
   }
@@ -34,7 +32,7 @@ class Scene implements Painted, Interactive, Positioned {
     return this._layout;
   }
 
-  size(size?:Size): Size {
+  size(size?: Size): Size {
     if (!size) {
       size = new Size();
     }
@@ -60,8 +58,8 @@ class Scene implements Painted, Interactive, Positioned {
   }
 }
 
-describe("WindowNode", ()=>{
-  it("works", ()=>{
+describe("WindowNode", () => {
+  it("works", () => {
     const n = new DirectionNode<Scene>();
     n.setValue(new Scene(n));
   });

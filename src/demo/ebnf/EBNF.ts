@@ -144,7 +144,7 @@ export default class EBNF extends TreeNode {
 
   render() {
     this._tree.clear();
-    let bnfParser = new Grammars.W3C.Parser(this._text);
+    const bnfParser = new Grammars.W3C.Parser(this._text);
     const children = bnfParser.getAST(this._text);
     this.graphWithNewlines(this._tree, children.children);
     return this._tree.root();

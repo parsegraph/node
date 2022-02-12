@@ -11,7 +11,7 @@ export enum LispType {
 export const lisp_COMMON_LISP = "common_lisp";
 export const lisp_SCHEME = "scheme";
 export const lisp_dialect = lisp_SCHEME;
-//var lisp_dialect = lisp_COMMON_LISP;
+// var lisp_dialect = lisp_COMMON_LISP;
 
 export default class LispCell {
   type: LispType;
@@ -92,7 +92,7 @@ export default class LispCell {
         // (define var exp)
         if (this.list[0].val === "define") {
           var result = this.list[2].eval(env);
-          //console.log("Defining: " + this.list[1].val);
+          // console.log("Defining: " + this.list[1].val);
           env.setVar(this.list[1].val, result);
           return result;
         }
@@ -152,11 +152,11 @@ export default class LispCell {
     }
 
     // (proc exp*)
-    var proc = env.findProc(this.list[0].val).getProc(this.list[0].val);
+    const proc = env.findProc(this.list[0].val).getProc(this.list[0].val);
     if (!proc) {
       throw new Error("Proc must not be null");
     }
-    var exps = [];
+    const exps = [];
 
     for (var i = 1; i < this.list.length; ++i) {
       exps.push(this.list[i].eval(env));
@@ -185,8 +185,8 @@ export default class LispCell {
    */
   toString(): string {
     if (this.type === LispType.List) {
-      var children = [];
-      for (var i = 0; i < this.list.length; ++i) {
+      const children = [];
+      for (let i = 0; i < this.list.length; ++i) {
         children.push(this.list[i].toString());
       }
       return "(" + children.join(" ") + ")";
@@ -202,6 +202,6 @@ export default class LispCell {
 }
 
 const lisp_nil = new LispCell(LispType.Symbol, "nil");
-//const lisp_true_sym = new LispCell(LispType.Symbol, lisp_dialect === lisp_SCHEME ? "#t" : "T"); // anything that isn't false_sym is true
+// const lisp_true_sym = new LispCell(LispType.Symbol, lisp_dialect === lisp_SCHEME ? "#t" : "T"); // anything that isn't false_sym is true
 const lisp_false_sym =
   lisp_dialect === lisp_SCHEME ? new LispCell(LispType.Symbol, "#f") : lisp_nil;

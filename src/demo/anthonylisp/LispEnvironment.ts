@@ -13,8 +13,8 @@ export default class LispEnvironment {
     if (parms) {
       // new lisp_environment(parms, args, outer)
       // const lisp_cells& args
-      for (var i = 0; i < parms.length; ++i) {
-        var p = parms[i];
+      for (let i = 0; i < parms.length; ++i) {
+        const p = parms[i];
         this._variables.set(p.val, args[i]);
       }
     }
@@ -54,7 +54,7 @@ export default class LispEnvironment {
 
     // attempt to find the symbol in some "outer" env
     if (this._outer) {
-      //console.log("Deferring to outer environment for variable");
+      // console.log("Deferring to outer environment for variable");
       return this._outer.findVar(varName);
     }
 
@@ -67,7 +67,7 @@ export default class LispEnvironment {
 
   getProc(procName: string): LispCell {
     if (lisp_dialect === lisp_SCHEME) {
-      //console.log("Deferring to var for procedure");
+      // console.log("Deferring to var for procedure");
       return this.getVar(procName);
     }
 
@@ -79,20 +79,20 @@ export default class LispEnvironment {
    */
   findProc(procName: string): LispEnvironment {
     if (lisp_dialect === lisp_SCHEME) {
-      //console.log("Deferring to var for procedure");
+      // console.log("Deferring to var for procedure");
       return this.findVar(procName);
     }
 
     // check if the procedure exists in this environment
-    var proc = this._procedures.get(procName);
+    const proc = this._procedures.get(procName);
     if (proc) {
-      //console.log("Found procedure: " + proc);
+      // console.log("Found procedure: " + proc);
       return this;
     }
 
     // attempt to find the procedure in some outer env
     if (this._outer) {
-      //console.log("Deferring to outer environment for procedure");
+      // console.log("Deferring to outer environment for procedure");
       return this._outer.findProc(procName);
     }
 

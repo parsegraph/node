@@ -1,4 +1,4 @@
-/*// return given number as a string
+/* // return given number as a string
 {
     ////////////////////// built-in primitive procedures
     var proc_add = function() {

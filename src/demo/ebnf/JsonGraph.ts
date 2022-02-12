@@ -44,7 +44,7 @@ export default class JsonGraph extends TreeNode {
   }
 
   parseWithNewlines(text: string) {
-    let stack = [];
+    const stack = [];
     let idx = 0;
     text = text.trim();
     while (idx < text.length) {

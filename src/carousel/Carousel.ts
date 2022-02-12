@@ -11,7 +11,7 @@ import Viewport from "./Viewport";
 import WindowNode from "./WindowNode";
 import CarouselAction from "./CarouselAction";
 import Camera from "parsegraph-camera";
-//import { toDegrees } from "parsegraph-toradians";
+// import { toDegrees } from "parsegraph-toradians";
 import { Keystroke } from "parsegraph-window";
 
 class CarouselPlot {
