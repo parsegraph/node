@@ -1,8 +1,8 @@
 import Painted from "../windownode/Painted";
 import { BasicWindow, Component } from "parsegraph-window";
 import WindowNode from "../windownode/WindowNode";
-import Freezable from "../freezer/Freezable";
-import Interactive from "../interact/Interactive";
+import { Freezable } from "parsegraph-graphpainter";
+import { Interactive } from "parsegraph-interact";
 import Direction from "parsegraph-direction";
 
 export type ElementFunc = (window: BasicWindow) => HTMLElement;
@@ -12,7 +12,7 @@ export default class NestedDom implements Painted, Interactive, Freezable {
   _windowElement: Map<Component, HTMLElement>;
   _node: WindowNode;
 
-  constructor(node:WindowNode) {
+  constructor(node: WindowNode) {
     this._node = node;
     this._windowElement = new Map();
     this._element = null;

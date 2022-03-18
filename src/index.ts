@@ -33,11 +33,9 @@ import DirectionNode, {
   readFit,
 } from "parsegraph-direction";
 
-import {
-  LayoutNode,
-} from "parsegraph-layout";
+import { LayoutNode } from "parsegraph-layout";
 import showGraph from "./showGraph";
-import {showInCamera, showNodeInCamera } from "./showInCamera";
+import { showInCamera, showNodeInCamera } from "./showInCamera";
 import { addEventMethod, addEventListener } from "./event";
 import Viewport, {
   FullscreenViewportDisplayMode,
@@ -207,5 +205,5 @@ export {
   WrappingTreeList,
   ImageBuilder,
   showInCamera,
-  showNodeInCamera
+  showNodeInCamera,
 };
